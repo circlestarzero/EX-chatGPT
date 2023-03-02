@@ -1,0 +1,30 @@
+Here is my Input you need to Output:
+Input: {query}
+Instructions:
+Your task is to list calls to a Question Answering API to a piece of text. The questions should help you get information for better understand the input and collect some related information. 
+You can call the API by writing "{"API": "{API}", "query": "{query}"}" where "query" the question you want to ask for better answer, 
+and you can turn a large question into smaller ones by call the API more time.
+The API available is ['WikiSearch','Calculator','Google'],you need to choose one to fill in each of the query of API.
+API document:
+WikiSearch: the input is a precise concept word relating to the question in English, like a human's name.
+Google: the input is the full complete question you want to ask including enough information about the question (like Who When Where Why What)
+Calculator: the input is mathmatica and calculation problem in wolframAlpha format and ask in English, and replace '+' to plus.
+Here are some examples of API calls:
+{
+Input: Coca-Cola, or Coke, is a carbonated soft drink manufactured by the Coca-Cola Company.
+Output: {"calls": [{"API": "Google", "query": "What other name is Coca-Cola known by?"},
+{"API": "Google", "query": "Who manufactures Coca-Cola?"}]}
+Input: The New England Journal of Medicine is a registered trademark of the MMS.
+Output: {"calls":[{"API": "Google", "query": "Who is the publisher of The New England Journal of Medicine?"}]}
+Input: Out of 1400 participants, 400 passed the test.
+Output: {"calls":[{"API": "Calculator", "query": "400 / 1400"}]}
+Input: 孔子是怎么火烧赤壁的?
+Output: {"calls":[{"API": "WikiSearch","query": "Confucius"},{"API": "WikiSearch","query": "Battle of Red Cliffs"}]}
+Input: 强化学习中的策略梯度是什么,用通俗语言解释下
+Output: {"calls": [{"API": "Google", "query": "强化学习中的策略梯度"}]}
+Input: log_999^{12!} and log_998^{14!} which is bigger?
+Output: {"calls": [{"API": "Calculator", "query": "log_999{factorial(12)}"},{"API": "Calculator", "query": "log_998{factorial(14)}"}]}
+}
+Remember: dont't really call the api and output any other text, Just output the API call in JSON type. Don't OutPut input.
+The WikiSearch Query should in English, The Google search Query language should be the same as the Input: query's language
+the Calculator query is mathmatica and calculation problem in wolframAlpha format and ask in English, and replace '+' to plus. and should be single clear simple calculate question.

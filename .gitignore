@@ -1,0 +1,5 @@
+/chatGPTChromeEhance/.vscode
+*.log
+*.temp
+/chatGPTChromeEhance/node_modules
+/chatGPTChromeEhance/build

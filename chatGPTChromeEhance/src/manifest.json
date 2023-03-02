@@ -1,0 +1,40 @@
+{
+  "manifest_version": 2,
+  "name": "__MSG_appName__",
+  "description": "__MSG_appDesc__",
+  "default_locale": "en",
+  "version": "2.0.5",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "webRequest",
+    "https://ddg-webapp-aagd.vercel.app/*",
+    "https://api.wolframalpha.com/*"
+  ],
+  "background": {
+    "scripts": ["background/bg.js"]
+  },
+  "browser_action": {},
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{b13d04e3-41db-48b3-842c-8079df93c7ad}"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chat.openai.com/*"],
+      "js": ["content-scripts/mainUI.js"]
+    }
+  ],
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true,
+    "chrome_style": true
+  },
+  "web_accessible_resources": ["content-scripts/mainUI.css", "icons/icon48.png"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "title": "Input",
+    "scanner": "Identity",
+    "id": "Input",
+    "position": 100,
+    "error": false,
+    "numsubpods": 1,
+    "subpods": [
+      {
+        "title": "",
+        "plaintext": "log(20)"
+      }
+    ],
+    "expressiontypes": {
+      "name": "Default"
+    },
+    "infos": {
+      "text": "log(x) is the natural logarithm",
+      "links": [
+        {
+          "url": "http://reference.wolfram.com/language/ref/Log.html",
+          "text": "Documentation",
+          "title": "Mathematica"
+        },
+        {
+          "url": "http://functions.wolfram.com/ElementaryFunctions/Log",
+          "text": "Properties",
+          "title": "Wolfram Functions Site"
+        },
+        {
+          "url": "http://mathworld.wolfram.com/NaturalLogarithm.html",
+          "text": "Definition",
+          "title": "MathWorld"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Decimal approximation",
+    "scanner": "Numeric",
+    "id": "DecimalApproximation",
+    "position": 200,
+    "error": false,
+    "numsubpods": 1,
+    "primary": true,
+    "subpods": [
+      {
+        "title": "",
+        "plaintext": "2.9957322735539909934352235761425407756766016229890282301540079104..."
+      }
+    ],
+    "expressiontypes": {
+      "name": "Default"
+    },
+    "states": [
+      {
+        "name": "More digits",
+        "input": "DecimalApproximation__More digits"
+      }
+    ]
+  },
+  {
+    "title": "Property",
+    "scanner": "Numeric",
+    "id": "Property",
+    "position": 300,
+    "error": false,
+    "numsubpods": 1,
+    "subpods": [
+      {
+        "title": "",
+        "plaintext": "log(20) is a transcendental number"
+      }
+    ],
+    "expressiontypes": {
+      "name": "Default"
+    }
+  }
+]

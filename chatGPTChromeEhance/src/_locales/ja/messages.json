@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "WebChatGPT: インターネットにアクセスできる ChatGPT"
+  },
+  "appDesc": {
+    "message": "Webから関連する結果を使用して、ChatGPTのプロンプトを拡張します。"
+  }
+}

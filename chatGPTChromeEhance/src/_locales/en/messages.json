@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "WebChatGPT: ChatGPT with internet access"
+  },
+  "appDesc": {
+    "message": "Augment your ChatGPT prompts with relevant results from the web."
+  }
+}
