@@ -3,3 +3,4 @@
 *.temp
 /chatGPTChromeEhance/node_modules
 /chatGPTChromeEhance/build
+/chatGPTEx/__pycache__

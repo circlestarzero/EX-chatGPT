@@ -1,4 +1,7 @@
 # EX-chatGPT introduction
+## update 
+
+- update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 
 ## Background
 "ChatGPT as Inherent Toolformer" means that ChatGPT has the ability to become a tool for various tasks without requiring additional adjustments.
@@ -34,12 +37,12 @@ QA Demos:
 - `pip install`
 `pip install -r requirements.txt`
 - fill your `API keys` in `api_class.py` and `main.py`
-  -  `Googgle api key and client id`
+  -  `Google api key and client id`
   -  `wolframAlpha api key`
   -  `openAI api key`
      -  use to summarize when there are too many querys
-  -  `chatGPT access_token` 
-     -  (yesterday, OpenAI has published the `GPT-3.5 Turbo API` , you can replace it with the newsest one)
+  -   `openAI api key`(new feature) or `chatGPT access_token`(old version)
+     -  (3.2, OpenAI has published the `GPT-3.5 Turbo API` , you can replace it with the newsest one)
 - run the `main.py` and type your query
 
 ## WebChatGPTEnhance
