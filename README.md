@@ -1,9 +1,12 @@
 # EX-chatGPT introduction
-## update 
+
+## update
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
-
+- update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+  
 ## Background
+
 "ChatGPT as Inherent Toolformer" means that ChatGPT has the ability to become a tool for various tasks without requiring additional adjustments.
 
 However, ChatGPT has some limitations such as being unable to connect to the internet and difficulty solving math problems.
