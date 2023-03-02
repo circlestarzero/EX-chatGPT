@@ -14,38 +14,6 @@ import re
 #   # recently openAI has published the GPT-3.5 turbo API, you can replace this with the newsest one.
 # })
 # new gpt3.5 turbo api by api key
-chatbot = Chatbot(api_key="YOUR_OPENAI_API_KEY")
-def APIQuery(query):
-    with open("chatGPTEx/APIPrompt.txt", "r") as f:
-        prompt = f.read()
-    prompt = prompt.replace("{query}", query)
-    response = ""
-    prev_text = ""
-    # old chatgpt api by access token
-    # for data in chatbot.ask(
-    #     prompt
-    # ):
-    #     message = data["message"][len(prev_text) :]
-    #     print(message, end="", flush=True)
-    #     response+=message
-    #     prev_text = data["message"]
-    # print()
-    for data in chatbot.ask(prompt):
-        print(data, end="", flush=True)
-        response+=data
-    print()
-    pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
-    match = re.search(pattern, response)
-    if match:
-        json_data = match.group(1)
-        return json.loads(json_data)
-    return json.loads("{\"calls\":[]}")
-def SumReply(query, apicalls):
-    with open("chatGPTEx/ReplySum.txt", "r") as f:
-        prompt = f.read()
-    prompt = prompt.replace("{query}", query)
-    prompt = prompt.replace("{apicalls}", apicalls)
-    response = ""
     # old chatgpt api by access token
     # prev_text = ""
     # for data in chatbot.ask(
@@ -56,6 +24,61 @@ def SumReply(query, apicalls):
     #     prev_text = data["message"]
 
     # new gpt3.5 turbo api by api key
+chatbot = Chatbot(api_key="YOU_OPENAI_API_KEY")
+
+# ask the API call
+def APIQuery(query):
+    with open("chatGPTEx/APIPrompt.txt", "r") as f:
+        prompt = f.read()
+    prompt = prompt.replace("{query}", query)
+    response = ""
+    for data in chatbot.ask(prompt):
+        response+=data
+    pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
+    match = re.search(pattern, response)
+    if match:
+        json_data = match.group(1)
+        print(json.loads(json_data))
+        return json.loads(json_data)
+    return json.loads("{\"calls\":[]}")
+
+# ask some extra information to the API call response
+def APIExtraQuery(query,callResponse):
+    with open("chatGPTEx/APIExtraPrompt.txt", "r") as f:
+        prompt = f.read()
+    prompt = prompt.replace("{query}", query)
+    prompt = prompt.replace("{callResponse}", str(callResponse))
+    response = ""
+    for data in chatbot.ask(prompt):
+        response+=data
+    pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
+    match = re.search(pattern, response)
+    if match:
+        json_data = match.group(1)
+        print(json.loads(json_data))
+        return json.loads(json_data)
+    return json.loads("{\"calls\":[]}")
+
+# summary the give the final reply
+def SumReply(query, apicalls):
+    with open("chatGPTEx/ReplySum.txt", "r") as f:
+        prompt = f.read()
+    prompt = prompt.replace("{query}", query)
+    prompt = prompt.replace("{apicalls}", apicalls)
+    response = ""
+    for data in chatbot.ask(prompt):
+        print(data, end="", flush=True)
+        response+=data
+    print()
+    return response
+
+# summary the search result
+def Summary(query, callResponse):
+    with open("chatGPTEx/summary.txt", "r") as f:
+        prompt = f.read()
+    prompt = prompt.replace("{query}", query)
+    prompt = prompt.replace("{callResponse}", callResponse)
+    response = ""
     for data in chatbot.ask(prompt):
         print(data, end="", flush=True)
         response+=data
@@ -96,10 +119,6 @@ def search(content):
             google_cnt += 1
         if q.lower() == 'wikisearch':
             wiki_cnt += 1
-    if google_cnt > 3:
-        google_summarize = True
-    if wiki_cnt > 2:
-        wiki_summarize = True
     for call in call_list[:]:
         q = call['query']
         api = call['API']
@@ -116,11 +135,14 @@ def search(content):
         t.start()
     for t in all_threads:
         t.join()
-    print(json.dumps(call_res, ensure_ascii=False))
+    # print(json.dumps(call_res, ensure_ascii=False))
     return json.dumps(call_res, ensure_ascii=False)
 if __name__ == "__main__":
     query = input()
     # APIQuery(query)
-    call_res = search(APIQuery(query))
+    call_res0 = search(APIQuery(query))
+    Sum0 = Summary(query, call_res0)
+    call_res1 = search(APIExtraQuery(query,Sum0))
+    Sum1 = Summary(query, call_res1)
     print('\n\nChatGpt: \n' )
-    SumReply(query, call_res)
+    SumReply(query, str(Sum0)+str(Sum1))

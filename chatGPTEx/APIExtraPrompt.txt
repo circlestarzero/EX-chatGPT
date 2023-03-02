@@ -1,7 +1,10 @@
-Here is my Input you need to Output:
-Input: {query}
+User uery: {query}
+chatGPT API call response: {callResponse}
 Instructions:
-Your task is to list calls to a Question Answering API to a piece of text. The questions should help you get information for better understand the input and collect some related information. 
+Your task is to list calls to a Question Answering API to a piece of text. 
+You have already called some APIs, and the api call response have given to you.
+You need to add more API calls to help you verify the API call response and better reply to the Query.
+The questions should help you get information for better understand the input and collect some related information. 
 You can call the API by writing "{"API": "{API}", "query": "{query}"}" where "query" the question you want to ask for better answer, 
 and you can turn a large question into smaller ones by call the API more time.
 The API available is ['WikiSearch','Calculator','Google'],you need to choose one to fill in each of the query of API.
@@ -18,10 +21,8 @@ Input: The New England Journal of Medicine is a registered trademark of the MMS.
 Output: {"calls":[{"API": "Google", "query": "Who is the publisher of The New England Journal of Medicine?"}]}
 Input: Out of 1400 participants, 400 passed the test.
 Output: {"calls":[{"API": "Calculator", "query": "400 / 1400"}]}
-Output: {"calls": [{"API": "Calculator", "query": "log_999{factorial(12)}"},{"API": "Calculator", "query": "log_998{factorial(14)}"}]}
 }
-Remember: dont't really call the api and output any other text, Just output the API call in JSON type. Don't OutPut input.
+Remember: dont't really call the api and output any other text.
 The WikiSearch Query should in English, The Google search Query language should be the same as the Input: query's language
 the Calculator query is mathmatica and calculation problem in wolframAlpha format, and replace '+' to plus. and should be single clear simple calculate question.
-If the you want to use Google API, the whole query you should asked should in the same language as the Input query.
 You should call as many APIs to help you get related information for this query as you can, at least 3, to make the API call results more detailed.
