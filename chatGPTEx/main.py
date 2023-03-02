@@ -3,26 +3,36 @@ import json
 from flask import Flask, request, jsonify, make_response
 from api_class import GoogleSearchAPI, GPT3API, WikiSearchAPI, WolframAPI
 import threading 
-from revChatGPT.V1 import Chatbot
+#from revChatGPT.V1 import ChatbotOld
+from revChatGPT.V3 import Chatbot
+
 import json
 import re
-chatbot = Chatbot(config={
-  "access_token": "YOUR_CHATGPT_ACCESS_TOKEN"
-  # recently openAI has published the GPT-3.5 turbo API, you can replace this with the newsest one.
-})
+# old chatgpt api by access token 
+# chatbot = Chatbot(config={
+#   "access_token": "YOUR_CHATGPT_ACCESS_TOKEN"
+#   # recently openAI has published the GPT-3.5 turbo API, you can replace this with the newsest one.
+# })
+# new gpt3.5 turbo api by api key
+chatbot = Chatbot(api_key="YOUR_OPENAI_API_KEY")
 def APIQuery(query):
-    with open("./APIPrompt.txt", "r") as f:
+    with open("chatGPTEx/APIPrompt.txt", "r") as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     response = ""
     prev_text = ""
-    for data in chatbot.ask(
-        prompt
-    ):
-        message = data["message"][len(prev_text) :]
-        print(message, end="", flush=True)
-        response+=message
-        prev_text = data["message"]
+    # old chatgpt api by access token
+    # for data in chatbot.ask(
+    #     prompt
+    # ):
+    #     message = data["message"][len(prev_text) :]
+    #     print(message, end="", flush=True)
+    #     response+=message
+    #     prev_text = data["message"]
+    # print()
+    for data in chatbot.ask(prompt):
+        print(data, end="", flush=True)
+        response+=data
     print()
     pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
     match = re.search(pattern, response)
@@ -31,19 +41,26 @@ def APIQuery(query):
         return json.loads(json_data)
     return json.loads("{\"calls\":[]}")
 def SumReply(query, apicalls):
-    with open("./ReplySum.txt", "r") as f:
+    with open("chatGPTEx/ReplySum.txt", "r") as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{apicalls}", apicalls)
     response = ""
-    prev_text = ""
-    for data in chatbot.ask(
-        prompt
-    ):
-        message = data["message"][len(prev_text) :]
-        print(message, end="", flush=True)
-        prev_text = data["message"]
+    # old chatgpt api by access token
+    # prev_text = ""
+    # for data in chatbot.ask(
+    #     prompt
+    # ):
+    #     message = data["message"][len(prev_text) :]
+    #     print(message, end="", flush=True)
+    #     prev_text = data["message"]
+
+    # new gpt3.5 turbo api by api key
+    for data in chatbot.ask(prompt):
+        print(data, end="", flush=True)
+        response+=data
     print()
+    return response
 def search(content):
     call_list = content['calls']
     # global search_data
@@ -103,6 +120,7 @@ def search(content):
     return json.dumps(call_res, ensure_ascii=False)
 if __name__ == "__main__":
     query = input()
+    # APIQuery(query)
     call_res = search(APIQuery(query))
     print('\n\nChatGpt: \n' )
     SumReply(query, call_res)
