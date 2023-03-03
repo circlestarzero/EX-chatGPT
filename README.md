@@ -4,7 +4,8 @@
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
-  
+- update web chatmode and fix some bugs(below is the detailed mode)
+![web](img/web.jpg)
 ## Background
 
 "ChatGPT as Inherent Toolformer" means that ChatGPT has the ability to become a tool for various tasks without requiring additional adjustments.
@@ -46,7 +47,8 @@ QA Demos:
      -  use to summarize when there are too many querys
   -   `openAI api key`(new feature) or `chatGPT access_token`(old version)
      -  (3.2, OpenAI has published the `GPT-3.5 Turbo API` , you can replace it with the newsest one)
-- run the `main.py` and type your query
+- run the `main.py` and click the local url like `http://127.0.0.1:5000/`
+- if you need detailed, mode uncomment it in the `main.py`
 
 ## WebChatGPTEnhance
 - fill you `Googgle api key and client id` in `chatGPTChromeEhance/src/util/apiManager.ts/getDefaultAPI`

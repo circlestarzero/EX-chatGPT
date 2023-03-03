@@ -148,13 +148,16 @@ class WolframAPI(MetaAPI):
         
         responseFromWolfram = requests.get(
             base_url, params=params, headers=headers)
-        pods = responseFromWolfram.json()['queryresult']['pods'][:num_results]
-        pods_id = [pod["id"]for pod in pods]
-        subplots = [(pod['subpods']) for pod in pods]
-        pods_plaintext = []
-        for subplot in subplots:
-            text = '\n'.join([c['plaintext'] for c in subplot])
-            pods_plaintext.append(text)
-        # pods_plaintext = ['\n'.join(pod['subpods']['plaintext']) for pod in pods]
-        res = [pods_id[i] + ": " + pods_plaintext[i]  for i in range(len(pods_plaintext)) if pods_plaintext[i].strip() != '']
-        return res
+        if  'queryresult' in responseFromWolfram.json() and 'pods' in responseFromWolfram.json()['queryresult']:
+            pods = responseFromWolfram.json()['queryresult']['pods'][:num_results]
+            pods_id = [pod["id"]for pod in pods]
+            subplots = [(pod['subpods']) for pod in pods]
+            pods_plaintext = []
+            for subplot in subplots:
+                text = '\n'.join([c['plaintext'] for c in subplot])
+                pods_plaintext.append(text)
+            # pods_plaintext = ['\n'.join(pod['subpods']['plaintext']) for pod in pods]
+            res = [pods_id[i] + ": " + pods_plaintext[i]  for i in range(len(pods_plaintext)) if pods_plaintext[i].strip() != '']
+            return res
+        else:
+            return []
