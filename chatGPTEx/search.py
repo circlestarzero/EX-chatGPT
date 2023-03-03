@@ -27,6 +27,11 @@ import time
     # new gpt3.5 turbo api by api key
 chatbot = Chatbot(api_key="YOU_OPENAI_API_KEY")
 
+def directQuery(query):
+    response = ""
+    for data in chatbot.ask(query):
+        response+=data
+    return response
 # ask the API call
 def APIQuery(query):
     with open("chatGPTEx/APIPrompt.txt", "r") as f:
