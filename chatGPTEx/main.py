@@ -1,9 +1,10 @@
 import json
 import random
+from flask import Flask, render_template, request
 from search import search,APIQuery,APIExtraQuery,Summary,SumReply
 def getResponse(query):
     call_res0 = search(APIQuery(query))
-    
+
     # if you need detailed mode , uncomment below. 
     # Sum0 = Summary(query, call_res0)
     # call_res1 = search(APIExtraQuery(query,Sum0))
@@ -19,11 +20,10 @@ def chatbot_response(query):
     res = res.replace("\n","<br>")
     print(res)
     return res
-from flask import Flask, render_template, request
+
 
 app = Flask(__name__)
 app.static_folder = 'static'
-
 @app.route("/")
 def home():
     return render_template("index.html")
