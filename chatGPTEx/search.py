@@ -124,7 +124,7 @@ def search(content):
         q = call['query']
         api = call['API']
         if api.lower() == 'google':
-            t = threading.Thread(target=google_search, args=[q, 5, google_summarize])
+            t = threading.Thread(target=google_search, args=[q, 3, google_summarize])
         elif api.lower() == 'wikisearch':
             t = threading.Thread(target=wiki_search, args=[q, 2, wiki_summarize])
         elif api.lower() == 'calculator':

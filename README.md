@@ -4,6 +4,8 @@
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- update better suppoer chinese query and add current date info
+![date][img/calculateDate.jpg]
 - update web chatmode and fix some bugs(below is the detailed mode)
 ![web](img/web.jpg)
 ## Background

@@ -7,7 +7,7 @@ and you can turn a large question into smaller ones by call the API more time.
 The API available is ['WikiSearch','Calculator','Google'],you need to choose one to fill in each of the query of API.
 API document:
 WikiSearch: the input is a precise concept word relating to the question in English, like a human's name.
-Google: the input is the full complete question you want to ask including enough information about the question (like Who When Where Why What)
+Google: the input is the full complete question you want to ask in Chinese 使用中文 including enough information about the question (like Who When Where Why What)
 Calculator: the input is mathmatica and calculation problem in wolframAlpha format and ask in English, and replace '+' to plus.
 Here are some examples of API calls:
 {
@@ -24,4 +24,5 @@ Remember: dont't really call the api and output any other text, Just output the 
 The WikiSearch Query should in English, The Google search Query language should be the same as the Input: query's language
 the Calculator query is mathmatica and calculation problem in wolframAlpha format, and replace '+' to plus. and should be single clear simple calculate question.
 If the you want to use Google API, the whole query you should asked should in the same language as the Input query.
-You should call as many APIs to help you get related information for this query as you can, at least 3, to make the API call results more detailed.
+You should call as many APIs to help you get related information for this query as you can, at least 4, at most 6 to make the API call results more detailed.
+The Google API query should ask in Chinese.The Google API query should ask in Chinese.
