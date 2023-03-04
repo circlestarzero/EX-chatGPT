@@ -1,27 +1,35 @@
 import json
 
 from flask import Flask, request, jsonify, make_response
-from api_class import GoogleSearchAPI, GPT3API, WikiSearchAPI, WolframAPI
+from api_class import GoogleSearchAPI, WikiSearchAPI, WolframAPI
 import threading 
 #from revChatGPT.V1 import ChatbotOld
 from revChatGPT.V3 import Chatbot
-import time
 import json
 import re
+import configparser
+import os
+program_path = os.path.realpath(__file__)
+program_dir = os.path.dirname(program_path)
 # old chatgpt api by access token 
 # chatbot = Chatbot(config={
 #   "access_token": "YOUR_CHATGPT_ACCESS_TOKEN"
 #   # recently openAI has published the GPT-3.5 turbo API, you can replace this with the newsest one.
 # })
 # new gpt3.5 turbo api by api key
-chatbot = Chatbot(api_key="YOUR_OPENAI_API_KEY")
+config = configparser.ConfigParser()
+config.read(program_dir+'/apikey.ini')
+# Access the keys in the configuration file
+OPENAI_API_KEY = config['OpenAI']['OPENAI_API_KEY']
+chatbot = Chatbot(api_key=str(OPENAI_API_KEY))
+
 def directQuery(query):
     response = ""
     for data in chatbot.ask(query):
         response+=data
     return response
 def APIQuery(query):
-    with open("API_Prompt.txt", "r") as f:
+    with open(program_dir+"/APIPrompt.txt", "r", encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     response = ""
@@ -45,7 +53,7 @@ def APIQuery(query):
         return json.loads(json_data)
     return json.loads("{\"calls\":[]}")
 def APIExtraQuery(query,callResponse):
-    with open("APIExtraPrompt.txt", "r") as f:
+    with open(program_dir+"/APIExtraPrompt.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{callResponse}", str(callResponse))
@@ -70,7 +78,7 @@ def APIExtraQuery(query,callResponse):
         return json.loads(json_data)
     return json.loads("{\"calls\":[]}")
 def SumReply(query, apicalls,max_token=2000):
-    with open("ReplySum.txt", "r") as f:
+    with open(program_dir+"/ReplySum.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     apicalls = str(apicalls)[:max_token]
     prompt = prompt.replace("{query}", query)
@@ -82,7 +90,7 @@ def SumReply(query, apicalls,max_token=2000):
     print()
     return response
 def Summary(query, callResponse):
-    with open("summary.txt", "r") as f:
+    with open(program_dir+"/summary.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{callResponse}", callResponse)
@@ -110,14 +118,14 @@ def search(content,max_token=2000):
     def google_search(query, num_results=4,summarzie = False):
         search_data = GoogleSearchAPI.call(query, num_results=num_results)
         if summarzie:
-            summary_data = GPT3API.call(query, search_data)
+            summary_data = search_data
             call_res['google/' + query] = summary_data
         else:
             call_res['google/' + query] = search_data
     def wiki_search(query, num_results=3,summarzie = False):
         search_data = WikiSearchAPI.call(query, num_results=num_results)
         if summarzie:
-            summary_data = GPT3API.call(query, search_data)
+            summary_data = search_data
             call_res['wiki/' + query] = summary_data
         else:
             call_res['wiki/' + query] = search_data
@@ -168,13 +176,4 @@ def search(content,max_token=2000):
         res = res[:max_token]
     return res
 if __name__ == "__main__":
-    # key = [1,2,3,4]
-    # print(key[:-1])
-    query = input()
-    # APIQuery(query)
-    call_res0 = search(APIQuery(query))
-    Sum0 = Summary(query, call_res0)
-    call_res1 = search(APIExtraQuery(query,Sum0))
-    Sum1 = Summary(query, call_res1)
-    print('\n\nChatGpt: \n' )
-    SumReply(query, str(Sum0)+str(Sum1))
+    print(program_dir)

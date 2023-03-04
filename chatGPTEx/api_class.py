@@ -1,12 +1,13 @@
 import json
-import openai
 import requests
 import urllib.parse
 import re
-
-openai.api_key = "YOUR_OPENAI_API_KEY"
-
-
+import configparser
+import os
+program_path = os.path.realpath(__file__)
+program_dir = os.path.dirname(program_path)
+config = configparser.ConfigParser()
+config.read(program_dir+'/apikey.ini')
 class MetaAPI():
     def __init__(self, api_name, base_url):
         self.api_name = api_name
@@ -18,8 +19,6 @@ class WikiSearchAPI(MetaAPI):
         api_name = 'Wiki Search'
         base_url = 'https://en.wikipedia.org/w/api.php'
         super(WikiSearchAPI, self).__init__(api_name, base_url)
-        
-        
     @staticmethod
     def call(query, num_results=2):
         
@@ -52,11 +51,12 @@ class GoogleSearchAPI(MetaAPI):
     @staticmethod
     def call(query, num_results=2):
         base_url = 'https://customsearch.googleapis.com/customsearch/v1?'
-
+        GOOGLE_API_KEY = str(config['Google']['GOOGLE_API_KEY'])
+        GOOGLE_SEARCH_ENGINE_ID = str(config['Google']['SEARCH_ENGINE_ID'])
         params = {
             'q': query,
-            'key': 'YOUR_GOOGLE_API_KEY',
-            'cx': 'YOUR_GOOGLE_CLIENT_ID',
+            'key': GOOGLE_API_KEY,
+            'cx': GOOGLE_SEARCH_ENGINE_ID,
             'c2coff': '0',
             'num': num_results
         }
@@ -73,42 +73,42 @@ class GoogleSearchAPI(MetaAPI):
         else:
             return []
 
-class GPT3API(MetaAPI):
-    def __init__(self):
-        api_name = 'GPT3'
-        self.model_name = {
-            'tiny': 'text-ada-001',
-            'small': 'text-babbage-001',
-            'middle': 'text-curie-001',
-            'large': "text-davinci-003",
-        }
-        super(GPT3API, self).__init__(api_name, '')
+# class GPT3API(MetaAPI):
+#     def __init__(self):
+#         api_name = 'GPT3'
+#         self.model_name = {
+#             'tiny': 'text-ada-001',
+#             'small': 'text-babbage-001',
+#             'middle': 'text-curie-001',
+#             'large': "text-davinci-003",
+#         }
+#         super(GPT3API, self).__init__(api_name, '')
 
-    @staticmethod
-    def call(query, search_result, model_type='text-curie-001'):
-        prefix = "Web search results:"
-        num_words = 100
-        suffix = f"instructions: Using the provided web search " \
-                 f"results, write a comprehensive and summarized reply to the given query in {num_words} words and in " \
-                 f"English.The reply should let ChatGpt understand easily and fastly."
-        if search_result == []:
-            return ''
-        prompt = prefix + str(search_result) + suffix + "Query:" + query
-        # print(query)
-        # print(prompt)
-        res = openai.Completion.create(
-                model=model_type,
-                prompt=prompt,
-                temperature=0,
-                max_tokens=500
-        )
+#     @staticmethod
+#     def call(query, search_result, model_type='text-curie-001'):
+#         prefix = "Web search results:"
+#         num_words = 100
+#         suffix = f"instructions: Using the provided web search " \
+#                  f"results, write a comprehensive and summarized reply to the given query in {num_words} words and in " \
+#                  f"English.The reply should let ChatGpt understand easily and fastly."
+#         if search_result == []:
+#             return ''
+#         prompt = prefix + str(search_result) + suffix + "Query:" + query
+#         # print(query)
+#         # print(prompt)
+#         res = openai.Completion.create(
+#                 model=model_type,
+#                 prompt=prompt,
+#                 temperature=0,
+#                 max_tokens=500
+#         )
 
-        text = res.get('choices')[0].get("text").strip()
-        # all_texts = [c.get("text").strip() for c in res.get('choices')]
-        # print(all_texts)
-        # json_res = json.dumps(res, ensure_ascii=False)
-        # print(json_res)
-        return text
+#         text = res.get('choices')[0].get("text").strip()
+#         # all_texts = [c.get("text").strip() for c in res.get('choices')]
+#         # print(all_texts)
+#         # json_res = json.dumps(res, ensure_ascii=False)
+#         # print(json_res)
+#         return text
 
 class WolframAPI(MetaAPI):
     def __init__(self):
@@ -121,12 +121,12 @@ class WolframAPI(MetaAPI):
         base_url = 'https://api.wolframalpha.com/v2/query'
         
         query = query.replace('+', ' plus ')
-        
+        APPID = str(config['WolframAlpha']['WOLFRAMALPHA_APP_ID'])
         params = {
             'input': query,
             'format': 'plaintext',
             'output': 'JSON',
-            'appid': 'YOUR_WOLFRAMALPHA_API_ID', # get from wolfram Alpha document
+            'appid': APPID, # get from wolfram Alpha document
         }
         headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',

@@ -3,6 +3,8 @@ import random
 import datetime
 import time
 from search import search,APIQuery,APIExtraQuery,Summary,SumReply,directQuery
+
+# Load the configuration file
 apiTime = 15
 def detail_old(query):
     t0 = time.time()

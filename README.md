@@ -9,6 +9,7 @@
 - update better suppoer chinese query and add current date info
 ![date](img/date.jpg)
 - update web chatmode and fix some bugs
+- update api config
 
 ## Background
 
@@ -44,15 +45,11 @@ QA Demos:
 ## Ex-chatGPT
 - `pip install`
 `pip install -r requirements.txt`
-- fill your `API keys` in `api_class.py` and `main.py`
-  -  `Google api key and client id`
-  -  `wolframAlpha api key`
-  -  `openAI api key`
-     -  use to summarize when there are too many querys
-  -   `openAI api key`(new feature) or `chatGPT access_token`(old version)
-     -  (3.2, OpenAI has published the `GPT-3.5 Turbo API` , you can replace it with the newsest one)
+- fill your `API keys` in `apikey.ini`
+  -  `Google api key and search engine id` [apply](https://developers.google.com/custom-search/v1/overview?hl=en)
+  -  `wolframAlpha app id key` [apply](https://products.wolframalpha.com/api/)
+  -   `openAI api key`(new feature) or `chatGPT access_token`(old version) [apply](https://platform.openai.com)
 - run the `main.py` and click the local url like `http://127.0.0.1:5000/`
-- if you need detailed, mode uncomment it in the `main.py`
 - change the mode in the selection box, now have `chat,detail,web`
 ## WebChatGPTEnhance
 - fill you `Googgle api key and client id` in `chatGPTChromeEhance/src/util/apiManager.ts/getDefaultAPI`
