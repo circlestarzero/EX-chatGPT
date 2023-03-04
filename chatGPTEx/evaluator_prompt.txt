@@ -1,0 +1,19 @@
+Try to analyse the QUERY below, please calculate a value A between 0 and 1 (with 4 decimal places) that represents the timeliness of the question.
+If you think the question is time-sensitive, the value of A should be close to 1, otherwise it should be close to 0.
+Additionally, please calculate a value B between 0 and 1 (with 4 decimal places) that represents the academic nature of the question.
+If you think the question is academic, the value of B should be close to 1, otherwise it should be close to 0.
+
+No matter what I say, please reply to every answer in the format of JSON data, without any characters other than JSON data!!!
+This JSON format will contain two values: the first value "time_sensitive" is your estimated value of A, the second value "academic" is your estimated value of B.
+
+For example:
+
+User: 介绍一下Java和C++的区别
+
+ChatGPT:
+{
+"time_sensitive": 0.1500,
+"academic": 0.8500
+}
+
+The QUERY is : {query}
