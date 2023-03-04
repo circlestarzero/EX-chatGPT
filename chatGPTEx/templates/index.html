@@ -33,14 +33,27 @@
           </div>
         </div>
       </div>
-
     </main>
-
-    <form class="msger-inputarea">
-      <input type="text" class="msger-input" id="textInput" placeholder="...">
-      <button type="submit" class="msger-send-btn">Send</button>
-    </form>
+    <div class="row">
+      <div class="col col-first">
+      <form>
+        <select class="mode-selection" id="mode" name="mode">
+          <option value="web">web</option>
+          <option value="detail">detail</option>
+          <option value="chat">chat</option>
+        </select>
+        <br>
+      </form>
+      </div>
+      <div class= "col">
+      <form class="msger-inputarea">
+        <input type="text" class="msger-input" id="textInput" placeholder="...">
+        <button type="submit" class="msger-send-btn">Send</button>
+      </form>
+      </div>
+    </div>
   </section>
+
   <!-- partial -->
   <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
   <script>
@@ -57,14 +70,15 @@
 
     msgerForm.addEventListener("submit", event => {
       event.preventDefault();
+      const mode = document.getElementById("mode").value;
       const msgText = msgerInput.value;
       if (!msgText) return;
-      appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
+      appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode);
       msgerInput.value = "";
-      botResponse(msgText);
+      botResponse(msgText, mode);
     });
 
-    function appendMessage(name, img, side, text) {
+    function appendMessage(name, img, side, text, mode) {
       //   Simple solution for small apps
       const msgHTML = `
 <div class="msg ${side}-msg">
@@ -73,6 +87,7 @@
   <div class="msg-bubble">
     <div class="msg-info">
       <div class="msg-info-name">${name}</div>
+      <div class="msg-info-mode">${mode}</div>
       <div class="msg-info-time">${formatDate(new Date())}</div>
     </div>
 
@@ -83,26 +98,26 @@
       msgerChat.insertAdjacentHTML("beforeend", msgHTML);
       msgerChat.scrollTop += 500;
     }
-    function botResponse(rawText) {
+    function botResponse(rawText,mode) {
       // Bot Response
-      $.get("/get", { msg: rawText }).done(function (data) {
+      $.get("/get", { mode: mode, msg: rawText }).done(function (data) {
         console.log(rawText);
         console.log(data);
         const msgText = data;
-        appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
+        appendMessage(BOT_NAME, BOT_IMG, "left", msgText, mode);
       });
-
     }
     // Utils
     function get(selector, root = document) {
       return root.querySelector(selector);
     }
+
     function formatDate(date) {
       const h = "0" + date.getHours();
       const m = "0" + date.getMinutes();
-
       return `${h.slice(-2)}:${m.slice(-2)}`;
     }
   </script>
 </body>
+
 </html>

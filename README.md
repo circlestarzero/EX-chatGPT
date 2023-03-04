@@ -4,10 +4,11 @@
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- upate web chatmode selection in webpage and optimize the prompt and the token cost, and restrict the token limit.
+![mode](img/mode.jpg)
 - update better suppoer chinese query and add current date info
 ![date](img/date.jpg)
-- update web chatmode and fix some bugs(below is the detailed mode)
-![web](img/web.jpg)
+- update web chatmode and fix some bugs
 
 ## Background
 
@@ -52,7 +53,7 @@ QA Demos:
      -  (3.2, OpenAI has published the `GPT-3.5 Turbo API` , you can replace it with the newsest one)
 - run the `main.py` and click the local url like `http://127.0.0.1:5000/`
 - if you need detailed, mode uncomment it in the `main.py`
-
+- change the mode in the selection box, now have `chat,detail,web`
 ## WebChatGPTEnhance
 - fill you `Googgle api key and client id` in `chatGPTChromeEhance/src/util/apiManager.ts/getDefaultAPI`
 - run `npm install`

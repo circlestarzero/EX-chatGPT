@@ -5,16 +5,88 @@ from api_class import GoogleSearchAPI, GPT3API, WikiSearchAPI, WolframAPI
 import threading 
 #from revChatGPT.V1 import ChatbotOld
 from revChatGPT.V3 import Chatbot
-
+import time
 import json
 import re
-import time
 # old chatgpt api by access token 
 # chatbot = Chatbot(config={
 #   "access_token": "YOUR_CHATGPT_ACCESS_TOKEN"
 #   # recently openAI has published the GPT-3.5 turbo API, you can replace this with the newsest one.
 # })
 # new gpt3.5 turbo api by api key
+chatbot = Chatbot(api_key="YOUR_OPENAI_API_KEY")
+def directQuery(query):
+    response = ""
+    for data in chatbot.ask(query):
+        response+=data
+    return response
+def APIQuery(query):
+    with open("API_Prompt.txt", "r") as f:
+        prompt = f.read()
+    prompt = prompt.replace("{query}", query)
+    response = ""
+    # prev_text = ""
+    # old chatgpt api by access token
+    # for data in chatbot.ask(
+    #     prompt
+    # ):
+    #     message = data["message"][len(prev_text) :]
+    #     print(message, end="", flush=True)
+    #     response+=message
+    #     prev_text = data["message"]
+    # print()
+    for data in chatbot.ask(prompt):
+        response+=data
+    pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
+    match = re.search(pattern, response)
+    if match:
+        json_data = match.group(1)
+        print(json.loads(json_data))
+        return json.loads(json_data)
+    return json.loads("{\"calls\":[]}")
+def APIExtraQuery(query,callResponse):
+    with open("APIExtraPrompt.txt", "r") as f:
+        prompt = f.read()
+    prompt = prompt.replace("{query}", query)
+    prompt = prompt.replace("{callResponse}", str(callResponse))
+    response = ""
+    # prev_text = ""
+    # old chatgpt api by access token
+    # for data in chatbot.ask(
+    #     prompt
+    # ):
+    #     message = data["message"][len(prev_text) :]
+    #     print(message, end="", flush=True)
+    #     response+=message
+    #     prev_text = data["message"]
+    # print()
+    for data in chatbot.ask(prompt):
+        response+=data
+    pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
+    match = re.search(pattern, response)
+    if match:
+        json_data = match.group(1)
+        print(json.loads(json_data))
+        return json.loads(json_data)
+    return json.loads("{\"calls\":[]}")
+def SumReply(query, apicalls,max_token=2000):
+    with open("ReplySum.txt", "r") as f:
+        prompt = f.read()
+    apicalls = str(apicalls)[:max_token]
+    prompt = prompt.replace("{query}", query)
+    prompt = prompt.replace("{apicalls}", apicalls)
+    response = ""
+    for data in chatbot.ask(prompt):
+        print(data, end="", flush=True)
+        response+=data
+    print()
+    return response
+def Summary(query, callResponse):
+    with open("summary.txt", "r") as f:
+        prompt = f.read()
+    prompt = prompt.replace("{query}", query)
+    prompt = prompt.replace("{callResponse}", callResponse)
+    response = ""
     # old chatgpt api by access token
     # prev_text = ""
     # for data in chatbot.ask(
@@ -25,72 +97,12 @@ import time
     #     prev_text = data["message"]
 
     # new gpt3.5 turbo api by api key
-chatbot = Chatbot(api_key="YOU_OPENAI_API_KEY")
-
-def directQuery(query):
-    response = ""
-    for data in chatbot.ask(query):
-        response+=data
-    return response
-# ask the API call
-def APIQuery(query):
-    with open("chatGPTEx/APIPrompt.txt", "r") as f:
-        prompt = f.read()
-    prompt = prompt.replace("{query}", query)
-    response = ""
-    for data in chatbot.ask(prompt):
-        response+=data
-    pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
-    match = re.search(pattern, response)
-    if match:
-        json_data = match.group(1)
-        print(json.loads(json_data))
-        return json.loads(json_data)
-    return json.loads("{\"calls\":[]}")
-
-# ask some extra information to the API call response
-def APIExtraQuery(query,callResponse):
-    with open("chatGPTEx/APIExtraPrompt.txt", "r") as f:
-        prompt = f.read()
-    prompt = prompt.replace("{query}", query)
-    prompt = prompt.replace("{callResponse}", str(callResponse))
-    response = ""
-    for data in chatbot.ask(prompt):
-        response+=data
-    pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
-    match = re.search(pattern, response)
-    if match:
-        json_data = match.group(1)
-        print(json.loads(json_data))
-        return json.loads(json_data)
-    return json.loads("{\"calls\":[]}")
-
-# summary the give the final reply
-def SumReply(query, apicalls):
-    with open("chatGPTEx/ReplySum.txt", "r") as f:
-        prompt = f.read()
-    prompt = prompt.replace("{query}", query)
-    prompt = prompt.replace("{apicalls}", apicalls)
-    response = ""
     for data in chatbot.ask(prompt):
         print(data, end="", flush=True)
         response+=data
     print()
     return response
-
-# summary the search result
-def Summary(query, callResponse):
-    with open("chatGPTEx/summary.txt", "r") as f:
-        prompt = f.read()
-    prompt = prompt.replace("{query}", query)
-    prompt = prompt.replace("{callResponse}", callResponse)
-    response = ""
-    for data in chatbot.ask(prompt):
-        print(data, end="", flush=True)
-        response+=data
-    print()
-    return response
-def search(content):
+def search(content,max_token=2000):
     call_list = content['calls']
     # global search_data
     global call_res
@@ -102,7 +114,6 @@ def search(content):
             call_res['google/' + query] = summary_data
         else:
             call_res['google/' + query] = search_data
-        
     def wiki_search(query, num_results=3,summarzie = False):
         search_data = WikiSearchAPI.call(query, num_results=num_results)
         if summarzie:
@@ -129,9 +140,9 @@ def search(content):
         q = call['query']
         api = call['API']
         if api.lower() == 'google':
-            t = threading.Thread(target=google_search, args=[q, 3, google_summarize])
+            t = threading.Thread(target=google_search, args=[q, 6, google_summarize])
         elif api.lower() == 'wikisearch':
-            t = threading.Thread(target=wiki_search, args=[q, 2, wiki_summarize])
+            t = threading.Thread(target=wiki_search, args=[q, 1, wiki_summarize])
         elif api.lower() == 'calculator':
             t = threading.Thread(target=wolfram_search, args=[q])
         else:
@@ -141,12 +152,25 @@ def search(content):
         t.start()
     for t in all_threads:
         t.join()
-    # print(json.dumps(call_res, ensure_ascii=False))
-    return json.dumps(call_res, ensure_ascii=False)
+    call_res = json.loads(json.dumps(call_res,ensure_ascii=False))
+    res = str(call_res)
+    while len(res) > max_token:
+        flag = 0
+        for key,value in call_res.items():
+            if len(res) <= max_token: break
+            if len(value) > 2:
+                flag = 1
+                value = value[:-1]
+                call_res[key] = value
+            res = str(call_res)
+        if flag == 0: break
+    if len(res) > max_token:
+        res = res[:max_token]
+    return res
 if __name__ == "__main__":
-    # print time 
-    print()
-    query = 'current date: ' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ' query:' + input()
+    # key = [1,2,3,4]
+    # print(key[:-1])
+    query = input()
     # APIQuery(query)
     call_res0 = search(APIQuery(query))
     Sum0 = Summary(query, call_res0)
