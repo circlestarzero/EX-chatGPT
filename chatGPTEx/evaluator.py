@@ -36,7 +36,3 @@ def get_mode(query):
         else:
             return "chat"
     return "chat"
-
-
-if __name__ == "__main__":
-    print(get_mode("掉的一是谁"))
