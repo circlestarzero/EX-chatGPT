@@ -1,0 +1,3 @@
+Your goal is to summarize the provided conversation in English. Your summary should be concise and focus on the key information to facilitate better dialogue for the large language model.
+Ensure that you include all necessary details and relevant information while still reducing the length of the conversation as much as possible. Your summary should be clear and easily understandable for the ChatGpt model providing a comprehensive and concise summary of the conversation.
+{conversation}

@@ -1,6 +1,7 @@
 Input: {query}
+ChatGpt response: {resp}
 Instructions:
-Your task is to generate a list of API calls to a Question Answering API based on the input query. The API calls should help extract relevant information and provide a better understanding of the input query.
+Your task is to generate a list of API calls to a Question Answering API based on the input query and chatgpt response. The API calls should help extract relevant information and provide a better understanding of the input query and verify the response of chatgpt.
 You can make an API call by using the following format: "{"API": "{API}", "query": "{query}"}". Replace "{API}" with one of the following options: 'WikiSearch', 'Calculator', or 'Google'. Replace "{query}" with the specific question you want to ask to extract relevant information.
 Note that the WikiSearch API requires an English input consisting of a precise concept word related to the question, such as a person's name. The Google API requires a full, complete question in the same langeuage as the query that includes enough information about the question, such as who, what, when, where, and why. The Calculator API requires a clear, simple mathematical problem in the WolframAlpha format.
 Here are some examples of API calls:
@@ -12,3 +13,4 @@ Output: {"calls":[{"API": "Calculator", "query": "400 / 1400"}]}
 Input: 电视剧狂飙怎么样, 和三体比应该看哪一部?
 Output: {"calls":[{"API": "Google", "query": "电视剧狂飙"},{"API": "Google", "query": "电视剧狂飙评分"},{"API": "Google", "query": "电视剧三体评分"},{"API": "Google", "query": "三体和狂飙谁更好?"}]}
 The Google API question should in the same language as the Input query.
+The apicalls should verify every detial of the response of chatgpt!!!!

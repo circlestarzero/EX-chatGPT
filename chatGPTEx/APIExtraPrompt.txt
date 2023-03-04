@@ -17,4 +17,3 @@ Call at least 3 APIs to ensure that the API call results are detailed and releva
 Use clear and concise language to ensure that your reply is easily understandable.
 Keep in mind the token cost limitation when writing your reply.
 Ensure that the Google API question is in the same language as the input query.
-Remember to follow these guidelines to generate a comprehensive and relevant reply to the input query. Use the information extracted from the API calls to support your reply and make it as accurate and informative as possible.

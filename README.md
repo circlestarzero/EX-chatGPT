@@ -4,6 +4,8 @@
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- update chat history token optimizer, and the web mode can response according to the chat history.Add token cost counter.
+![history](img/webHistory.jpg)
 - upate web chatmode selection in webpage and optimize the prompt and the token cost, and restrict the token limit.
 ![mode](img/mode.jpg)
 - update better suppoer chinese query and add current date info
