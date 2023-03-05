@@ -13,7 +13,7 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
 - Supports OpenAI GPT-3.5 Turbo API
 - Allows ChatGPT to call external APIs
 - Can summerize contents from external APIs using GPT-3
-
+- openAI API keys pool
 ## Installation
 
 ## Ex-chatGPT
@@ -25,7 +25,7 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
   - `wolframAlpha app id key` [apply](https://products.wolframalpha.com/api/)
   - `openAI api key`(new feature) or `chatGPT access_token`(old version) [apply](https://platform.openai.com)
 - run the `main.py` and click the local url like `http://127.0.0.1:5000/`
-- change the mode in the selection box, now have `chat,detail,web`
+- change the mode in the selection box, now have `chat,detail,web,webDirect`
 
 ## WebChatGPTEnhance
 
@@ -49,4 +49,5 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
 ![date](img/date.jpg)
 - update web chatmode and fix some bugs
 - update api config
+- update api pool
   

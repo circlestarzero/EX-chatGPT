@@ -1,0 +1,40 @@
+{
+    "role": "user",
+    "content": "电视剧狂飙怎么样, 和三体比应该看哪一部?"
+  },
+  {
+    "role": "assistant",
+    "content": "[{'Google':['电视剧狂飙','电视剧狂飙评分','电视剧三体评分','三体和狂飙谁更好']}]"
+  },
+  {
+    "role": "user",
+    "content": "Out of 1400 participants, 400 passed the test."
+  },
+  {
+    "role": "assistant",
+    "content": "[{'Calculator':['400 / 1400']}]"
+  },
+  {
+    "role": "user",
+    "content": "Write a quick sort in python."
+  },
+  {
+    "role": "assistant",
+    "content": "none"
+  },
+  {
+    "role": "user",
+    "content": "Hello world"
+  },
+  {
+    "role": "assistant",
+    "content": "none"
+  },
+  {
+    "role": "user",
+    "content": "current date:2023.3.5 Q:Who is the current president of the United States?"
+  },
+  {
+    "role": "assistant",
+    "content": "[{'Google':['president of the United States in 2023']}]"
+  }

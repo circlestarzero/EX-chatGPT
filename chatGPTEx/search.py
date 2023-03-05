@@ -3,151 +3,114 @@ import json
 from flask import Flask, request, jsonify, make_response
 from api_class import GoogleSearchAPI, WikiSearchAPI, WolframAPI
 import threading 
-#from revChatGPT.V1 import ChatbotOld
-from revChatGPT.V3 import Chatbot
 import json
 import re
 import configparser
 import os
-# import googlesearch
 import os
 import requests
 import tiktoken
+from optimizeOpenAI import ExChatGPT
 ENCODER = tiktoken.get_encoding("gpt2")
-
 program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
-# old chatgpt api by access token 
-# chatbot = Chatbot(config={
-#   "access_token": "YOUR_CHATGPT_ACCESS_TOKEN"
-#   # recently openAI has published the GPT-3.5 turbo API, you can replace this with the newsest one.
-# })
-# new gpt3.5 turbo api by api key
+# api config load
 config = configparser.ConfigParser()
 config.read(program_dir+'/apikey.ini')
-# Access the keys in the configuration file
-OPENAI_API_KEY = config['OpenAI']['OPENAI_API_KEY']
-chatbot = Chatbot(api_key=str(OPENAI_API_KEY))
-def dump_conversation():
-    return chatbot.conversation
-def load_conversation(conversation):
-    chatbot.conversation = conversation
-def clear_conversation():
-    chatbot.conversation = []
-def conversation_summary():
-    input = ""
-    role = ""
-    converstaion = chatbot.conversation
-    for conv in converstaion:
-        if (conv["role"]=='user'):
-            role = 'User'
-        else:
-            role = 'ChatGpt'
-        input+=role+' : '+conv['content']+'\n'
-    chatbot.conversation = []
-    with open(program_dir+"/conversationSummary.txt", "r", encoding='utf-8') as f:
-        prompt = f.read()
-    print(input)
-    prompt = prompt.replace("{conversation}", input)
-    response = ""
-    for data in chatbot.ask(prompt):
-        response+=data
-    chatbot.conversation=[]
-    chatbot.conversation.append({"role": 'system', "content": "You are Ex-ChatGPT,a large language model that can call APIs to get information"})
-    chatbot.conversation.append({"role": 'assistant', "content": response})
-    return chatbot.conversation
-def token_cost():
-    conversation = chatbot.conversation
-    full_conversation = "\n".join([x["content"] for x in conversation])
-    return len(ENCODER.encode(full_conversation))
-def directQuery(query):
-    response = ""
-    for data in chatbot.ask(query):
-        response+=data
-    print(response)
-    return response +'\n\n token_cost: '+ str(token_cost())
+openAIAPIKeys = []
+for i in range(0,10):
+    key = 'key'+str(i)
+    
+    if key in config['OpenAI']:
+        openAIAPIKeys.append(config['OpenAI'][key])
+    else:
+        break
+print(openAIAPIKeys)
+chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=20)
+def detail_old(query):
+    call_res0 = search(APIQuery(query))
+    Sum0 = Summary(query, call_res0)
+    call_res1 = search(APIExtraQuery(query,Sum0))
+    Sum1 = Summary(query, call_res1)
+    print('\n\nChatGpt: \n' )
+    result  = SumReply(query, str(Sum0) + str(Sum1))
+    return result
+def detail(query,conv_id = 'default'):
+    call_res0 = search(APIQuery(query),750)
+    print(f'API calls response:\n {call_res0}')
+    call_res1 = search(APIExtraQuery(query,call_res0),750)
+    print(f'API calls response:\n {call_res1}')
+    result  = SumReply(query, str(call_res0) + str(call_res1),max_token=1500,conv_id=conv_id)
+    return result +'\n\n token_cost: '+ str(chatbot.token_cost())
+def web(query,conv_id = 'default'):
+    last_conv = chatbot.conversation_summary(convo_id=conv_id)
+    resp = directQuery(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', conv_id=  conv_id)
+    apir = APIQuery(query,resp=resp)
+    call_res0 = search(apir,1500)
+    print(f'API calls response:\n {call_res0}')
+    result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', str(call_res0), conv_id=conv_id)
+    last_conv.append({'role':'user','content':str(query)})
+    last_conv.append({'role':'assistant','content':str(result)})
+    chatbot.conversation[conv_id] = last_conv
+    return result +'\n\n token_cost: '+ str(chatbot.token_cost())
+def webDirect(query,conv_id = 'default'):
+    apir = APIQuery(query)
+    call_res0 = search(apir,1500)
+    print(f'API calls response:\n {call_res0}')
+    result = SumReply(f'{query}', str(call_res0), conv_id=conv_id)
+    return result +'\n\n token_cost: '+ str(chatbot.token_cost())
+def directQuery(query,conv_id = 'default'):
+    response = chatbot.ask(query)
+    print(f'Direct Query: {query}\nChatGpt: {response}')
+    return response +'\n\n token_cost: '+ str(chatbot.token_cost())
 def APIQuery(query,resp =''):
     with open(program_dir+"/APIPrompt.txt", "r", encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{resp}", resp)
     response = ""
-    # prev_text = ""
-    # old chatgpt api by access token
-    # for data in chatbot.ask(
-    #     prompt
-    # ):
-    #     message = data["message"][len(prev_text) :]
-    #     print(message, end="", flush=True)
-    #     response+=message
-    #     prev_text = data["message"]
-    # print()
-    for data in chatbot.ask(prompt):
-        response+=data
+    chatbot.reset(convo_id='api',system_prompt='Your are a API caller for a LLM, you need to call some APIs to get the information you need.')
+    response =  chatbot.ask(prompt,convo_id='api')
     pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
     match = re.search(pattern, response)
     if match:
         json_data = match.group(1)
-        print(json.loads(json_data))
-        return json.loads(json_data)
+        result = json.loads(json_data)
+        print(f'API calls: {result}\n')
+        return result
     return json.loads("{\"calls\":[]}")
 def APIExtraQuery(query,callResponse):
     with open(program_dir+"/APIExtraPrompt.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{callResponse}", str(callResponse))
-    response = ""
-    # prev_text = ""
-    # old chatgpt api by access token
-    # for data in chatbot.ask(
-    #     prompt
-    # ):
-    #     message = data["message"][len(prev_text) :]
-    #     print(message, end="", flush=True)
-    #     response+=message
-    #     prev_text = data["message"]
-    # print()
-    for data in chatbot.ask(prompt):
-        response+=data
+    chatbot.reset(convo_id='api',system_prompt='Your are a API caller for a LLM, you need to call some APIs to get the information you need.')
+    response = chatbot.ask(prompt,convo_id='api')
     pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
     match = re.search(pattern, response)
     if match:
         json_data = match.group(1)
-        print(json.loads(json_data))
-        return json.loads(json_data)
+        result = json.loads(json_data)
+        print(f'API calls: {result}\n')
+        return result
     return json.loads("{\"calls\":[]}")
-def SumReply(query, apicalls,max_token=2000):
+def SumReply(query, apicalls, max_token=2000, conv_id = 'default'):
     with open(program_dir+"/ReplySum.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     apicalls = str(apicalls)[:max_token]
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{apicalls}", apicalls)
-    response = ""
-    for data in chatbot.ask(prompt):
-        print(data, end="", flush=True)
-        response+=data
-    print()
+    response = chatbot.ask(prompt,convo_id=conv_id)
+    print(f'ChatGPT SumReply:\n  {response}\n')
     return response
 def Summary(query, callResponse):
     with open(program_dir+"/summary.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{callResponse}", callResponse)
-    response = ""
-    # old chatgpt api by access token
-    # prev_text = ""
-    # for data in chatbot.ask(
-    #     prompt
-    # ):
-    #     message = data["message"][len(prev_text) :]
-    #     print(message, end="", flush=True)
-    #     prev_text = data["message"]
-
-    # new gpt3.5 turbo api by api key
-    for data in chatbot.ask(prompt):
-        print(data, end="", flush=True)
-        response+=data
-    print()
+    chatbot.reset(convo_id='sum',system_prompt='Your need to summarize the information you got from the APIs.')
+    response = chatbot.ask(prompt,convo_id='sum')
+    print(f'Summary : {response}\n')
     return response
 def search(content,max_token=2000):
     call_list = content['calls']
@@ -218,6 +181,6 @@ if __name__ == "__main__":
     while True:
         query = input()
         if(query == 'sum'):
-            print(conversation_summary())
+            print(chatbot.conversation_summary())
         else:
             print(chatbot.ask(query))

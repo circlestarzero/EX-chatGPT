@@ -2,6 +2,8 @@
 GOOGLE_API_KEY = x
 SEARCH_ENGINE_ID = x
 [OpenAI]
-OPENAI_API_KEY = x
+key0 = sk-xxxx
+key1 = sk-xxxx
+key2 = sk-xxxx
 [WolframAlpha]
-WOLFRAMALPHA_APP_ID = x
+WOLFRAMALPHA_APP_ID = xxxx
