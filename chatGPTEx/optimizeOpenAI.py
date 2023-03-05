@@ -163,6 +163,7 @@ class ExChatGPT:
             **kwargs,
         )
         full_response: str = "".join(response)
+        self.save(program_dir+"/chatHistory.json")
         return full_response
     def rollback(self, n: int = 1, convo_id: str = "default"):
         """
@@ -210,6 +211,7 @@ class ExChatGPT:
             {"role": "user", "content": "Summariaze our diaglog"},
             {"role": 'assistant', "content": response},
         ]
+        self.save(program_dir+"/chatHistory.json")
         return self.conversation[convo_id]
     def summarize_last_message(self, convo_id: str = "default"):
         last_message = self.conversation[convo_id][-1]["content"]

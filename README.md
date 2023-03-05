@@ -13,7 +13,7 @@
 - 支持 OpenAI GPT-3.5 Turbo API
 - 允许 ChatGPT 调用外部 API 接口
 - 可以使用 GPT-3 将外部接口返回的内容进行总结
-- 保存对话历史，ChatGPT 可联系之前对话
+- 自动保存载入对话历史，ChatGPT 可联系之前对话
 - 可显示使用的 Token 数量
 - openAI api key池
 ## 安装
@@ -51,3 +51,5 @@
 ![date](img/date.jpg)
 - update web chatmode and fix some bugs
 - update api config
+- 更新api池
+- 自动保存载入对话历史，ChatGPT 可联系之前对话

@@ -27,8 +27,10 @@ for i in range(0,10):
         break
 print(openAIAPIKeys)
 chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=20)
-convs = ['search']
-chatbot.load(program_dir+'/chatbot.json',*convs)
+chatbot.load(program_dir+'/chatHistory.json')
+max_token = 1000
+def load_history(conv_id = 'default'):
+    return chatbot.conversation[conv_id]
 def detail_old(query):
     call_res0 = search(APIQuery(query))
     Sum0 = Summary(query, call_res0)
@@ -38,30 +40,41 @@ def detail_old(query):
     result  = SumReply(query, str(Sum0) + str(Sum1))
     return result
 def detail(query,conv_id = 'default'):
+    if chatbot.token_cost(conv_id) > max_token:
+        chatbot.conversation_summary(convo_id=conv_id)
     call_res0 = search(APIQuery(query),750)
     print(f'API calls response:\n {call_res0}')
     call_res1 = search(APIExtraQuery(query,call_res0),750)
     print(f'API calls response:\n {call_res1}')
     result  = SumReply(query, str(call_res0) + str(call_res1),max_token=1500,conv_id=conv_id)
-    return result +'\n\n token_cost: '+ str(chatbot.token_cost())
+    return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def web(query,conv_id = 'default'):
-    last_conv = chatbot.conversation_summary(convo_id=conv_id)
+    chatbot.conversation_summary(convo_id=conv_id)
     resp = directQuery(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', conv_id=  conv_id)
     apir = APIQuery(query,resp=resp)
     call_res0 = search(apir,1500)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', str(call_res0), conv_id=conv_id)
-    last_conv.append({'role':'user','content':str(query)})
-    last_conv.append({'role':'assistant','content':str(result)})
-    chatbot.conversation[conv_id] = last_conv
-    return result +'\n\n token_cost: '+ str(chatbot.token_cost())
+    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-4]
+    chatbot.conversation[conv_id].append({'role':'user','content':str(query)})
+    chatbot.conversation[conv_id].append({'role':'assistant','content':str(result)})
+    chatbot.save(program_dir+'/chatHistory.json')
+    return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def webDirect(query,conv_id = 'default'):
+    if chatbot.token_cost(conv_id) > max_token:
+        chatbot.conversation_summary(convo_id=conv_id)
     apir = APIQuery(query)
     call_res0 = search(apir,1500)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'{query}', str(call_res0), conv_id=conv_id)
-    return result +'\n\n token_cost: '+ str(chatbot.token_cost())
+    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
+    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
+    chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
+    chatbot.save(program_dir+'/chatHistory.json')
+    return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def WebKeyWord(query,conv_id = 'default'):
+    if chatbot.token_cost(conv_id) > max_token:
+        chatbot.conversation_summary(convo_id=conv_id)
     q = chatbot.ask(
                 f'Given a user prompt "{query}", respond with "none" if it is directed at the chatbot or cannot be answered by an internet search. Otherwise, provide a concise search query for a search engine. Avoid adding any additional text to the response to minimize token cost.',
                 convo_id="search",
@@ -83,6 +96,10 @@ def WebKeyWord(query,conv_id = 'default'):
         convo_id=conv_id,
     )
     result = chatbot.ask(query, "user", convo_id=conv_id)
+    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
+    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
+    chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
+    chatbot.save(program_dir+'/chatHistory.json')
     print(result)
     return result +'\n\n token_cost: '+ str(chatbot.token_cost())
 def directQuery(query,conv_id = 'default'):

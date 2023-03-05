@@ -157,7 +157,8 @@ body {
 select#mode {
   border: none;
   background-color: #f2f2f2;
-  padding: 15px;
+  padding: 10px;
+  width: 4em;
   font-size: 1em;
   border-radius: 5px;
   -webkit-appearance: none;
@@ -182,6 +183,22 @@ select#mode:hover, select#mode:focus {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .col:first-child {
-  flex: 0 0 8%;
+  flex: 0 0 5%;
   /* align-self: flex-start; */
+}
+.save-hisotry{
+  border: none;
+  background-color: #f2f2f2;
+  padding: 5px;
+  font-size: 1em;
+  border-radius: 5px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-repeat: no-repeat;
+  height: 3.7em;
+}
+.save-hisotry:hover{
+  background-color: #ddd;
+  outline: none;
 }

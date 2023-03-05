@@ -50,4 +50,5 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
 - update web chatmode and fix some bugs
 - update api config
 - update api pool
+- Automatic saving and loading of conversation history, ChatGPT can retrieve previous conversations.
   
