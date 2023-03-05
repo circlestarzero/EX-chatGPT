@@ -250,55 +250,7 @@ ChatGPT Configuration:
 
 
 def main():
-    chatbot = ExChatGPT(
-       api_keys=['test'],
-    )
-    # Check if internet is enabled
-    # if True:
-    #     chatbot.system_prompt = """
-    #     You are ChatGPT, an AI assistant that can access the internet. Internet search results will be sent from the system in JSON format.
-    #     Respond conversationally and cite your sources via a URL at the end of your message.
-    #     """
-    chatbot.load("chatbot.json", "search")
-    now = datetime.datetime.now()
-    # Start chat
-    while True:
-        print()
-        try:
-            print("User: ")
-            prompt = input()
-        except KeyboardInterrupt:
-            print("\nExiting...")
-            sys.exit()
-        print()
-        print("ChatGPT: ", flush=True)
-        if True:
-            # query = chatbot.ask_stream(
-            #     f'current Time:{now} Query:{prompt}',
-            #     convo_id="search",
-            # )
-            # print("Searching for: ", query, "")
-            # Get search results
-            # if query == "none":
-            #     search_results = '{"results": "No search results"}'
-            # else:
-            #     search_results = requests.post(
-            #         url="https://ddg-api.herokuapp.com/search",
-            #         json={"query": query, "limit": 3},
-            #         timeout=10,
-            #     ).text
-            # print(json.dumps(json.loads(search_results), indent=4))
-            # chatbot.add_to_conversation(
-            #     "Search results:" + search_results,
-            #     "system",
-            #     convo_id="default",
-            # )
-            # if False:
-            #     print(chatbot.ask(prompt, "user", convo_id="default"))
-            # else:
-            for query in chatbot.ask_stream(prompt):
-                print(query, end="", flush=True)
-        print()
+    return
 
 
 if __name__ == "__main__":
@@ -307,3 +259,5 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nExiting...")
         sys.exit()
+
+

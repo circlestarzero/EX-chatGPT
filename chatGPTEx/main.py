@@ -2,10 +2,8 @@ import json
 import random
 import datetime
 import time
-from search import search,APIQuery,APIExtraQuery,Summary,SumReply,directQuery,web,detail,webDirect
+from search import search,APIQuery,APIExtraQuery,Summary,SumReply,directQuery,web,detail,webDirect,WebKeyWord
 # Load the configuration file
-
-
 def parse_text(text):
     lines = text.split("\n")
     for i,line in enumerate(lines):
@@ -50,6 +48,10 @@ def get_bot_response():
     elif mode =='webDirect':
         q = 'current Time: '+ str(now) + ' Query:'+ str(userText)
         res = parse_text(webDirect(q))
+        return res
+    elif mode == 'WebKeyWord':
+        q = str(userText)
+        res = parse_text(WebKeyWord(q))
         return res
     return "Error"
 if __name__ == "__main__":

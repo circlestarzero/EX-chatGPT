@@ -27,6 +27,8 @@ for i in range(0,10):
         break
 print(openAIAPIKeys)
 chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=20)
+convs = ['search']
+chatbot.load(program_dir+'/chatbot.json',*convs)
 def detail_old(query):
     call_res0 = search(APIQuery(query))
     Sum0 = Summary(query, call_res0)
@@ -58,6 +60,30 @@ def webDirect(query,conv_id = 'default'):
     call_res0 = search(apir,1500)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'{query}', str(call_res0), conv_id=conv_id)
+    return result +'\n\n token_cost: '+ str(chatbot.token_cost())
+def WebKeyWord(query,conv_id = 'default'):
+    q = chatbot.ask(
+                f'Given a user prompt "{query}", respond with "none" if it is directed at the chatbot or cannot be answered by an internet search. Otherwise, provide a concise search query for a search engine. Avoid adding any additional text to the response to minimize token cost.',
+                convo_id="search",
+                temperature=0.0,
+            ).strip()
+    print("Searching for: ", query, "")
+    if query == "none":
+        search_results = '{"results": "No search results"}'
+    else:
+        search_results = requests.post(
+            url="https://ddg-api.herokuapp.com/search",
+            json={"query": query, "limit": 4},
+            timeout=10,
+        ).text
+    search_res = json.dumps(json.loads(search_results), indent=4,ensure_ascii=False)
+    chatbot.add_to_conversation(
+        "Search results:" + search_res,
+        "system",
+        convo_id=conv_id,
+    )
+    result = chatbot.ask(query, "user", convo_id=conv_id)
+    print(result)
     return result +'\n\n token_cost: '+ str(chatbot.token_cost())
 def directQuery(query,conv_id = 'default'):
     response = chatbot.ask(query)
