@@ -25,7 +25,7 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
   - `wolframAlpha app id key` [apply](https://products.wolframalpha.com/api/)
   - `openAI api key`(new feature) or `chatGPT access_token`(old version) [apply](https://platform.openai.com)
 - run the `main.py` and click the local url like `http://127.0.0.1:5000/`
-- change the mode in the selection box, now have `chat,detail,web,webDirect`
+- change the mode in the selection box, now have `chat,detail,web,webDirect,WebKeyWord`
 
 ## WebChatGPTEnhance
 
