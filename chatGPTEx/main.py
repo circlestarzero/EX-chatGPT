@@ -10,6 +10,7 @@ from markdown_it import MarkdownIt
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import HTMLRenderer, MarkdownConverter, PageOption, ScreenshotOption
 from mdit_py_plugins.dollarmath.index import dollarmath_plugin
+import evaluator
 # Load the configuration file
 
 def parse_text(text):
@@ -33,6 +34,8 @@ def get_bot_response():
     mode = str(request.args.get('mode'))
     userText = str(request.args.get('msg'))
     now = datetime.datetime.now()
+    if mode=="auto":
+        mode = evaluator.get_mode(query=str(userText))
     if mode=="chat":
         q = str(userText)
         res = parse_text(directQuery(q))

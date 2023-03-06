@@ -7,7 +7,6 @@ import json
 import re
 import configparser
 import os
-import os
 import requests
 import tiktoken
 from optimizeOpenAI import ExChatGPT
