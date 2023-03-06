@@ -5,11 +5,9 @@ import time
 from flask import Flask, render_template, request,render_template_string
 from search import search,APIQuery,APIExtraQuery,Summary,SumReply,directQuery,web,detail,webDirect,WebKeyWord,load_history
 from markdown import markdown
-from pygments.formatters import HtmlFormatter
 from markdown_it import MarkdownIt
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
-from graiax.text2img.playwright import HTMLRenderer, MarkdownConverter, PageOption, ScreenshotOption
-from mdit_py_plugins.dollarmath.index import dollarmath_plugin
+from graiax.text2img.playwright import MarkdownConverter
 # Load the configuration file
 import regex
 def parse_text(text):
