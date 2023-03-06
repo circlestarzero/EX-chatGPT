@@ -16,6 +16,7 @@
 - 自动保存载入对话历史，ChatGPT 可联系之前对话
 - 可显示使用的 Token 数量
 - openAI api key池
+- markdown render
 ## 安装
 
 ## Ex-chatGPT

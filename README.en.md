@@ -14,6 +14,7 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
 - Allows ChatGPT to call external APIs
 - Can summerize contents from external APIs using GPT-3
 - openAI API keys pool
+- markdown render
 ## Installation
 
 ## Ex-chatGPT
