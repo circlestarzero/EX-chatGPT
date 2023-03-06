@@ -16,7 +16,7 @@
 - 自动保存载入对话历史，ChatGPT 可联系之前对话
 - 可显示使用的 Token 数量
 - openAI api key池
-- markdown render
+- Markdown and MathJax 渲染
 ## 安装
 
 ## Ex-chatGPT
@@ -40,9 +40,10 @@
   - `wolframAlpha` needs to run local sever - `WebChatGPTAPI/WolframLocalServer.py`
 
 ## 更新日志
-
 - 支持 OpenAI GPT-3.5 Turbo API，快速且价格低廉
 - 额外的 API 调用和搜索摘要，以提供更全面和详细的答案
+- Markdown and MathJax renderer
+![MathJax](img/mathjax.jpg)
 - 更新聊天记录token优化器，web模式可以根据聊天记录进行响应；添加token成本计数器
 ![history](img/webHistory.jpg)
 - upate web chatmode selection in webpage and optimize the prompt and the token cost, and restrict the token limit.

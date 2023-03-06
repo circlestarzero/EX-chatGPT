@@ -11,10 +11,10 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
 ## Highlights
 
 - Supports OpenAI GPT-3.5 Turbo API
-- Allows ChatGPT to call external APIs
+- Allows ChatGPT to call external APIs(Google,WolframAlpha,WikiMedia)
 - Can summerize contents from external APIs using GPT-3
 - openAI API keys pool
-- markdown render
+- Markdown and MathJax renderer
 ## Installation
 
 ## Ex-chatGPT
@@ -42,6 +42,8 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- update Markdown and MathJax renderer
+![MathJax](img/mathjax.jpg)
 - update chat history token optimizer, and the web mode can response according to the chat history.Add token cost counter.
 ![history](img/webHistory.jpg)
 - upate web chatmode selection in webpage and optimize the prompt and the token cost, and restrict the token limit.

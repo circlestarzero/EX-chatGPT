@@ -11,15 +11,9 @@ from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import HTMLRenderer, MarkdownConverter, PageOption, ScreenshotOption
 from mdit_py_plugins.dollarmath.index import dollarmath_plugin
 # Load the configuration file
-
+import regex
 def parse_text(text):
-    md = MarkdownIt("commonmark", {"highlight": Highlighter()}).use(
-        dollarmath_plugin,
-        allow_labels=True,
-        allow_space=True,
-        allow_digits=True,
-        double_inline=True,
-    ).enable("table")
+    md = MarkdownIt("commonmark", {"highlight": Highlighter()}).enable("table")
     res = MarkdownConverter(md).convert(text)
     # res = res.replace('<code', '<code class="lang-python"')
     return res

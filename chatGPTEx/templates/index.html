@@ -7,10 +7,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/prism.css') }}">
-  <script src="{{ url_for('static', filename='styles/prisms.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/prism-3.css') }}">
+  <script src="{{ url_for('static', filename='styles/prism-3.js') }}"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
 </head>
 <body>
   
@@ -61,7 +65,6 @@
       
     </div>
   </section>
-  <script src="prisms.js"></script>
   <!-- partial -->
   <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
   <script>
@@ -94,10 +97,25 @@
       .then(data => {
           data.forEach(message => {
             appendHistoryMessage(message.name, message.img, message.side, message.text, message.mode);
-            Prism.highlightAll();
+            
+            
         }); 
+        Prism.highlightAll();
+        const script1 = document.createElement("script");
+            script1.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
+            document.body.appendChild(script1);
+        const script2 = document.createElement("script");
+        script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+        document.body.appendChild(script2);
+        window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        }
+        };
+          
       })
       .catch(err => console.error(err));
+      
   }
 
     function appendMessage(name, img, side, text, mode) {
@@ -147,7 +165,18 @@
         const msgText = data;
         appendMessage(BOT_NAME, BOT_IMG, "left", msgText, mode);
         Prism.highlightAll();
-      });
+        const script1 = document.createElement("script");
+        script1.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
+        document.body.appendChild(script1);
+        const script2 = document.createElement("script");
+        script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+        document.body.appendChild(script2);
+        window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        }
+        };
+        });
     }
     // Utils
     function get(selector, root = document) {
@@ -160,6 +189,20 @@
       return `${h.slice(-2)}:${m.slice(-2)}`;
     }
   </script>
+  <script>
+    // window.onload = function() {
+    //     const script1 = document.createElement("script");
+    //     script1.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
+    //     document.body.appendChild(script1);
+    //     const script2 = document.createElement("script");
+    //     script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+    //     document.body.appendChild(script2);
+    //     window.MathJax = {
+    //     tex: {
+    //       inlineMath: [['$', '$'], ['\\(', '\\)']]
+    //     }
+    //     };
+    // };
+  </script>
 </body>
-
 </html>
