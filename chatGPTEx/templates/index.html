@@ -7,11 +7,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/prism.css') }}">
+  <script src="{{ url_for('static', filename='styles/prisms.js') }}"></script>
 </head>
-
 <body>
+  
   <!-- partial:index.partial.html -->
   <section class="msger">
     <header class="msger-header">
@@ -43,8 +45,6 @@
           <option value="WebKeyWord">WebKeyWord</option>
           <option value="webDirect">webDirect</option>
           <option value="detail">detail</option>
-          
-          
         </select>
         <br>
       </form>
@@ -61,14 +61,10 @@
       
     </div>
   </section>
-
+  <script src="prisms.js"></script>
   <!-- partial -->
   <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
   <script>
-    function saveHistory() {
-        
-        alert('Chat history saved successfully!');
-    }
     const msgerForm = get(".msger-inputarea");
     const msgerInput = get(".msger-input");
     const msgerChat = get(".msger-chat");
@@ -86,6 +82,7 @@
       const mode = document.getElementById("mode").value;
       const msgText = msgerInput.value;
       if (!msgText) return;
+      console.log(msgText)
       appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode);
       msgerInput.value = "";
       botResponse(msgText, mode);
@@ -97,7 +94,8 @@
       .then(data => {
           data.forEach(message => {
             appendHistoryMessage(message.name, message.img, message.side, message.text, message.mode);
-        });
+            Prism.highlightAll();
+        }); 
       })
       .catch(err => console.error(err));
   }
@@ -121,6 +119,7 @@
 `;
       msgerChat.insertAdjacentHTML("beforeend", msgHTML);
       msgerChat.scrollTop += 500;
+      
     }
     function appendHistoryMessage(name, img, side, text, mode) {
       //   Simple solution for small apps
@@ -147,6 +146,7 @@
         console.log(data);
         const msgText = data;
         appendMessage(BOT_NAME, BOT_IMG, "left", msgText, mode);
+        Prism.highlightAll();
       });
     }
     // Utils

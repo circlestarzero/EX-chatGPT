@@ -1,0 +1,22 @@
+{
+    "role": "assistant",
+    "id": "chatcmpl-6qxcPceZFlUpVjyRwgMbTLZrQowRm",
+    "parentMessageId": "cc8df7f5-7bbf-43e7-a800-ab820c7d9ba6",
+    "text": "Hello",
+    "delta": "Hello",
+    "detail": {
+        "id": "chatcmpl-6qxcPceZFlUpVjyRwgMbTLZrQowRm",
+        "object": "chat.completion.chunk",
+        "created": 1678080249,
+        "model": "gpt-3.5-turbo-0301",
+        "choices": [
+            {
+                "delta": {
+                    "content": "Hello"
+                },
+                "index": 0,
+                "finish_reason": null
+            }
+        ]
+    }
+}

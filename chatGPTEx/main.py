@@ -4,27 +4,27 @@ import datetime
 import time
 from flask import Flask, render_template, request,render_template_string
 from search import search,APIQuery,APIExtraQuery,Summary,SumReply,directQuery,web,detail,webDirect,WebKeyWord,load_history
+from markdown import markdown
+from pygments.formatters import HtmlFormatter
+from markdown_it import MarkdownIt
+from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
+from graiax.text2img.playwright import HTMLRenderer, MarkdownConverter, PageOption, ScreenshotOption
+from mdit_py_plugins.dollarmath.index import dollarmath_plugin
 # Load the configuration file
+
 def parse_text(text):
-    lines = text.split("\n")
-    for i,line in enumerate(lines):
-        if "```" in line:
-            items = line.split('`')
-            if items[-1]:
-                lines[i] = f'<pre><code class="{items[-1]}">'
-            else:
-                lines[i] = f'</code></pre>'
-        else:
-            if i>0:
-                line = line.replace("<", "&lt;")
-                line = line.replace(">", "&gt;")
-                lines[i] = '<br/>'+line.replace(" ", "&nbsp;")
-    return "".join(lines)
-
-
+    md = MarkdownIt("commonmark", {"highlight": Highlighter()}).use(
+        dollarmath_plugin,
+        allow_labels=True,
+        allow_space=True,
+        allow_digits=True,
+        double_inline=True,
+    ).enable("table")
+    res = MarkdownConverter(md).convert(text)
+    # res = res.replace('<code', '<code class="lang-python"')
+    return res
 app = Flask(__name__)
 app.static_folder = 'static'
-
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -35,7 +35,6 @@ def get_bot_response():
     now = datetime.datetime.now()
     if mode=="chat":
         q = str(userText)
-        
         res = parse_text(directQuery(q))
         return res
     elif mode == "web":
@@ -66,4 +65,4 @@ def send_history():
             msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content']), 'mode': ''})
     return json.dumps(msgs,ensure_ascii=False)
 if __name__ == "__main__":
-    app.run()
+    app.run(port = 1234)

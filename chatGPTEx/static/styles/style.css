@@ -83,7 +83,7 @@ body {
   border-radius: 50%;
 }
 .msg-bubble {
-  max-width: 450px;
+  max-width: 600px;
   padding: 15px;
   border-radius: 15px;
   background: var(--left-msg-bg);
@@ -201,4 +201,27 @@ select#mode:hover, select#mode:focus {
 .save-hisotry:hover{
   background-color: #ddd;
   outline: none;
+}
+pre {
+  background-color: #f5f5f5;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  overflow: auto;
+  padding: 1em;
+}
+
+/* Add line numbers to the highlighted code */
+.line-numbers-mode .line-numbers-rows {
+  border-right: 1px solid #ccc;
+}
+
+/* Style the line numbers */
+.line-numbers-mode .line-numbers-rows span {
+  display: inline-block;
+  padding-right: 0.5em;
+  text-align: right;
+  user-select: none;
+  opacity: 0.5;
 }

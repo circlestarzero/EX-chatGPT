@@ -19,7 +19,6 @@
 ## 安装
 
 ## Ex-chatGPT
-
 - `pip install`
 `pip install -r requirements.txt`
 - 在 `apikey.ini` 中填入你的 API 密钥

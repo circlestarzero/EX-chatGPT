@@ -29,7 +29,7 @@ class ExChatGPT:
         top_p: float = 1.0,
         reply_count: int = 1,
         system_prompt: str = "You are ExChatGPT, a web-based large language model, Respond conversationally",
-        lastAPICallTime = time.time()-30,
+        lastAPICallTime = time.time()-100,
         apiTimeInterval = 20,
     ) -> None:
         """
@@ -89,7 +89,47 @@ class ExChatGPT:
                 self.conversation[convo_id].pop(1)
             else:
                 break
-            
+    def ask_stream_copy(
+        self,
+        prompt: str,
+        role: str = "user",
+        convo_id: str = "default",
+        **kwargs,
+    ) -> any: # type: ignore
+        """
+        Ask a question
+        """
+        # Make conversation if it doesn't exist
+        if convo_id not in self.conversation:
+            self.reset(convo_id=convo_id, system_prompt=self.system_prompt)
+        self.add_to_conversation(prompt, "user", convo_id=convo_id)
+        self.__truncate_conversation(convo_id=convo_id)
+        apiKey = self.api_keys.get()
+        print(time.time() - apiKey[0])
+        if time.time() - apiKey[0]<self.apiTimeInterval:
+            time.sleep(self.apiTimeInterval - (time.time() - apiKey[0]))
+        self.api_keys.put((time.time(),apiKey[1]))
+        # Get response
+        response = self.session.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey[1])}"},
+            json={
+                "model": self.engine,
+                "messages": self.conversation[convo_id],
+                "stream": True,
+                # kwargs
+                "temperature": kwargs.get("temperature", self.temperature),
+                "top_p": kwargs.get("top_p", self.top_p),
+                "n": kwargs.get("n", self.reply_count),
+                "user": role,
+            },
+            stream=True,
+        ) 
+        if response.status_code != 200:
+            raise Exception(
+                f"Error: {response.status_code} {response.reason} {response.text}",
+            )
+        return response
     def ask_stream(
         self,
         prompt: str,
@@ -106,6 +146,7 @@ class ExChatGPT:
         self.add_to_conversation(prompt, "user", convo_id=convo_id)
         self.__truncate_conversation(convo_id=convo_id)
         apiKey = self.api_keys.get()
+        print(time.time() - apiKey[0])
         if time.time() - apiKey[0]<self.apiTimeInterval:
             time.sleep(self.apiTimeInterval - (time.time() - apiKey[0]))
         self.api_keys.put((time.time(),apiKey[1]))
@@ -255,11 +296,6 @@ def main():
     return
 
 
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\nExiting...")
-        sys.exit()
+
 
 

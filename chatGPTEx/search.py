@@ -29,6 +29,8 @@ print(openAIAPIKeys)
 chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=20)
 chatbot.load(program_dir+'/chatHistory.json')
 max_token = 1000
+def chatReplyProcess(prompt):
+    return chatbot.ask_stream_copy(prompt)
 def load_history(conv_id = 'default'):
     return chatbot.conversation[conv_id]
 def detail_old(query):
@@ -54,7 +56,7 @@ def web(query,conv_id = 'default'):
     apir = APIQuery(query,resp=resp)
     call_res0 = search(apir,1500)
     print(f'API calls response:\n {call_res0}')
-    result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', str(call_res0), conv_id=conv_id)
+    result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}' ,str(call_res0),max_token=1000, conv_id=conv_id)
     chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-4]
     chatbot.conversation[conv_id].append({'role':'user','content':str(query)})
     chatbot.conversation[conv_id].append({'role':'assistant','content':str(result)})
@@ -221,9 +223,8 @@ def search(content,max_token=2000):
         res = res[:max_token]
     return res
 if __name__ == "__main__":
-    while True:
-        query = input()
-        if(query == 'sum'):
-            print(chatbot.conversation_summary())
-        else:
-            print(chatbot.ask(query))
+    response = chatbot.ask_stream(
+            prompt='hello',
+            role='user',
+            convo_id='default',
+    )
