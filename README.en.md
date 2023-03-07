@@ -15,6 +15,8 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
 - Can summerize contents from external APIs using GPT-3
 - openAI API keys pool
 - Markdown and MathJax renderer
+- Bing like API processing animation
+
 ## Installation
 
 ## Ex-chatGPT
@@ -42,6 +44,8 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- update API calls processing animation
+![APIAnimation](img/APIAnimation.png)
 - Web Page Beautification
 ![WebBeautification](img/WebPageBeautification.jpg)
 - update Markdown and MathJax renderer

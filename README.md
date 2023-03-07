@@ -17,7 +17,7 @@
 - 可显示使用的 Token 数量
 - openAI api key池
 - Markdown and MathJax 渲染
-- 调用API过程显示
+- 调用API过程显示动画, 类似必应
 
 ## 安装
 
@@ -44,6 +44,8 @@
 ## 更新日志
 - 支持 OpenAI GPT-3.5 Turbo API，快速且价格低廉
 - 额外的 API 调用和搜索摘要，以提供更全面和详细的答案
+- update API calls processing animation
+![APIAnimation](img/APIAnimation.png)
 - 页面美化
 ![WebBeautification](img/WebPageBeautification.jpg)
 - Markdown and MathJax renderer
