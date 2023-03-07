@@ -6,7 +6,6 @@
   <title>EXChatGPT</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/prism.css') }}">
@@ -19,10 +18,18 @@
 <body>
   
   <!-- partial:index.partial.html -->
+  <div class = "container">
+  <div class="sidebar">
+		<h2>Chat History</h2>
+		<ul>
+			<li>2023-3-7-12</li>
+			<li>2023-3-6-17</li>
+		</ul>
+	</div>
   <section class="msger">
     <header class="msger-header">
       <div class="msger-header-title">
-        <i class="fas fa-bug"></i> EXChatGPT <i class="fas fa-bug"></i>
+        🤖️EXChatGPT Model: <span> </span>GPT3.5-Turbo
       </div>
     </header>
 
@@ -40,31 +47,31 @@
         </div>
       </div>
     </main>
-    <div class="row">
-      <div class="col col-first">
-      <form>
-        <select class="mode-selection" id="mode" name="mode">
-          <option value="web">web</option>
-          <option value="chat">chat</option>
-          <option value="WebKeyWord">WebKeyWord</option>
-          <option value="webDirect">webDirect</option>
-          <option value="detail">detail</option>
-        </select>
-        <br>
-      </form>
-      </div>
-      <!-- <div clas="col">
-        <button class="save-hisotry" onclick="saveHistory()">Save<br>History</button>
-      </div> -->
-      <div class= "col">
-      <form class="msger-inputarea">
-        <input type="text" class="msger-input" id="textInput" placeholder="...">
-        <button type="submit" class="msger-send-btn">Send</button>
-      </form>
-      </div>
-      
-    </div>
   </section>
+</div>
+<div class="row">
+  <div class="col col-first">
+  <form>
+    <select class="mode-selection" id="mode" name="mode">
+      <option value="web">web</option>
+      <option value="chat">chat</option>
+      <option value="WebKeyWord">WebKeyWord</option>
+      <option value="webDirect">webDirect</option>
+      <option value="detail">detail</option>
+    </select>
+    <br>
+  </form>
+  </div>
+  <!-- <div clas="col">
+    <button class="save-hisotry" onclick="saveHistory()">Save<br>History</button>
+  </div> -->
+  <div class= "col">
+  <form class="msger-inputarea">
+    <input type="text" class="msger-input" id="textInput" placeholder="...">
+    <button type="submit" class="msger-send-btn">↵</button>
+  </form>
+  </div>
+</div>
   <!-- partial -->
   <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
   <script>

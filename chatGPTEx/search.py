@@ -1,6 +1,4 @@
 import json
-
-from flask import Flask, request, jsonify, make_response
 from api_class import GoogleSearchAPI, WikiSearchAPI, WolframAPI
 import threading 
 import json

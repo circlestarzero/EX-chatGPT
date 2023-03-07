@@ -42,6 +42,8 @@
 ## 更新日志
 - 支持 OpenAI GPT-3.5 Turbo API，快速且价格低廉
 - 额外的 API 调用和搜索摘要，以提供更全面和详细的答案
+- 页面美化
+![WebBeautification](img/WebPageBeautification.jpg)
 - Markdown and MathJax renderer
 ![MathJax](img/mathjax.jpg)
 - 更新聊天记录token优化器，web模式可以根据聊天记录进行响应；添加token成本计数器

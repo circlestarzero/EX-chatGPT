@@ -42,6 +42,8 @@ This repository contains Ex-ChatGPT, which is a chatting service that uses ChatG
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- Web Page Beautification
+![WebBeautification](img/WebPageBeautification.jpg)
 - update Markdown and MathJax renderer
 ![MathJax](img/mathjax.jpg)
 - update chat history token optimizer, and the web mode can response according to the chat history.Add token cost counter.

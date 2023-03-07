@@ -1,19 +1,13 @@
 import json
-import random
 import datetime
-import time
-from flask import Flask, render_template, request,render_template_string
-from search import search,APIQuery,APIExtraQuery,Summary,SumReply,directQuery,web,detail,webDirect,WebKeyWord,load_history
-from markdown import markdown
+from flask import Flask, render_template, request
+from search import directQuery,web,detail,webDirect,WebKeyWord,load_history
 from markdown_it import MarkdownIt
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import MarkdownConverter
-# Load the configuration file
-import regex
 def parse_text(text):
     md = MarkdownIt("commonmark", {"highlight": Highlighter()}).enable("table")
     res = MarkdownConverter(md).convert(text)
-    # res = res.replace('<code', '<code class="lang-python"')
     return res
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -25,20 +19,21 @@ def get_bot_response():
     mode = str(request.args.get('mode'))
     userText = str(request.args.get('msg'))
     now = datetime.datetime.now()
+    now = now.strftime("%Y-%m-%d %H:%M")
     if mode=="chat":
         q = str(userText)
         res = parse_text(directQuery(q))
         return res
     elif mode == "web":
-        q = 'current Time: '+ str(now) + '\nQuery:'+ str(userText)
+        q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
         res = parse_text(web(q))
         return res
     elif mode == "detail":
-        q = 'current Time: '+ str(now) + '\nQuery:'+ str(userText)
+        q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
         res = parse_text(detail(q))
         return res
     elif mode =='webDirect':
-        q = 'current Time: '+ str(now) + '\nQuery:'+ str(userText)
+        q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
         res = parse_text(webDirect(q))
         return res
     elif mode == 'WebKeyWord':
@@ -57,4 +52,6 @@ def send_history():
             msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content']), 'mode': ''})
     return json.dumps(msgs,ensure_ascii=False)
 if __name__ == "__main__":
+    app.config['JSON_AS_ASCII'] = False
+    app.config['DEBUG'] = True
     app.run(port = 1234)
