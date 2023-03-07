@@ -26,7 +26,7 @@
   - `Google api key and search engine id` [apply](https://developers.google.com/custom-search/v1/overview?hl=en)
   - `wolframAlpha app id key` [apply](https://products.wolframalpha.com/api/)
   - `openAI api key`(新功能) 或 `chatGPT access_token`(旧版本) [apply](https://platform.openai.com)
-- 运行 `main.py` 并打开 `http://127.0.0.1:5000/`
+- 运行 `main.py` 并打开 `http://127.0.0.1:1234/`
 - 调整模式，例如 `chat,detail,web,webDirect,WebKeyWord`
 
 ## WebChatGPTEnhance
