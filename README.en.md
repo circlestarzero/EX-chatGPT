@@ -4,18 +4,18 @@
 
 [简体中文](./README.md) English / [Background](./BACKGROUND.md)
 
-ChatGPT has the ability to become a tool for various tasks without requiring additional adjustments. And Ex-ChatGPT allows ChatGPT to call external APIs, e.g. WolframAlpha & Bing, to give more precise & time-sensitive answers.
+ChatGPT can act as a tool former without requiring adjustment, generating API requests for questions to assist in answering. Ex-ChatGPT enables ChatGPT to call external APIs, such as WolframAlpha, Google, and WikiMedia, to provide more accurate and timely answers.
 
-This repository contains Ex-ChatGPT, which is a chatting service that uses ChatGPT API, and WebChatGPTEnhance, which is a browser extension.
+This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a service that uses the GPT3.5 Turbo API and Google,WolframAlpha,WikiMedia APIs, while the latter is a browser extension which update the origin WebChatGPT plugin to Enable adding external APIs.
 
 ## Highlights
 
 - Supports OpenAI GPT-3.5 Turbo API
 - Allows ChatGPT to call external APIs(Google,WolframAlpha,WikiMedia)
-- Can summerize contents from external APIs using GPT-3
-- openAI API keys pool
+- Can summerize contents from external APIs using GPT-3.5 Turbo
+- openAI API keys pool to accelerate
 - Markdown and MathJax renderer
-- Bing like API processing animation
+- New Bing like API processing and animation
 
 ## Installation
 
