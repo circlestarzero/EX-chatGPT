@@ -287,9 +287,9 @@ pre {
 
 /* Style for the left sidebar */
 .sidebar {
-  background-color: #f1f1f1;
+  background: #fff5ff !important;
   padding: 20px;
-  width: 300px;
+  width: 330px;
   height: 100%;
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -316,7 +316,6 @@ pre {
 }
 
 .sidebar li {
-  padding: 10px;
   font-size: 18px;
   color: #000;
   border-bottom: 1px solid #ccc;
@@ -329,3 +328,107 @@ pre {
 .sidebar li:hover {
   background-color: #ddd;
 }
+
+.new-chat {
+  font-family: monospace;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  padding: 0.75rem;
+  padding-left: 13%;
+  align-items: center;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.2);
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+  background: linear-gradient( to top right,pink 0%, #8bb9dd 50%);
+  box-shadow: 1px 1px 10px #87ceeb;
+}
+
+.new-chat:hover {
+  background: linear-gradient(to top right, pink 0%, #8bb9dd 80%);
+  animation: mask 0.3s forwards;
+}
+
+@keyframes mask {
+  0% {
+    background: linear-gradient(to top right, pink 0%, #8bb9dd 50%);
+  }
+  100% {
+    background: linear-gradient(to top right, pink 0%, #8bb9dd 70%);
+  }
+}
+.chat-list a {
+  display: flex;
+  padding: 1rem;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  word-break: break-all;
+  padding-right: 3.5rem;
+  background: #ffe6ff;
+}
+
+.chat-list a:hover {
+  background-color: #d8bfd8;
+}
+
+.chat-list a svg {
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  height: 1em;
+  width: 1em;
+}
+
+.chat-list a .flex-1 {
+  max-height: 5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.chat-list a .absolute {
+  position: absolute;
+  display: flex;
+  right: 1rem;
+  z-index: 10;
+  visibility: visible;
+}
+
+.chat-list a .absolute button {
+  padding: 0.2rem;
+  cursor: pointer;
+}
+
+.chat-list a .absolute button:hover {
+  color: #F9FAFB;
+}
+
+.chat-list a .absolute button:hover svg polyline,
+.chat-list a .absolute button:hover svg path,
+.chat-list a .absolute button:hover svg line {
+  stroke: #F9FAFB;
+}
+.chat-list{
+  padding-top: 5px;
+  padding-bottom: 8px;
+}
+.edit-button{
+  background: transparent;
+  border: none;
+}
+.delete-button{
+  background: transparent;
+  border: none;
+}
+

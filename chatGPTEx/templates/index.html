@@ -16,16 +16,21 @@
 </head>
 
 <body>
-
   <!-- partial:index.partial.html -->
   <div class="container">
     <div class="sidebar">
-      <h2>Chat History</h2>
-      <ul>
-        <li>2023-3-7-12</li>
-        <li>2023-3-6-17</li>
+      <button class="new-chat">
+        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+          stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        New chat
+      </button>
+      <ul class="sidebar-list">
       </ul>
     </div>
+
     <section class="msger">
       <header class="msger-header">
         <div class="msger-header-title">
@@ -34,18 +39,6 @@
       </header>
 
       <main class="msger-chat">
-        <div class="msg left-msg">
-          <div class="msg-img" style="background-image: url(static/styles/ChatGPT_logo.png)"></div>
-          <div class="msg-bubble">
-            <div class="msg-info">
-              <div class="msg-info-name">EXChatGPT</div>
-              <div class="msg-info-time"></div>
-            </div>
-            <div class="msg-text">
-              Hello, I'm EXChatGPT, what can I help you?😄
-            </div>
-          </div>
-        </div>
       </main>
     </section>
   </div>
@@ -76,7 +69,7 @@
 
   <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
   <script>
-    
+
     const msgerForm = get(".msger-inputarea");
     const msgerInput = get(".msger-input");
     const msgerChat = get(".msger-chat");
@@ -88,9 +81,6 @@
     const BOT_NAME = "EXChatGPT";
     const PERSON_NAME = "You";
     const CHECK_IMG = "static/styles/check.png";
-    window.onload = () => {
-      loadHistory();
-    };
     function appendAPIresults(name, img, side, text) {
       //   Simple solution for small apps
       const msgHTML = `
@@ -102,13 +92,13 @@
       msger.scrollTop = msger.scrollHeight;
     }
     function fetchData() {
-      fetch('/APIProcess')
+      fetch('/api/APIProcess')
         .then(response => response.json())
         .then(data => {
-          if (data.hasOwnProperty('calls')){
+          if (data.hasOwnProperty('calls')) {
             console.log(data)
             data.calls.forEach(message => {
-              appendAPIresults(message.API, BOT_IMG , 'left', message.query);
+              appendAPIresults(message.API, BOT_IMG, 'left', message.query);
               msger.scrollTop = msger.scrollHeight;
             });
           }
@@ -120,15 +110,33 @@
       event.preventDefault();
       const mode = document.getElementById("mode").value;
       const msgText = msgerInput.value;
+      const uuid =  document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
       if (!msgText) return;
       console.log(msgText)
       appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode);
       msgerInput.value = "";
-      botResponse(msgText, mode);
+      botResponse(msgText, mode,uuid);
     });
+    var intervalId = setInterval(pollFunction, 1000);
+    function pollFunction() {
+      var result = loadHistory();
+      if (result !== null) {
+        clearInterval(intervalId);
+      }
+    }
     function loadHistory() {
+      if (document.querySelector('.sidebar-list').hasChildNodes() == false) {
+        return null;
+      }
       // Fetch chat history from server
-      fetch('/history')
+      while (msgerChat.firstChild) {
+        msgerChat.removeChild(msgerChat.firstChild);
+      }
+      appendHistoryMessage(BOT_NAME, BOT_IMG, "left", "Hello, I'm EXChatGPT, what can I help you?😄", "");
+      console.log(document.querySelector('.sidebar-list'));
+      const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
+      console.log(uuid);
+      fetch('/api/history?uuid=' + uuid)
         .then(response => response.json())
         .then(data => {
           data.forEach(message => {
@@ -148,6 +156,7 @@
           };
         })
         .catch(err => console.error(err));
+      return uuid;
     }
     function appendMessage(name, img, side, text, mode) {
       //   Simple solution for small apps
@@ -187,9 +196,9 @@
       msgerChat.insertAdjacentHTML("beforeend", msgHTML);
       msger.scrollTop = msger.scrollHeight;
     }
-    function botResponse(rawText, mode) {
+    function botResponse(rawText, mode, uuid) {
       // Bot Response
-      $.get("/get", { mode: mode, msg: rawText }).done(function (data) {
+      $.get("/api/query", { mode: mode, msg: rawText ,uuid: uuid}).done(function (data) {
         console.log(rawText);
         console.log(data);
         const msgText = data;
@@ -219,21 +228,7 @@
       return `${h.slice(-2)}:${m.slice(-2)}`;
     }
   </script>
-  <script>
-    // window.onload = function() {
-    //     const script1 = document.createElement("script");
-    //     script1.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
-    //     document.body.appendChild(script1);
-    //     const script2 = document.createElement("script");
-    //     script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
-    //     document.body.appendChild(script2);
-    //     window.MathJax = {
-    //     tex: {
-    //       inlineMath: [['$', '$'], ['\\(', '\\)']]
-    //     }
-    //     };
-    // };
-  </script>
+  <script src="{{ url_for('static', filename='styles/newChat.js') }}"></script>
 </body>
 
 </html>

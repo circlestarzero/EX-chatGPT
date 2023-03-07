@@ -34,6 +34,9 @@ hint_api_finished = json.loads(json.dumps({"calls":[{"API":"System","query":"API
 def chatReplyProcess(prompt):
     return chatbot.ask_stream_copy(prompt)
 def load_history(conv_id = 'default'):
+    if(conv_id not in chatbot.conversation):
+        chatbot.reset(conv_id)
+        chatbot.save(program_dir+'/chatHistory.json')
     return chatbot.conversation[conv_id]
 def detail_old(query):
     call_res0 = search(APIQuery(query))

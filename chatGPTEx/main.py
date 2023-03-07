@@ -5,6 +5,9 @@ from search import directQuery,web,detail,webDirect,WebKeyWord,load_history,APIC
 from markdown_it import MarkdownIt
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import MarkdownConverter
+import os
+program_path = os.path.realpath(__file__)
+program_dir = os.path.dirname(program_path)
 def parse_text(text):
     md = MarkdownIt("commonmark", {"highlight": Highlighter()}).enable("table")
     res = MarkdownConverter(md).convert(text)
@@ -14,37 +17,46 @@ app.static_folder = 'static'
 @app.route("/")
 def home():
     return render_template("index.html")
-@app.route("/get")
+@app.route("/api/query")
 def get_bot_response():
     mode = str(request.args.get('mode'))
     userText = str(request.args.get('msg'))
+    uuid = str(request.args.get('uuid'))
+    
     now = datetime.datetime.now()
     now = now.strftime("%Y-%m-%d %H:%M")
     if mode=="chat":
         q = str(userText)
-        res = parse_text(directQuery(q))
+        res = parse_text(directQuery(q,conv_id=uuid))
         return res
     elif mode == "web":
         q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
-        res = parse_text(web(q))
+        res = parse_text(web(q,conv_id=uuid))
         return res
     elif mode == "detail":
         q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
-        res = parse_text(detail(q))
+        res = parse_text(detail(q,conv_id=uuid))
         return res
     elif mode =='webDirect':
         q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
-        res = parse_text(webDirect(q))
+        res = parse_text(webDirect(q,conv_id=uuid))
         return res
     elif mode == 'WebKeyWord':
         q = str(userText)
-        res = parse_text(WebKeyWord(q))
+        res = parse_text(WebKeyWord(q,conv_id=uuid))
         return res
     return "Error"
-@app.route("/history")
+@app.route("/api/chatLists")
+def get_chat_lists():
+    with open(program_dir+'/chatLists.json', 'r', encoding='utf-8') as f:
+        chatLists = json.load(f)
+        chatLists["chatLists"] = list(reversed(chatLists["chatLists"]))
+        return json.dumps(chatLists)
+@app.route("/api/history")
 def send_history():
+    uuid = str(request.args.get('uuid'))
     msgs = []
-    chats  = load_history()[1:]
+    chats  = load_history(conv_id=uuid)[1:]
     for chat in chats:
         if chat['role']=='user':
             msgs.append({'name': 'You', 'img': 'static/styles/person.jpg', 'side': 'right', 'text': parse_text(chat['content']), 'mode': ''})
@@ -52,15 +64,19 @@ def send_history():
             msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content']), 'mode': ''})
     return json.dumps(msgs,ensure_ascii=False)
 lastAPICallListLength = len(APICallList)
-@app.route("/APIProcess")
+@app.route("/api/APIProcess")
 def APIProcess():
     global lastAPICallListLength
     if len(APICallList) > lastAPICallListLength:
         lastAPICallListLength +=1
-        print('233:'+json.dumps(APICallList[lastAPICallListLength-1],ensure_ascii=False))
         return json.dumps(APICallList[lastAPICallListLength-1],ensure_ascii=False)
     else:
         return {}
+@app.route('/api/setChatLists',methods=['POST'])
+def set_chat_lists():
+    with open(program_dir+'/chatLists.json', 'w', encoding='utf-8') as f:
+        json.dump(request.json,f,ensure_ascii=False)
+        return 'ok'
 if __name__ == "__main__":
     app.config['JSON_AS_ASCII'] = False
     app.config['DEBUG'] = True

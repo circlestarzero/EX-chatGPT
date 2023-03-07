@@ -3,46 +3,6 @@
     {
       "role": "system",
       "content": "You are ExChatGPT, a web-based large language model, Respond conversationally"
-    },
-    {
-      "role": "user",
-      "content": "\u5199\u4e00\u6bb5\u5feb\u901f\u6392\u5e8f"
-    },
-    {
-      "role": "assistant",
-      "content": "\u597d\u7684\uff0c\u4e0b\u9762\u662f\u5feb\u901f\u6392\u5e8f\u7684\u4ee3\u7801\u5b9e\u73b0\uff08\u4f7f\u7528 Python \u8bed\u8a00\uff09\uff1a\n\n```python\ndef quick_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    else:\n        pivot = arr[0]\n        less = [i for i in arr[1:] if i <= pivot]\n        greater = [i for i in arr[1:] if i > pivot]\n        return quick_sort(less) + [pivot] + quick_sort(greater)\n```\n\n\u5feb\u901f\u6392\u5e8f\u7684\u57fa\u672c\u601d\u60f3\u662f\u901a\u8fc7\u9009\u5b9a\u4e00\u4e2a\u57fa\u51c6\u503c\uff08\u4e00\u822c\u9009\u7b2c\u4e00\u4e2a\u5143\u7d20\uff09\uff0c\u5c06\u6570\u7ec4\u5212\u5206\u4e3a\u4e24\u4e2a\u90e8\u5206\uff1a\u5c0f\u4e8e\u57fa\u51c6\u503c\u7684\u90e8\u5206\u548c\u5927\u4e8e\u57fa\u51c6\u503c\u7684\u90e8\u5206\u3002\u7136\u540e\u5bf9\u8fd9\u4e24\u4e2a\u90e8\u5206\u5206\u522b\u8fdb\u884c\u9012\u5f52\u6392\u5e8f\uff0c\u6700\u540e\u5c06\u5b83\u4eec\u5408\u5e76\u8d77\u6765\u5373\u53ef\u5f97\u5230\u6392\u5e8f\u540e\u7684\u6570\u7ec4\u3002"
-    },
-    {
-      "role": "user",
-      "content": "current Time: 2023-03-07 17:39\n\nQuery:\u6b66\u6c49\u7684\u5929\u6c14\u600e\u4e48\u6837"
-    },
-    {
-      "role": "assistant",
-      "content": "\u6839\u636e\u63d0\u4f9b\u7684 API \u8c03\u7528\u7ed3\u679c\uff0c\u6b66\u6c49\u5f53\u524d\u7684\u5929\u6c14\u662f\u6674\u6717\uff0c\u6e29\u5ea6\u4e3a 63 \u534e\u6c0f\u5ea6\uff08\u7ea6\u5408 17 \u6444\u6c0f\u5ea6\uff09\uff0c\u6e7f\u5ea6\u4e3a 60%\uff0c\u98ce\u901f\u4e3a 5.8 \u516c\u91cc/\u5c0f\u65f6\uff0c\u6c14\u538b\u4e3a 1027 \u6beb\u5df4\u3002\u6b64\u5916\uff0c\u53ef\u4ee5\u67e5\u770b\u672a\u6765 14 \u5929\u7684\u5929\u6c14\u9884\u62a5\u3002\u5982\u679c\u60a8\u9700\u8981\u66f4\u591a\u7684\u5929\u6c14\u4fe1\u606f\uff0c\u53ef\u4ee5\u67e5\u770b AccuWeather \u7684\u5929\u6c14\u9884\u62a5\uff0c\u4e86\u89e3\u5f53\u524d\u6761\u4ef6\u3001\u98ce\u3001\u7a7a\u6c14\u8d28\u91cf\u4ee5\u53ca\u672a\u6765\u4e09\u5929\u7684\u9884\u671f\u3002\u540c\u65f6\uff0c\u8fd8\u53ef\u4ee5\u67e5\u770b\u300a\u5929\u6c14\u9891\u9053\u300b\u7684\u9884\u62a5\uff0c\u4e86\u89e3\u4eca\u5929\u3001\u660e\u5929\u4ee5\u53ca\u672a\u6765 14 \u5929\u7684\u5929\u6c14\u72b6\u51b5\u3002\u5982\u679c\u60a8\u60f3\u4e86\u89e3\u66f4\u591a\u5173\u4e8e\u6b66\u6c49\u7684\u5929\u6c14\u548c\u6c14\u5019\u4fe1\u606f\uff0c\u53ef\u4ee5\u67e5\u770b\u7ef4\u57fa\u767e\u79d1\u4e0a\u7684\u76f8\u5173\u4fe1\u606f\u3002"
-    },
-    {
-      "role": "user",
-      "content": "current Time: 2023-03-07 17:41\n\nQuery:\u4eca\u5929\u6b66\u6c49\u7684\u6e29\u5ea6+ln(123123)\u662f\u591a\u5c11"
-    },
-    {
-      "role": "assistant",
-      "content": "\u6839\u636e\u63d0\u4f9b\u7684 API \u8c03\u7528\u7ed3\u679c\uff0c\u4eca\u5929\u6b66\u6c49\u7684\u6e29\u5ea6\u662f\u65e0\u6cd5\u5f97\u77e5\u7684\uff0c\u56e0\u4e3a API \u8c03\u7528\u7ed3\u679c\u4e2d\u6ca1\u6709\u6d89\u53ca\u5230\u4eca\u5929\u7684\u5929\u6c14\u4fe1\u606f\u3002\u4f46\u662f\uff0c\u6211\u4eec\u53ef\u4ee5\u6839\u636e API \u8c03\u7528\u7ed3\u679c\u8ba1\u7b97\u51fa\u201c\u4eca\u5929\u6b66\u6c49\u7684\u6e29\u5ea6+ln(123123)\u201d\u8fd9\u4e2a\u8868\u8fbe\u5f0f\u7684\u503c\u3002\u6839\u636e Wolfram Alpha \u7684\u8ba1\u7b97\u7ed3\u679c\uff0cln(123123) \u7684\u503c\u7ea6\u4e3a 11.720939134687638080482792372933560927287960555501536565450960613\uff0c\u56e0\u6b64\u8be5\u8868\u8fbe\u5f0f\u7684\u503c\u7ea6\u4e3a 17 + 11.720939134687638080482792372933560927287960555501536565450960613\uff0c\u7ea6\u4e3a 28.72\u3002\u9700\u8981\u6ce8\u610f\u7684\u662f\uff0c\u8fd9\u4e2a\u8ba1\u7b97\u7ed3\u679c\u4ec5\u4f9b\u53c2\u8003\uff0c\u5b9e\u9645\u7ed3\u679c\u53ef\u80fd\u7565\u6709\u51fa\u5165\u3002"
-    },
-    {
-      "role": "user",
-      "content": "\u521a\u624d\u6211\u4eec\u804a\u4e86\u4ec0\u4e48"
-    },
-    {
-      "role": "assistant",
-      "content": "\u5728\u6211\u4eec\u7684\u804a\u5929\u4e2d\uff0c\u60a8\u5148\u662f\u8be2\u95ee\u4e86\u6b66\u6c49\u7684\u5929\u6c14\u72b6\u51b5\uff0c\u6211\u56de\u7b54\u4e86\u60a8\u7684\u95ee\u9898\uff1b\u7136\u540e\u60a8\u53c8\u95ee\u4e86\u4eca\u5929\u6b66\u6c49\u7684\u6e29\u5ea6+ln(123123)\u662f\u591a\u5c11\uff0c\u6211\u5bf9\u6b64\u8fdb\u884c\u4e86\u56de\u7b54\u3002\u5982\u679c\u60a8\u8fd8\u6709\u5176\u4ed6\u95ee\u9898\u6216\u9700\u8981\u6211\u7684\u5e2e\u52a9\uff0c\u8bf7\u968f\u65f6\u544a\u8bc9\u6211\u3002"
-    },
-    {
-      "role": "user",
-      "content": "\u4e3a\u4ec0\u4e48\u82b1\u8d39\u4e86\u8fd9\u4e48\u591atoken"
-    },
-    {
-      "role": "assistant",
-      "content": "\u6211\u60f3\u89e3\u91ca\u4e00\u4e0b\u4e3a\u4ec0\u4e48\u4f1a\u82b1\u8d39\u8fd9\u4e48\u591a token\u3002\u56e0\u4e3a\u60a8\u7684\u7b2c\u4e00\u6761\u95ee\u9898\u6d89\u53ca\u5230\u4e86\u5929\u6c14\u4fe1\u606f\u7684\u83b7\u53d6\uff0c\u9700\u8981\u901a\u8fc7\u8c03\u7528 API \u6765\u83b7\u53d6\u76f8\u5e94\u7684\u6570\u636e\uff0c\u800c\u8fd9\u4e2a\u8fc7\u7a0b\u9700\u8981\u6d88\u8017\u4e00\u5b9a\u7684 token\u3002\u540c\u65f6\uff0c\u7b2c\u4e8c\u6761\u95ee\u9898\u4e2d\u6d89\u53ca\u5230\u4e86\u6570\u5b66\u8ba1\u7b97\uff0c\u9700\u8981\u8fdb\u884c\u4e00\u5b9a\u7684\u8ba1\u7b97\u64cd\u4f5c\uff0c\u4e5f\u9700\u8981\u6d88\u8017\u4e00\u5b9a\u7684 token\u3002\u6b64\u5916\uff0c\u6211\u8fd8\u4e3a\u60a8\u63d0\u4f9b\u4e86\u8be6\u7ec6\u7684\u56de\u7b54\u548c\u89e3\u91ca\uff0c\u4ee5\u786e\u4fdd\u60a8\u80fd\u591f\u6e05\u695a\u5730\u4e86\u89e3\u95ee\u9898\u7684\u7b54\u6848\uff0c\u8fd9\u4e5f\u53ef\u80fd\u4f1a\u6d88\u8017\u4e00\u5b9a\u7684 token\u3002\u4e0d\u8fc7\uff0c\u6211\u4f1a\u5c3d\u529b\u786e\u4fdd\u5728\u4f7f\u7528\u5c3d\u53ef\u80fd\u5c11\u7684 token \u7684\u540c\u65f6\uff0c\u4e3a\u60a8\u63d0\u4f9b\u51c6\u786e\u3001\u8be6\u7ec6\u7684\u56de\u7b54\u3002"
     }
   ],
   "search": [
@@ -97,28 +57,12 @@
     {
       "role": "assistant",
       "content": "United States president"
-    },
-    {
-      "role": "user",
-      "content": "Given a user prompt \"\u4e09\u4f53\u7535\u89c6\u5267\u600e\u4e48\u6837\", respond with \"none\" if it is directed at the chatbot or cannot be answered by an internet search. Otherwise, provide a concise search query for a search engine. Avoid adding any additional text to the response to minimize token cost."
-    },
-    {
-      "role": "assistant",
-      "content": "\u4e09\u4f53\u7535\u89c6\u5267\u600e\u4e48\u6837"
     }
   ],
   "api": [
     {
       "role": "system",
       "content": "Your are a API caller for a LLM, you need to call some APIs to get the information you need."
-    },
-    {
-      "role": "user",
-      "content": "Input: current Time: 2023-03-07 17:41\n\nQuery:\u4eca\u5929\u6b66\u6c49\u7684\u6e29\u5ea6+ln(123123)\u662f\u591a\u5c11\nChatGpt response: \u62b1\u6b49\uff0c\u60a8\u7684\u67e5\u8be2\u4e0d\u7b26\u5408\u5e38\u89c4\u7684\u5929\u6c14\u67e5\u8be2\u683c\u5f0f\u3002\u6839\u636e\u60a8\u7684\u67e5\u8be2\uff0c\u60a8\u4f3c\u4e4e\u60f3\u8981\u67e5\u8be2\u4eca\u5929\u6b66\u6c49\u7684\u6e29\u5ea6\u52a0\u4e0a ln(123123) \u7684\u7ed3\u679c\uff0c\u4f46\u662f\u8fd9\u4e2a\u67e5\u8be2\u4e0d\u592a\u7b26\u5408\u5b9e\u9645\u60c5\u51b5\u3002\u5982\u679c\u60a8\u9700\u8981\u67e5\u8be2\u6b66\u6c49\u7684\u5929\u6c14\u60c5\u51b5\uff0c\u53ef\u4ee5\u4f7f\u7528\u7c7b\u4f3c\u201c\u6b66\u6c49\u4eca\u5929\u7684\u5929\u6c14\u5982\u4f55\uff1f\u201d\u8fd9\u6837\u7684\u683c\u5f0f\u8fdb\u884c\u67e5\u8be2\u3002\u6211\u53ef\u4ee5\u6839\u636e\u60a8\u63d0\u4f9b\u7684\u67e5\u8be2\u683c\u5f0f\u6765\u56de\u7b54\u60a8\u7684\u95ee\u9898\u3002\n\n token_cost: 2146\nInstructions:\nYour task is to generate a list of API calls to a Question Answering API based on the input query and chatgpt response. The API calls should help extract relevant information and provide a better understanding of the input query and verify the response of chatgpt.\nYou can make an API call by using the following format: \"{\"API\": \"{API}\", \"query\": \"current Time: 2023-03-07 17:41\n\nQuery:\u4eca\u5929\u6b66\u6c49\u7684\u6e29\u5ea6+ln(123123)\u662f\u591a\u5c11\"}\". Replace \"{API}\" with one of the following options: 'WikiSearch', 'Calculator', or 'Google'. Replace \"current Time: 2023-03-07 17:41\n\nQuery:\u4eca\u5929\u6b66\u6c49\u7684\u6e29\u5ea6+ln(123123)\u662f\u591a\u5c11\" with the specific question you want to ask to extract relevant information.\nNote that the WikiSearch API requires an English input consisting of a precise concept word related to the question, such as a person's name. The Google API requires a full, complete question in the same langeuage as the query that includes enough information about the question, such as who, what, when, where, and why. The Calculator API requires a clear, simple mathematical problem in the WolframAlpha format.\nHere are some examples of API calls:\nInput: Coca-Cola, or Coke, is a carbonated soft drink manufactured by the Coca-Cola Company.\nOutput: {\"calls\": [{\"API\": \"Google\", \"query\": \"What other name is Coca-Cola known by?\"},\n{\"API\": \"Google\", \"query\": \"Who manufactures Coca-Cola?\"}]}\nInput: Out of 1400 participants, 400 passed the test.\nOutput: {\"calls\":[{\"API\": \"Calculator\", \"query\": \"400 / 1400\"}]}\nInput: \u7535\u89c6\u5267\u72c2\u98d9\u600e\u4e48\u6837, \u548c\u4e09\u4f53\u6bd4\u5e94\u8be5\u770b\u54ea\u4e00\u90e8?\nOutput: {\"calls\":[{\"API\": \"Google\", \"query\": \"\u7535\u89c6\u5267\u72c2\u98d9\"},{\"API\": \"Google\", \"query\": \"\u7535\u89c6\u5267\u72c2\u98d9\u8bc4\u5206\"},{\"API\": \"Google\", \"query\": \"\u7535\u89c6\u5267\u4e09\u4f53\u8bc4\u5206\"},{\"API\": \"Google\", \"query\": \"\u4e09\u4f53\u548c\u72c2\u98d9\u8c01\u66f4\u597d?\"}]}\nThe Google API question should in the same language as the Input query.\nThe apicalls should verify every detial of the response of chatgpt!!!!"
-    },
-    {
-      "role": "assistant",
-      "content": "\n\n{\"calls\":[{\"API\": \"WikiSearch\", \"query\": \"Wuhan weather today\"},{\"API\": \"Calculator\", \"query\": \"ln(123123)\"},{\"API\": \"Calculator\", \"query\": \"Wuhan temperature + ln(123123)\"}]}\n\nThe first API call is to the WikiSearch API to get information related to the weather in Wuhan today. This will help us verify if the input query is related to weather in Wuhan or not.\n\nThe second API call is to the Calculator API to calculate the natural logarithm of 123123, which is mentioned in the input query.\n\nThe third API call is to the Calculator API to add the temperature of Wuhan today (which we will get from the first API call) to the natural logarithm of 123123 (which we will get from the second API call), and get the final result. This will help us verify the response of chatgpt."
     }
   ]
 }
