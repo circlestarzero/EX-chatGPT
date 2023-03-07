@@ -44,19 +44,19 @@ def detail_old(query):
 def detail(query,conv_id = 'default'):
     if chatbot.token_cost(conv_id) > max_token:
         chatbot.conversation_summary(convo_id=conv_id)
-    call_res0 = search(APIQuery(query),750)
+    call_res0 = search(APIQuery(query),1000)
     print(f'API calls response:\n {call_res0}')
-    call_res1 = search(APIExtraQuery(query,call_res0),750)
+    call_res1 = search(APIExtraQuery(query,call_res0),1000)
     print(f'API calls response:\n {call_res1}')
-    result  = SumReply(query, str(call_res0) + str(call_res1),max_token=1500,conv_id=conv_id)
+    result  = SumReply(query, str(call_res0) + str(call_res1),max_token=2000,conv_id=conv_id)
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def web(query,conv_id = 'default'):
     chatbot.conversation_summary(convo_id=conv_id)
     resp = directQuery(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', conv_id=  conv_id)
     apir = APIQuery(query,resp=resp)
-    call_res0 = search(apir,1500)
+    call_res0 = search(apir,2000)
     print(f'API calls response:\n {call_res0}')
-    result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}' ,str(call_res0),max_token=1000, conv_id=conv_id)
+    result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}' ,str(call_res0),max_token=2000, conv_id=conv_id)
     chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-4]
     chatbot.conversation[conv_id].append({'role':'user','content':str(query)})
     chatbot.conversation[conv_id].append({'role':'assistant','content':str(result)})
@@ -66,7 +66,7 @@ def webDirect(query,conv_id = 'default'):
     if chatbot.token_cost(conv_id) > max_token:
         chatbot.conversation_summary(convo_id=conv_id)
     apir = APIQuery(query)
-    call_res0 = search(apir,1500)
+    call_res0 = search(apir,2000)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'{query}', str(call_res0), conv_id=conv_id)
     chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
@@ -109,7 +109,7 @@ def directQuery(query,conv_id = 'default'):
     print(f'Direct Query: {query}\nChatGpt: {response}')
     return response +'\n\n token_cost: '+ str(chatbot.token_cost())
 def APIQuery(query,resp =''):
-    with open(program_dir+"/APIPrompt.txt", "r", encoding='utf-8') as f:
+    with open(program_dir+"/prompts/APIPrompt.txt", "r", encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{resp}", resp)
@@ -125,7 +125,7 @@ def APIQuery(query,resp =''):
         return result
     return json.loads("{\"calls\":[]}")
 def APIExtraQuery(query,callResponse):
-    with open(program_dir+"/APIExtraPrompt.txt", "r",encoding='utf-8') as f:
+    with open(program_dir+"/prompts/APIExtraPrompt.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{callResponse}", str(callResponse))
@@ -140,16 +140,18 @@ def APIExtraQuery(query,callResponse):
         return result
     return json.loads("{\"calls\":[]}")
 def SumReply(query, apicalls, max_token=2000, conv_id = 'default'):
-    with open(program_dir+"/ReplySum.txt", "r",encoding='utf-8') as f:
+    with open(program_dir+"/prompts/ReplySum.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
-    apicalls = str(apicalls)[:max_token]
+    apicalls = str(apicalls)
+    while(chatbot.token_str(apicalls) > max_token):
+        apicalls = apicalls[:-100]
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{apicalls}", apicalls)
     response = chatbot.ask(prompt,convo_id=conv_id)
     print(f'ChatGPT SumReply:\n  {response}\n')
     return response
 def Summary(query, callResponse):
-    with open(program_dir+"/summary.txt", "r",encoding='utf-8') as f:
+    with open(program_dir+"/prompts/summary.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{callResponse}", callResponse)
@@ -209,18 +211,18 @@ def search(content,max_token=2000):
         t.join()
     call_res = json.loads(json.dumps(call_res,ensure_ascii=False))
     res = str(call_res)
-    while len(res) > max_token:
+    while chatbot.token_str(res) > max_token:
         flag = 0
         for key,value in call_res.items():
-            if len(res) <= max_token: break
+            if chatbot.token_str(res) <= max_token: break
             if len(value) > 2 and key.find('wolfram') == -1:
                 flag = 1
                 value = value[:-1]
                 call_res[key] = value
             res = str(call_res)
         if flag == 0: break
-    if len(res) > max_token:
-        res = res[:max_token]
+    while chatbot.token_str(res) > max_token:
+        res = res[:-100]
     return res
 if __name__ == "__main__":
     response = chatbot.ask_stream(

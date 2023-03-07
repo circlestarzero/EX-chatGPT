@@ -258,6 +258,8 @@ class ExChatGPT:
         last_message = self.conversation[convo_id][-1]["content"]
     def token_cost(self,convo_id: str = "default"):
         return len(ENCODER.encode("\n".join([x["content"] for x in self.conversation[convo_id]])))
+    def token_str(self,content:str):
+        return len(ENCODER.encode(content))
     def load(self, file: str, *convo_ids: str):
         """
         Load the conversation from a JSON  file
