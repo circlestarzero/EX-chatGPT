@@ -243,7 +243,7 @@ class ExChatGPT:
             else:
                 role = 'ChatGpt'
             input+=role+' : '+conv['content']+'\n'
-        with open(program_dir+"/conversationSummary.txt", "r", encoding='utf-8') as f:
+        with open(program_dir+"/prompts/conversationSummary.txt", "r", encoding='utf-8') as f:
             prompt = f.read()
         prompt = prompt.replace("{conversation}", input)
         response = self.ask(prompt)
