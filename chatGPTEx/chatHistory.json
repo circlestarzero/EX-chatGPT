@@ -3,22 +3,6 @@
     {
       "role": "system",
       "content": "You are ExChatGPT, a web-based large language model, Respond conversationally"
-    },
-    {
-      "role": "user",
-      "content": "Summariaze our diaglog"
-    },
-    {
-      "role": "assistant",
-      "content": "The user asked for the weather trends for the next 15 days in Wuhan. ExChatGPT provided two ways to access this information: checking local weather forecasts on websites such as the Central Meteorological Observatory or well-known weather forecast websites like China Weather Net and Weather Tong. ExChatGPT also advised the user to provide more specific details if they need more detailed weather information."
-    },
-    {
-      "role": "user",
-      "content": "current Time: 2023-03-07 09:43:15.654997\nQuery:\u7535\u89c6\u5267\u4e09\u4f53\u597d\u770b\u5417"
-    },
-    {
-      "role": "assistant",
-      "content": "\u6839\u636eAPI\u8c03\u7528\u7ed3\u679c\uff0c\u7535\u89c6\u5267\u300a\u4e09\u4f53\u300b\u83b7\u5f97\u4e86\u5f88\u9ad8\u7684\u8bc4\u4ef7\u548c\u53e3\u7891\uff0c\u5b83\u6539\u7f16\u81ea\u5218\u6148\u6b23\u7684\u540c\u540d\u5c0f\u8bf4\uff0c\u8bb2\u8ff0\u4e86\u4eba\u7c7b\u548c\u5916\u661f\u6587\u660e\u4e09\u4f53\u4e4b\u95f4\u7684\u6545\u4e8b\u3002\u8be5\u5267\u7684\u4e3b\u8981\u6f14\u5458\u5305\u62ec\u5f20\u9c81\u4e00\u3001\u4e8e\u548c\u4f1f\u3001\u6797\u6c38\u5065\u3001\u674e\u5c0f\u5189\u7b49\u3002\u8be5\u5267\u57282022\u5e7412\u67083\u65e5\u9996\u64ad\uff0c\u83b7\u5f97\u4e86\u5f88\u9ad8\u7684\u8bc4\u4ef7\u3002\u6b64\u5916\uff0c\u8be5\u5267\u5df2\u7ecf\u5728\u4e00\u4e9b\u6d77\u5916\u5e02\u573a\u4e0a\u64ad\u51fa\uff0c\u4e5f\u83b7\u5f97\u4e86\u597d\u8bc4\u3002\u5efa\u8bae\u60a8\u4e00\u5b9a\u8981\u770b\u4e00\u770b\u3002"
     }
   ],
   "search": [
