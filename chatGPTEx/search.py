@@ -24,9 +24,13 @@ for i in range(0,10):
     else:
         break
 print(openAIAPIKeys)
-chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=20)
+chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1)
 chatbot.load(program_dir+'/chatHistory.json')
 max_token = 1000
+APICallList = []
+hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Summarize our dialogs…"}]},ensure_ascii=False))
+hint_recall_dialog = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Recall our dialogs…"}]},ensure_ascii=False))
+hint_api_finished = json.loads(json.dumps({"calls":[{"API":"System","query":"API calls finished"}]},ensure_ascii=False))
 def chatReplyProcess(prompt):
     return chatbot.ask_stream_copy(prompt)
 def load_history(conv_id = 'default'):
@@ -40,8 +44,10 @@ def detail_old(query):
     result  = SumReply(query, str(Sum0) + str(Sum1))
     return result
 def detail(query,conv_id = 'default'):
+    global APICallList
     if chatbot.token_cost(conv_id) > max_token:
         chatbot.conversation_summary(convo_id=conv_id)
+        APICallList.append(hint_dialog_sum)
     call_res0 = search(APIQuery(query),1000)
     print(f'API calls response:\n {call_res0}')
     call_res1 = search(APIExtraQuery(query,call_res0),1000)
@@ -49,10 +55,16 @@ def detail(query,conv_id = 'default'):
     result  = SumReply(query, str(call_res0) + str(call_res1),max_token=2000,conv_id=conv_id)
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def web(query,conv_id = 'default'):
-    chatbot.conversation_summary(convo_id=conv_id)
+    global APICallList
+    
+    if chatbot.token_cost(conv_id) > max_token:
+        chatbot.conversation_summary(convo_id=conv_id)
+        APICallList.append(hint_dialog_sum)
+    APICallList.append(hint_recall_dialog)
     resp = directQuery(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', conv_id=  conv_id)
     apir = APIQuery(query,resp=resp)
-    call_res0 = search(apir,2000)
+    call_res0 = search(apir,1600)
+    APICallList.append(hint_api_finished)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}' ,str(call_res0),max_token=2000, conv_id=conv_id)
     chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-4]
@@ -61,10 +73,13 @@ def web(query,conv_id = 'default'):
     chatbot.save(program_dir+'/chatHistory.json')
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def webDirect(query,conv_id = 'default'):
+    global APICallList
     if chatbot.token_cost(conv_id) > max_token:
         chatbot.conversation_summary(convo_id=conv_id)
+        APICallList.append(hint_dialog_sum)
     apir = APIQuery(query)
-    call_res0 = search(apir,2000)
+    call_res0 = search(apir,1600)
+    APICallList.append(hint_api_finished)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'{query}', str(call_res0), conv_id=conv_id)
     chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
@@ -73,20 +88,23 @@ def webDirect(query,conv_id = 'default'):
     chatbot.save(program_dir+'/chatHistory.json')
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def WebKeyWord(query,conv_id = 'default'):
+    global APICallList
     if chatbot.token_cost(conv_id) > max_token:
         chatbot.conversation_summary(convo_id=conv_id)
+        APICallList.append(hint_dialog_sum)
     q = chatbot.ask(
                 f'Given a user prompt "{query}", respond with "none" if it is directed at the chatbot or cannot be answered by an internet search. Otherwise, provide a concise search query for a search engine. Avoid adding any additional text to the response to minimize token cost.',
                 convo_id="search",
                 temperature=0.0,
             ).strip()
-    print("Searching for: ", query, "")
-    if query == "none":
+    print("Searching for: ", q, "")
+    if q == "none":
         search_results = '{"results": "No search results"}'
     else:
+        APICallList.append(json.loads(json.dumps({"calls":[{"API":"ddg-api","query":"Searching for:' + q + '"}]})))
         search_results = requests.post(
             url="https://ddg-api.herokuapp.com/search",
-            json={"query": query, "limit": 4},
+            json={"query": q, "limit": 4},
             timeout=10,
         ).text
     search_res = json.dumps(json.loads(search_results), indent=4,ensure_ascii=False)
@@ -95,6 +113,7 @@ def WebKeyWord(query,conv_id = 'default'):
         "system",
         convo_id=conv_id,
     )
+    APICallList.append(hint_answer_generating)
     result = chatbot.ask(query, "user", convo_id=conv_id)
     chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
@@ -103,6 +122,8 @@ def WebKeyWord(query,conv_id = 'default'):
     print(result)
     return result +'\n\n token_cost: '+ str(chatbot.token_cost())
 def directQuery(query,conv_id = 'default'):
+    global APICallList
+    APICallList.append(hint_answer_generating)
     response = chatbot.ask(query)
     print(f'Direct Query: {query}\nChatGpt: {response}')
     return response +'\n\n token_cost: '+ str(chatbot.token_cost())
@@ -116,10 +137,12 @@ def APIQuery(query,resp =''):
     response =  chatbot.ask(prompt,convo_id='api')
     pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
     match = re.search(pattern, response)
+    global APICallList
     if match:
         json_data = match.group(1)
         result = json.loads(json_data)
         print(f'API calls: {result}\n')
+        APICallList.append(result)
         return result
     return json.loads("{\"calls\":[]}")
 def APIExtraQuery(query,callResponse):
@@ -131,13 +154,18 @@ def APIExtraQuery(query,callResponse):
     response = chatbot.ask(prompt,convo_id='api')
     pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
     match = re.search(pattern, response)
+    global APICallList
     if match:
         json_data = match.group(1)
         result = json.loads(json_data)
+        APICallList.append(result)
         print(f'API calls: {result}\n')
         return result
     return json.loads("{\"calls\":[]}")
+hint_answer_generating = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Generating answers for you…"}]}))
 def SumReply(query, apicalls, max_token=2000, conv_id = 'default'):
+    global APICallList
+    APICallList.append(hint_answer_generating)
     with open(program_dir+"/prompts/ReplySum.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     apicalls = str(apicalls)

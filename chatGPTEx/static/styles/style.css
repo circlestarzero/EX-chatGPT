@@ -97,6 +97,28 @@ body {
   border-radius: 15px;
   background: var(--left-msg-bg);
 }
+.msg-api{
+  padding-bottom: 10px;
+  padding-left: 63px;
+  max-width: 80%;
+  background: transparent;
+  animation-name: fade-in;
+  animation-duration: 1s;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.check-img{
+  width: 20px;
+  height: 20px;
+  padding-top: 4px;
+  margin-right: 10px;
+}
 .msg-info {
   display: flex;
   justify-content: space-between;

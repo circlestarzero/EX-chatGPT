@@ -11,82 +11,111 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/prism.css') }}">
   <script src="{{ url_for('static', filename='styles/prism.js') }}"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async
-          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
   </script>
 </head>
-<body>
-  
-  <!-- partial:index.partial.html -->
-  <div class = "container">
-  <div class="sidebar">
-		<h2>Chat History</h2>
-		<ul>
-			<li>2023-3-7-12</li>
-			<li>2023-3-6-17</li>
-		</ul>
-	</div>
-  <section class="msger">
-    <header class="msger-header">
-      <div class="msger-header-title">
-        🤖️EXChatGPT Model: <span> </span>GPT3.5-Turbo
-      </div>
-    </header>
 
-    <main class="msger-chat">
-      <div class="msg left-msg">
-        <div class="msg-img" style="background-image: url(static/styles/ChatGPT_logo.png)"></div>
-        <div class="msg-bubble">
-          <div class="msg-info">
-            <div class="msg-info-name">EXChatGPT</div>
-            <div class="msg-info-time"></div>
-          </div>
-          <div class="msg-text">
-            Hello, I'm EXChatGPT, what can I help you?😄
+<body>
+
+  <!-- partial:index.partial.html -->
+  <div class="container">
+    <div class="sidebar">
+      <h2>Chat History</h2>
+      <ul>
+        <li>2023-3-7-12</li>
+        <li>2023-3-6-17</li>
+      </ul>
+    </div>
+    <section class="msger">
+      <header class="msger-header">
+        <div class="msger-header-title">
+          🤖️EXChatGPT Model: <span> </span>GPT3.5-Turbo
+        </div>
+      </header>
+
+      <main class="msger-chat">
+        <div class="msg left-msg">
+          <div class="msg-img" style="background-image: url(static/styles/ChatGPT_logo.png)"></div>
+          <div class="msg-bubble">
+            <div class="msg-info">
+              <div class="msg-info-name">EXChatGPT</div>
+              <div class="msg-info-time"></div>
+            </div>
+            <div class="msg-text">
+              Hello, I'm EXChatGPT, what can I help you?😄
+            </div>
           </div>
         </div>
-      </div>
-    </main>
-  </section>
-</div>
-<div class="row">
-  <div class="col col-first">
-  <form>
-    <select class="mode-selection" id="mode" name="mode">
-      <option value="web">web</option>
-      <option value="chat">chat</option>
-      <option value="WebKeyWord">WebKeyWord</option>
-      <option value="webDirect">webDirect</option>
-      <option value="detail">detail</option>
-    </select>
-    <br>
-  </form>
+      </main>
+    </section>
   </div>
-  <!-- <div clas="col">
+  <div class="row">
+    <div class="col col-first">
+      <form>
+        <select class="mode-selection" id="mode" name="mode">
+          <option value="web">web</option>
+          <option value="chat">chat</option>
+          <option value="WebKeyWord">WebKeyWord</option>
+          <option value="webDirect">webDirect</option>
+          <option value="detail">detail</option>
+        </select>
+        <br>
+      </form>
+    </div>
+    <!-- <div clas="col">
     <button class="save-hisotry" onclick="saveHistory()">Save<br>History</button>
   </div> -->
-  <div class= "col">
-  <form class="msger-inputarea">
-    <input type="text" class="msger-input" id="textInput" placeholder="...">
-    <button type="submit" class="msger-send-btn">↵</button>
-  </form>
+    <div class="col">
+      <form class="msger-inputarea">
+        <input type="text" class="msger-input" id="textInput" placeholder="...">
+        <button type="submit" class="msger-send-btn">↵</button>
+      </form>
+    </div>
   </div>
-</div>
   <!-- partial -->
+
   <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
   <script>
+    
     const msgerForm = get(".msger-inputarea");
     const msgerInput = get(".msger-input");
     const msgerChat = get(".msger-chat");
+    const msger = get(".msger");
 
     // Icons made by Freepik from www.flaticon.com
     const BOT_IMG = "static/styles/ChatGPT_logo.png";
     const PERSON_IMG = "static/styles/person.jpg";
     const BOT_NAME = "EXChatGPT";
     const PERSON_NAME = "You";
+    const CHECK_IMG = "static/styles/check.png";
     window.onload = () => {
       loadHistory();
     };
+    function appendAPIresults(name, img, side, text) {
+      //   Simple solution for small apps
+      const msgHTML = `
+    <div class="msg-api">
+      <div class="msg-text"><img class="check-img" src="${CHECK_IMG}" alt="Check mark"><b>${name}: </b>${text}</div>
+    </div>
+`;
+      msgerChat.insertAdjacentHTML("beforeend", msgHTML);
+      msger.scrollTop = msger.scrollHeight;
+    }
+    function fetchData() {
+      fetch('/APIProcess')
+        .then(response => response.json())
+        .then(data => {
+          if (data.hasOwnProperty('calls')){
+            console.log(data)
+            data.calls.forEach(message => {
+              appendAPIresults(message.API, BOT_IMG , 'left', message.query);
+              msger.scrollTop = msger.scrollHeight;
+            });
+          }
+        })
+        .catch(error => console.error(error));
+    }
+    setInterval(fetchData, 1000);
     msgerForm.addEventListener("submit", event => {
       event.preventDefault();
       const mode = document.getElementById("mode").value;
@@ -98,33 +127,28 @@
       botResponse(msgText, mode);
     });
     function loadHistory() {
-    // Fetch chat history from server
-    fetch('/history')
-      .then(response => response.json())
-      .then(data => {
+      // Fetch chat history from server
+      fetch('/history')
+        .then(response => response.json())
+        .then(data => {
           data.forEach(message => {
             appendHistoryMessage(message.name, message.img, message.side, message.text, message.mode);
-            
-            
-        }); 
-        Prism.highlightAll();
-        const script1 = document.createElement("script");
-            script1.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
-            document.body.appendChild(script1);
-        const script2 = document.createElement("script");
-        script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
-        document.body.appendChild(script2);
-        window.MathJax = {
-        tex: {
-          inlineMath: [['$', '$'], ['\\(', '\\)']]
-        }
-        };
-          
-      })
-      .catch(err => console.error(err));
-      
-  }
-
+          });
+          Prism.highlightAll();
+          const script1 = document.createElement("script");
+          script1.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
+          document.body.appendChild(script1);
+          const script2 = document.createElement("script");
+          script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+          document.body.appendChild(script2);
+          window.MathJax = {
+            tex: {
+              inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+          };
+        })
+        .catch(err => console.error(err));
+    }
     function appendMessage(name, img, side, text, mode) {
       //   Simple solution for small apps
       const msgHTML = `
@@ -143,8 +167,7 @@
 </div>
 `;
       msgerChat.insertAdjacentHTML("beforeend", msgHTML);
-      msgerChat.scrollTop += 500;
-      
+      msger.scrollTop = msger.scrollHeight;
     }
     function appendHistoryMessage(name, img, side, text, mode) {
       //   Simple solution for small apps
@@ -162,9 +185,9 @@
 </div>
 `;
       msgerChat.insertAdjacentHTML("beforeend", msgHTML);
-      msgerChat.scrollTop += 500;
+      msger.scrollTop = msger.scrollHeight;
     }
-    function botResponse(rawText,mode) {
+    function botResponse(rawText, mode) {
       // Bot Response
       $.get("/get", { mode: mode, msg: rawText }).done(function (data) {
         console.log(rawText);
@@ -179,11 +202,11 @@
         script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
         document.body.appendChild(script2);
         window.MathJax = {
-        tex: {
-          inlineMath: [['$', '$'], ['\\(', '\\)']]
-        }
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+          }
         };
-        });
+      });
     }
     // Utils
     function get(selector, root = document) {
@@ -212,4 +235,5 @@
     // };
   </script>
 </body>
+
 </html>

@@ -1,7 +1,7 @@
 import json
 import datetime
 from flask import Flask, render_template, request
-from search import directQuery,web,detail,webDirect,WebKeyWord,load_history
+from search import directQuery,web,detail,webDirect,WebKeyWord,load_history,APICallList
 from markdown_it import MarkdownIt
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import MarkdownConverter
@@ -51,6 +51,16 @@ def send_history():
         else:
             msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content']), 'mode': ''})
     return json.dumps(msgs,ensure_ascii=False)
+lastAPICallListLength = len(APICallList)
+@app.route("/APIProcess")
+def APIProcess():
+    global lastAPICallListLength
+    if len(APICallList) > lastAPICallListLength:
+        lastAPICallListLength +=1
+        print('233:'+json.dumps(APICallList[lastAPICallListLength-1],ensure_ascii=False))
+        return json.dumps(APICallList[lastAPICallListLength-1],ensure_ascii=False)
+    else:
+        return {}
 if __name__ == "__main__":
     app.config['JSON_AS_ASCII'] = False
     app.config['DEBUG'] = True

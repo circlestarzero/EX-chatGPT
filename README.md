@@ -17,6 +17,8 @@
 - 可显示使用的 Token 数量
 - openAI api key池
 - Markdown and MathJax 渲染
+- 调用API过程显示
+
 ## 安装
 
 ## Ex-chatGPT
