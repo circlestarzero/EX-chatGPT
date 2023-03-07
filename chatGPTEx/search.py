@@ -62,12 +62,13 @@ def web(query,conv_id = 'default'):
         APICallList.append(hint_dialog_sum)
     APICallList.append(hint_recall_dialog)
     resp = directQuery(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', conv_id=  conv_id)
+    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
     apir = APIQuery(query,resp=resp)
     call_res0 = search(apir,1600)
     APICallList.append(hint_api_finished)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}' ,str(call_res0),max_token=2000, conv_id=conv_id)
-    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-4]
+    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
     chatbot.conversation[conv_id].append({'role':'user','content':str(query)})
     chatbot.conversation[conv_id].append({'role':'assistant','content':str(result)})
     chatbot.save(program_dir+'/chatHistory.json')
@@ -123,6 +124,9 @@ def WebKeyWord(query,conv_id = 'default'):
     return result +'\n\n token_cost: '+ str(chatbot.token_cost())
 def directQuery(query,conv_id = 'default'):
     global APICallList
+    if chatbot.token_cost(conv_id) > max_token:
+        chatbot.conversation_summary(convo_id=conv_id)
+        APICallList.append(hint_dialog_sum)
     APICallList.append(hint_answer_generating)
     response = chatbot.ask(query)
     print(f'Direct Query: {query}\nChatGpt: {response}')
