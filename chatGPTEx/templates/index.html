@@ -100,7 +100,7 @@
     }
     setInterval(fetchData, 2000);
     //load History
-    var intervalId = setInterval(pollFunction, 1000);
+    var intervalId = setInterval(pollFunction, 200);
     function pollFunction() {
       var result = loadHistory();
       if (result !== null) {

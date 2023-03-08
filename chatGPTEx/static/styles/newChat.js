@@ -89,6 +89,7 @@ function NewChat(ChatName, uuid) {
     console.log(chatListText)
     chatListText.contentEditable = true;
     chatListText.focus = true;
+    chatListText.setAttribute('spellcheck') = false;
   });
   const chatListText = chatList.querySelector('.chat-list-text')
   chatListText.contentEditable = false;

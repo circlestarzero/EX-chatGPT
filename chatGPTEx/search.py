@@ -1,14 +1,12 @@
-import json
 from api_class import GoogleSearchAPI, WikiSearchAPI, WolframAPI
+from optimizeOpenAI import ExChatGPT,APICallList
 import threading 
 import json
 import re
 import configparser
 import os
-import os
 import requests
 import tiktoken
-from optimizeOpenAI import ExChatGPT
 ENCODER = tiktoken.get_encoding("gpt2")
 program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
@@ -25,23 +23,17 @@ for i in range(0,10):
         break
 print(openAIAPIKeys)
 chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1)
-if os.path.isfile(program_dir+'/chatLists.json'):
-    chatbot.load(program_dir+'/chatHistory.json')
-else:
-    chatbot.reset('default')
-    chatbot.save(program_dir+'/chatHistory.json')
+
 max_token = 1000
-APICallList = []
-hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Summarize our dialogs…"}]},ensure_ascii=False))
 hint_recall_dialog = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Recall our dialogs…"}]},ensure_ascii=False))
 hint_api_finished = json.loads(json.dumps({"calls":[{"API":"System","query":"API calls finished"}]},ensure_ascii=False))
 def chatReplyProcess(prompt):
     return chatbot.ask_stream_copy(prompt)
 def load_history(conv_id = 'default'):
-    if(conv_id not in chatbot.conversation):
+    if(conv_id not in chatbot.convo_history):
         chatbot.reset(conv_id)
         chatbot.save(program_dir+'/chatHistory.json')
-    return chatbot.conversation[conv_id]
+    return chatbot.convo_history[conv_id]
 def detail_old(query):
     call_res0 = search(APIQuery(query))
     Sum0 = Summary(query, call_res0)
@@ -52,57 +44,44 @@ def detail_old(query):
     return result
 def detail(query,conv_id = 'default'):
     global APICallList
-    if chatbot.token_cost(conv_id) > max_token:
-        chatbot.conversation_summary(convo_id=conv_id)
-        APICallList.append(hint_dialog_sum)
     call_res0 = search(APIQuery(query),1000)
     print(f'API calls response:\n {call_res0}')
     call_res1 = search(APIExtraQuery(query,call_res0),1000)
     print(f'API calls response:\n {call_res1}')
     result  = SumReply(query, str(call_res0) + str(call_res1),max_token=2000,conv_id=conv_id)
-    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
+    chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def web(query,conv_id = 'default'):
     global APICallList
-    
-    if chatbot.token_cost(conv_id) > max_token:
-        chatbot.conversation_summary(convo_id=conv_id)
-        APICallList.append(hint_dialog_sum)
     APICallList.append(hint_recall_dialog)
     resp = directQuery(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', conv_id=  conv_id)
-    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
+    chatbot.delete_last2_conversation(conv_id)
     apir = APIQuery(query,resp=resp)
     call_res0 = search(apir,1600)
     APICallList.append(hint_api_finished)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}' ,str(call_res0),max_token=2000, conv_id=conv_id)
-    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
-    chatbot.conversation[conv_id].append({'role':'user','content':str(query)})
-    chatbot.conversation[conv_id].append({'role':'assistant','content':str(result)})
+    chatbot.delete_last2_conversation(conv_id)
+    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
+    chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
     chatbot.save(program_dir+'/chatHistory.json')
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def webDirect(query,conv_id = 'default'):
     global APICallList
-    if chatbot.token_cost(conv_id) > max_token:
-        chatbot.conversation_summary(convo_id=conv_id)
-        APICallList.append(hint_dialog_sum)
     apir = APIQuery(query)
     call_res0 = search(apir,1600)
     APICallList.append(hint_api_finished)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'{query}', str(call_res0), conv_id=conv_id)
-    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
+    chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
     chatbot.save(program_dir+'/chatHistory.json')
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def WebKeyWord(query,conv_id = 'default'):
     global APICallList
-    if chatbot.token_cost(conv_id) > max_token:
-        chatbot.conversation_summary(convo_id=conv_id)
-        APICallList.append(hint_dialog_sum)
     q = chatbot.ask(
                 f'Given a user prompt "{query}", respond with "none" if it is directed at the chatbot or cannot be answered by an internet search. Otherwise, provide a concise search query for a search engine. Avoid adding any additional text to the response to minimize token cost.',
                 convo_id="search",
@@ -112,7 +91,7 @@ def WebKeyWord(query,conv_id = 'default'):
     if q == "none":
         search_results = '{"results": "No search results"}'
     else:
-        APICallList.append(json.loads(json.dumps({"calls":[{"API":"ddg-api","query":"Searching for:' + q + '"}]})))
+        APICallList.append(json.loads(json.dumps({"calls":[{"API":"ddg-api","query": "Searching for:" + q }]})))
         search_results = requests.post(
             url="https://ddg-api.herokuapp.com/search",
             json={"query": q, "limit": 4},
@@ -126,7 +105,7 @@ def WebKeyWord(query,conv_id = 'default'):
     )
     APICallList.append(hint_answer_generating)
     result = chatbot.ask(query, "user", convo_id=conv_id)
-    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
+    chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
     chatbot.save(program_dir+'/chatHistory.json')
@@ -134,9 +113,6 @@ def WebKeyWord(query,conv_id = 'default'):
     return result +'\n\n token_cost: '+ str(chatbot.token_cost())
 def directQuery(query,conv_id = 'default'):
     global APICallList
-    if chatbot.token_cost(conv_id) > max_token:
-        chatbot.conversation_summary(convo_id=conv_id)
-        APICallList.append(hint_dialog_sum)
     APICallList.append(hint_answer_generating)
     response = chatbot.ask(query)
     print(f'Direct Query: {query}\nChatGpt: {response}')

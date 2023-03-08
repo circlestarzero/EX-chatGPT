@@ -15,6 +15,10 @@ ENCODER = tiktoken.get_encoding("gpt2")
 program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
 apiTime = 20
+chatHistoryPath = program_dir+'/chatHistory.json'
+hint_token_exceed = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Shortening your query since exceeding token limits..."}]},ensure_ascii=False))
+hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Auto summarizing our dialogs to save tokens…"}]},ensure_ascii=False))
+APICallList = []
 class ExChatGPT:
     """
     Official ChatGPT API
@@ -32,9 +36,14 @@ class ExChatGPT:
         lastAPICallTime = time.time()-100,
         apiTimeInterval = 20,
     ) -> None:
-        """
-        Initialize Chatbot with API key (from https://platform.openai.com/account/api-keys)
-        """
+        self.convo_history = {}
+        if os.path.isfile(chatHistoryPath):
+            self.load(chatHistoryPath)
+        else:
+            self.reset('default')
+            self.save(chatHistoryPath)
+        with open(chatHistoryPath,'r',encoding="utf-8") as f:
+            self.convo_history = json.load(f)
         self.apiTimeInterval = apiTimeInterval
         self.engine = engine or ENGINE
         self.session = requests.Session()
@@ -61,7 +70,7 @@ class ExChatGPT:
         self.temperature = temperature
         self.top_p = top_p
         self.reply_count = reply_count
-
+        self.decrease_step = 250
         initial_conversation = "\n".join(
             [x["content"] for x in self.conversation["default"]],
         )
@@ -72,23 +81,32 @@ class ExChatGPT:
         Add a message to the conversation
         """
         self.conversation[convo_id].append({"role": role, "content": message})
-
+        self.convo_history[convo_id].append({"role": role, "content": message})
+        self.save(chatHistoryPath)
     def __truncate_conversation(self, convo_id: str = "default"):
         """
         Truncate the conversation
         """
+        query = self.conversation[convo_id][-1]
+        self.conversation[convo_id] = self.conversation[convo_id][:-1]
+        full_conversation = "\n".join([x["content"] for x in self.conversation[convo_id][:-1]],)
+        if len(ENCODER.encode(full_conversation)) > self.max_tokens:
+            self.conversation_summary(convo_id=convo_id)
+        self.conversation[convo_id].append(query)
+        flag = True
         while True:
             full_conversation = "\n".join(
-                [x["content"] for x in self.conversation[convo_id]],
+                [x["content"] for x in self.conversation[convo_id][:-1]],
             )
-            if (
-                len(ENCODER.encode(full_conversation)) > self.max_tokens
-                and len(self.conversation[convo_id]) > 1
-            ):
-                # Don't remove the first message
-                self.conversation[convo_id].pop(1)
+            if (len(ENCODER.encode(full_conversation)) > self.max_tokens):
+                if flag==False:
+                    APICallList.append(hint_token_exceed)
+                flag = True
+                self.conversation[convo_id][1] = self.conversation[convo_id][1][:-self.decrease_step]
+                self.convo_history[convo_id][-1] = self.convo_history[convo_id][-1][:-self.decrease_step]
             else:
                 break
+        
     def ask_stream_copy(
         self,
         prompt: str,
@@ -204,7 +222,6 @@ class ExChatGPT:
             **kwargs,
         )
         full_response: str = "".join(response)
-        self.save(program_dir+"/chatHistory.json")
         return full_response
     def rollback(self, n: int = 1, convo_id: str = "default"):
         """
@@ -220,21 +237,21 @@ class ExChatGPT:
         self.conversation[convo_id] = [
             {"role": "system", "content": system_prompt or self.system_prompt},
         ]
+        self.convo_history[convo_id] = [{"role": "system", "content": system_prompt or self.system_prompt}]
     def save(self, file: str, *convo_ids: str):
-        """
-        Save the conversation to a JSON file
-        """
         try:
             with open(file, "w", encoding="utf-8") as f:
                 if convo_ids:
-                    json.dump({k: self.conversation[k] for k in convo_ids}, f, indent=2)
+                    json.dump({k: self.convo_history[k] for k in convo_ids}, f, indent=2)
                 else:
-                    json.dump(self.conversation, f, indent=2)
+                    json.dump(self.convo_history, f, indent=2,ensure_ascii=False)
         except (FileNotFoundError, KeyError):
             return False
         return True
         # print(f"Error: {file} could not be created")
     def conversation_summary(self, convo_id: str = "default"):
+        global APICallList
+        APICallList.append(hint_dialog_sum)
         input = ""
         role = ""
         for conv in self.conversation[convo_id]:
@@ -252,8 +269,13 @@ class ExChatGPT:
             {"role": "user", "content": "Summariaze our diaglog"},
             {"role": 'assistant', "content": response},
         ]
-        self.save(program_dir+"/chatHistory.json")
         return self.conversation[convo_id]
+    def delete_last2_conversation(self, convo_id: str = "default"):
+        self.conversation[convo_id].pop()
+        self.conversation[convo_id].pop()
+        self.convo_history[convo_id].pop()
+        self.convo_history[convo_id].pop()
+        self.save(chatHistoryPath)
     def summarize_last_message(self, convo_id: str = "default"):
         last_message = self.conversation[convo_id][-1]["content"]
     def token_cost(self,convo_id: str = "default"):
