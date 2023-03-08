@@ -9,6 +9,7 @@ import time
 import requests
 import tiktoken
 import datetime
+from typing import Generator
 from queue import PriorityQueue as PQ
 ENGINE = os.environ.get("GPT_ENGINE") or "gpt-3.5-turbo"
 ENCODER = tiktoken.get_encoding("gpt2")
@@ -154,7 +155,7 @@ class ExChatGPT:
         role: str = "user",
         convo_id: str = "default",
         **kwargs,
-    ) -> str:
+    ) -> Generator:
         """
         Ask a question
         """

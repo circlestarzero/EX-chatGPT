@@ -16,6 +16,8 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 - openAI API keys pool to accelerate
 - Markdown and MathJax renderer
 - New Bing like API processing and animation
+- chat history auto saving and loading like chatGPT
+- shortcut keys for quick mode selection using `Tab` and sending messages using `Shift+Enter`.
 
 ## Installation
 
@@ -44,6 +46,7 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- Update shortcut keys for quick mode selection using `Tab` and sending messages using `Shift+Enter`.
 - update history chat management sidebar
 ![chatHistory](img/chatHistory.png)
 - update API calls processing animation

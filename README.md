@@ -18,6 +18,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 - Markdown and MathJax 渲染
 - 调用API过程显示动画, 类似必应
 - 历史对话管理载入,类chatgpt页面布局
+- 快捷键快速选择模式`Tab`和发送`Shift+Enter`
 
 ## 安装
 
@@ -42,8 +43,10 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
   - `wolframAlpha` needs to run local sever - `WebChatGPTAPI/WolframLocalServer.py`
 
 ## 更新日志
+
 - 支持 OpenAI GPT-3.5 Turbo API，快速且价格低廉
 - 额外的 API 调用和搜索摘要，以提供更全面和详细的答案
+- 更新捷键快速选择模式`Tab`和发送`Shift+Enter`
 - 更新历史对话管理,支持载入删除保存历史对话
 ![chatHistory](img/chatHistory.png)
 - update API calls processing animation
