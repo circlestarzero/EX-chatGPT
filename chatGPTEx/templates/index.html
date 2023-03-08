@@ -222,6 +222,7 @@
       if (event.key == 'Tab') {
         event.preventDefault();
         selectNextMode();
+        updateSelectWidth();
       }
     });
     textarea.style.height = '45px';
@@ -236,6 +237,14 @@
         textarea.style.height = `${textarea.scrollHeight + 5}px`;
       }
     });
+    const select = document.getElementById('mode');
+    function updateSelectWidth() {
+      const selectedOption = select.options[select.selectedIndex];
+      const selectedOptionWidth = selectedOption.text.length*9+7;
+      select.style.width = selectedOptionWidth + 'px';
+    }
+    updateSelectWidth();
+    select.addEventListener('change', updateSelectWidth);
   </script>
   <script src="{{ url_for('static', filename='styles/newChat.js') }}"></script>
 </body>

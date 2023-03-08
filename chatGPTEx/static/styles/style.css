@@ -217,7 +217,8 @@ select#mode {
   align-content: center;
   border: none;
   padding: 5px;
-  width: 3em;
+  width: 2em;
+  font-optical-sizing: auto;
   font-size: 1em;
   border-radius: 5px;
   -webkit-appearance: none;
@@ -456,7 +457,7 @@ span.token.lf{
   visibility: hidden!important;
 }
 textarea{
-  padding-left: 10px;
+  padding-left: 2px;
   padding-top: 10px;
   padding-bottom: 10px;
   vertical-align:middle;
