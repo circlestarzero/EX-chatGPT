@@ -92,16 +92,17 @@ function NewChat(ChatName, uuid) {
   });
   const chatListText = chatList.querySelector('.chat-list-text')
   chatListText.contentEditable = false;
-  chatListText.addEventListener('blur', function () {
+  chatList.addEventListener('blur', function () {
     chatListText.contentEditable = false;
   });
   chatList.addEventListener('click', function () {
     chatListParent = chatList.parentNode;
     if (chatListParent) {
+      if(chatListParent.firstElementChild == chatList) return;
       chatListParent.insertBefore(chatList, chatListParent.firstElementChild);
+      loadHistory();
+      setChatLists();
     }
-    loadHistory();
-    setChatLists();
   });
 }
 newChatBtn.addEventListener("click", function () {
