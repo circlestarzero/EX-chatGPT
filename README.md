@@ -7,8 +7,15 @@
 ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮助回答。而 Ex-ChatGPT 使得 ChatGPT 能够自己调用外部 API，例如 WolframAlpha 和 Google, WikiMedia，从而给出更准确且具有时效性的回答。
 
 本项目分为 Ex-ChatGPT 和 WebChatGPTEnhance，前者是使用 ChatGPT API 的服务，后者是浏览器插件,支持chatgpt网页调用不同api和propmts。
+
+### ExChatGPT
+
 ![chatHistory](img/newPage.jpg)
+
+### WebChatGPTEnhance
+
 ![WebChatGPT](img/chatGPTChromeEnhance.png)
+
 ## Highlights
 
 - docker 和 proxy 支持
@@ -26,7 +33,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 
 ## 安装
 
-## Ex-chatGPT
+## Ex-chatGPT Installation
 
 - `pip install`
 `pip install -r requirements.txt`
@@ -37,7 +44,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 - 运行 `main.py` 并打开 `http://127.0.0.1:1234/`
 - 调整模式，例如 `chat,detail,web,webDirect,WebKeyWord`
 
-## WebChatGPTEnhance
+## WebChatGPTEnhance Installation
 
 - 在 `chatGPTChromeEhance/src/util/apiManager.ts/getDefaultAPI` 中填入 Google API 信息
 - 运行 `npm install`
