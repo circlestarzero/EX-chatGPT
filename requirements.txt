@@ -1,7 +1,0 @@
-fastapi==0.93.0
-Flask==2.0.2
-fuzzywuzzy==0.18.0
-requests==2.26.0
-tiktoken==0.2.0
-uvicorn==0.20.0
-xpinyin==0.7.6

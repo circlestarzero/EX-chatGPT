@@ -21,6 +21,8 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 - New Bing like API processing and animation
 - chat history auto saving and loading like chatGPT
 - Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.`up`,`down` to select previously sent messages, similar to terminal.
+- Auto-complete selection for prompt in chat mode, supporting fuzzy search and Pinyin search.
+![promptCompletion](img/promptCompletion.gif)
 
 ## Installation
 
@@ -47,6 +49,8 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 
 ## Update Log
 
+- Auto-complete selection for prompt in chat mode, supporting fuzzy search and Pinyin search.
+![promptCompletion](img/promptCompletion.gif)
 - update docker and proxy support
 - Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.`up`,`down` to select previously sent messages, similar to terminal.
 - update history chat management sidebar

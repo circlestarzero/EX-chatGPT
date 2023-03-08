@@ -13,15 +13,16 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 
 - docker 和 proxy 支持
 - 支持 OpenAI GPT-3.5 Turbo API
-- 允许 ChatGPT 调用外部 API 接口
-- 可以使用 GPT-3.5 将外部接口返回的内容进行总结
-- 自动保存载入对话历史，ChatGPT 可联系之前对话
-- 可显示使用的 Token 数量
-- openAI api key池
-- Markdown and MathJax 渲染
-- 调用API过程显示动画, 类似必应
-- 历史对话管理载入,类chatgpt页面布局
-- 快捷键快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送, `up`,`down`选择历史发送消息,类似终端
+- 允许 ChatGPT 调用外部 API 接口(**Google,WolframAlpha,WikiMedia**)
+- 自动保存载入对话历史，**自动压缩对话**
+- **可显示使用的 Token 数量**
+- **openAI api key池**
+- **Markdown and MathJax** 渲染
+- 调用**API过程显示动画**, 类似必应
+- **历史对话管理**载入,类chatgpt页面布局
+- **快捷键**快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送, `up`,`down`选择历史发送消息,类似终端
+- chat模式下**prompt自动补全**选择,支持模糊搜索, 拼音搜索, 支持自定义prompt
+![promptCompletion](img/promptCompletion.gif)
 
 ## 安装
 
@@ -48,6 +49,8 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 
 ## 更新日志
 
+- chat模式下prompt自动补全选择,支持模糊搜索, 拼音搜索
+![promptCompletion](img/promptCompletion.gif)
 - update docker 和 proxy 支持
 - 支持 OpenAI GPT-3.5 Turbo API，快速且价格低廉
 - 额外的 API 调用和搜索摘要，以提供更全面和详细的答案
