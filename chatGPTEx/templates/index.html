@@ -11,8 +11,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/prism.css') }}">
   <script src="{{ url_for('static', filename='styles/prism.js') }}"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
 <body>
@@ -54,6 +53,7 @@
           </form>
         </div>
         <div class="col">
+          <div id="autocomplete"></div>
           <form class="msger-inputarea">
             <textarea type="text" class="msger-input" id="textInput" placeholder="..."></textarea>
             <button type="submit" class="msger-send-btn">↵</button>
@@ -230,7 +230,7 @@
       } else if (event.key == 'Enter') {
         event.preventDefault();
         submit();
-        currentMessageIndex=0;
+        currentMessageIndex = 0;
       }
       if (event.key == 'Tab') {
         event.preventDefault();
@@ -238,19 +238,19 @@
         updateSelectWidth();
       }
       if (event.key === "ArrowUp") {
-        if (messageHistory.length > 0 && currentMessageIndex >=0) {
+        if (messageHistory.length > 0 && currentMessageIndex >= 0) {
           event.preventDefault();
           msgerInput.value = messageHistory[currentMessageIndex];
           currentMessageIndex++;
-          currentMessageIndex = currentMessageIndex%messageHistory.length;
+          currentMessageIndex = currentMessageIndex % messageHistory.length;
         }
-      }else if (event.key === "ArrowDown") {
-        if (messageHistory.length > 0 && currentMessageIndex >=0 && currentMessageIndex < messageHistory.length) {
+      } else if (event.key === "ArrowDown") {
+        if (messageHistory.length > 0 && currentMessageIndex >= 0 && currentMessageIndex < messageHistory.length) {
           event.preventDefault();
           msgerInput.value = messageHistory[currentMessageIndex];
-          currentMessageIndex = (currentMessageIndex + messageHistory.length -1)%messageHistory.length;
+          currentMessageIndex = (currentMessageIndex + messageHistory.length - 1) % messageHistory.length;
         }
-    }
+      }
     });
     textarea.style.height = '45px';
     textarea.style.paddingTop = '10px';
