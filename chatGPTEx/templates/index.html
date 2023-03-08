@@ -133,6 +133,7 @@
     function submit() {
       const mode = document.getElementById("mode").value;
       const msgText = msgerInput.value;
+      messageHistory.unshift(msgText);
       const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
       if (!msgText) return;
       console.log(msgText)
@@ -214,30 +215,48 @@
         modeSelect.selectedIndex = 0; // wrap around to the first option
       }
     }
+    let messageHistory = []; // array to store sent messages
+    messageHistory.unshift('');
+    let currentMessageIndex = 0;
     textarea.addEventListener('keydown', (event) => {
       if (event.shiftKey && event.key == 'Enter') {
-        const cursorPos = this.selectionStart;
-        const currentValue = this.value;
-        const newValue = currentValue.substring(0, cursorPos) + '\n' + currentValue.substring(this.selectionEnd);
-        this.value = newValue;
-        this.selectionStart = cursorPos + 1;
-        this.selectionEnd = cursorPos + 1;
+        const cursorPos = msgerInput.selectionStart;
+        const currentValue = msgerInput.value;
+        const newValue = currentValue.substring(0, cursorPos) + '\n' + currentValue.substring(msgerInput.selectionEnd);
+        msgerInput.value = newValue;
+        msgerInput.selectionStart = cursorPos + 1;
+        msgerInput.selectionEnd = cursorPos + 1;
         event.preventDefault();
       } else if (event.key == 'Enter') {
         event.preventDefault();
         submit();
+        currentMessageIndex=0;
       }
       if (event.key == 'Tab') {
         event.preventDefault();
         selectNextMode();
         updateSelectWidth();
       }
+      if (event.key === "ArrowUp") {
+        if (messageHistory.length > 0 && currentMessageIndex >=0) {
+          event.preventDefault();
+          msgerInput.value = messageHistory[currentMessageIndex];
+          currentMessageIndex++;
+          currentMessageIndex = currentMessageIndex%messageHistory.length;
+        }
+      }else if (event.key === "ArrowDown") {
+        if (messageHistory.length > 0 && currentMessageIndex >=0 && currentMessageIndex < messageHistory.length) {
+          event.preventDefault();
+          msgerInput.value = messageHistory[currentMessageIndex];
+          currentMessageIndex = (currentMessageIndex + messageHistory.length -1)%messageHistory.length;
+        }
+    }
     });
     textarea.style.height = '45px';
     textarea.style.paddingTop = '10px';
     textarea.addEventListener('input', () => {
       textarea.style.height = 'auto';
-      if (textarea.scrollHeight < 90) {
+      if (textarea.scrollHeight < 80) {
         textarea.style.height = '45px';
       } else if (textarea.scrollHeight > 400) {
         textarea.style.height = `400px`;
