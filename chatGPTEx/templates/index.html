@@ -215,7 +215,15 @@
       }
     }
     textarea.addEventListener('keydown', (event) => {
-      if (event.shiftKey && event.key === 'Enter') {
+      if (event.shiftKey && event.key == 'Enter') {
+        const cursorPos = this.selectionStart;
+        const currentValue = this.value;
+        const newValue = currentValue.substring(0, cursorPos) + '\n' + currentValue.substring(this.selectionEnd);
+        this.value = newValue;
+        this.selectionStart = cursorPos + 1;
+        this.selectionEnd = cursorPos + 1;
+        event.preventDefault();
+      } else if (event.key == 'Enter') {
         event.preventDefault();
         submit();
       }
@@ -240,7 +248,7 @@
     const select = document.getElementById('mode');
     function updateSelectWidth() {
       const selectedOption = select.options[select.selectedIndex];
-      const selectedOptionWidth = selectedOption.text.length*9+7;
+      const selectedOptionWidth = selectedOption.text.length * 9 + 7;
       select.style.width = selectedOptionWidth + 'px';
     }
     updateSelectWidth();
