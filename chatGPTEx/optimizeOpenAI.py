@@ -26,8 +26,8 @@ class ExChatGPT:
     def __init__(
         self,
         api_keys: list,
-        engine: str = None,
-        proxy: str = None,
+        engine = None,
+        proxy = None,
         max_tokens: int = 3000,
         temperature: float = 0.5,
         top_p: float = 1.0,
@@ -188,7 +188,7 @@ class ExChatGPT:
             raise Exception(
                 f"Error: {response.status_code} {response.reason} {response.text}",
             )
-        response_role: str = None
+        response_role: str = ""
         full_response: str = ""
         for line in response.iter_lines():
             if not line:
@@ -230,14 +230,14 @@ class ExChatGPT:
         for _ in range(n):
             self.conversation[convo_id].pop()
 
-    def reset(self, convo_id: str = "default", system_prompt: str = None):
+    def reset(self, convo_id: str = "default", system_prompt = None):
         """
         Reset the conversation
         """
         self.conversation[convo_id] = [
-            {"role": "system", "content": system_prompt or self.system_prompt},
+            {"role": "system", "content": str(system_prompt or self.system_prompt)},
         ]
-        self.convo_history[convo_id] = [{"role": "system", "content": system_prompt or self.system_prompt}]
+        self.convo_history[convo_id] = [{"role": "system", "content": str(system_prompt or self.system_prompt)}]
     def save(self, file: str, *convo_ids: str):
         try:
             with open(file, "w", encoding="utf-8") as f:
