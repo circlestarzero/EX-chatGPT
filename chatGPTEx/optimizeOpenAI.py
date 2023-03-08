@@ -111,8 +111,6 @@ class ExChatGPT:
                 [x["content"] for x in self.conversation[convo_id][:-1]],
             )
             if (len(ENCODER.encode(full_conversation)) > self.max_tokens):
-                if flag==False:
-                    APICallList.append(hint_token_exceed)
                 flag = True
                 self.conversation[convo_id][1] = self.conversation[convo_id][1][:-self.decrease_step]
                 self.convo_history[convo_id][-1] = self.convo_history[convo_id][-1][:-self.decrease_step]

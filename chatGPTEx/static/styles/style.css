@@ -228,7 +228,29 @@ select#mode {
   height: 2.5em;
 }
 
-select#mode:hover, select#mode:focus {
+select#prompt:hover, select#prompt:focus {
+  background-color: #f5cae6;
+  outline: none;
+}
+select#prompt {
+  font-family: monospace;
+  color: white;
+  background-color: transparent;
+  align-content: center;
+  border: none;
+  padding: 5px;
+  width: 2em;
+  font-optical-sizing: auto;
+  font-size: 1em;
+  border-radius: 5px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-repeat: no-repeat;
+  height: 2.5em;
+}
+
+select#prompt:hover, select#prompt:focus {
   background-color: #f5cae6;
   outline: none;
 }
@@ -510,5 +532,8 @@ textarea{
 .dark ::-webkit-scrollbar-thumb:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(172,172,190,var(--tw-bg-opacity))
+}
+select#prompt{
+  display: none;
 }
 

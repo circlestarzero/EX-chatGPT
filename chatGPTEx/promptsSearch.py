@@ -9,11 +9,15 @@ program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
 json_file_path = program_dir+'/prompts/prompts.json'
 name_list = []
+promptsJSON = {}
+promptsDict = {}
 with open(json_file_path, 'r', encoding='utf-8') as f:
-        prompts = json.load(f)
-        for prompt in prompts:
+        promptsJSON = json.load(f)
+        for prompt in promptsJSON:
                 name_list.append(prompt['act'])
 pinlist=[]
+for prompt in promptsJSON:
+        promptsDict[prompt['act']] = prompt['prompt']
 pin =Pinyin()
 for i in name_list:
         pinlist.append([re.sub('-','',pin.get_pinyin(i)),i])
@@ -38,14 +42,15 @@ def SearchPrompt(name,resultLimit=7):
         finalResult.sort(reverse=True)
         finalResultList=[]
         cnt=0
+        print(finalResult)
         for res in finalResult:
+                if(res[0]<50): break
                 finalResultList.append(res[1])
                 cnt+=1
                 if cnt>=resultLimit:break
         return finalResultList
 if __name__ == '__main__':
-        print(SearchName('comedy'))
-                
+        print(SearchPrompt('英语ssss'))
 
 
  

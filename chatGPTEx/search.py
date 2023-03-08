@@ -111,10 +111,13 @@ def WebKeyWord(query,conv_id = 'default'):
     chatbot.save(program_dir+'/chatHistory.json')
     print(result)
     return result +'\n\n token_cost: '+ str(chatbot.token_cost())
-def directQuery(query,conv_id = 'default'):
+def directQuery(query,conv_id = 'default',prompt = ''):
     global APICallList
     APICallList.append(hint_answer_generating)
-    response = chatbot.ask(query,convo_id=conv_id)
+    response = chatbot.ask(prompt+'\n'+query,convo_id=conv_id)
+    chatbot.delete_last2_conversation(conv_id)
+    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
+    chatbot.add_to_conversation(str(response), "assistant", convo_id=conv_id)
     print(f'Direct Query: {query}\nChatGpt: {response}')
     return response +'\n\n token_cost: '+ str(chatbot.token_cost())
 def APIQuery(query,resp =''):

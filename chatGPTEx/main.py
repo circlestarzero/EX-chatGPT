@@ -1,7 +1,7 @@
 import json
 import datetime
 import os
-from promptsSearch import SearchPrompt
+from promptsSearch import SearchPrompt,promptsDict
 from markdown_it import MarkdownIt
 from flask import Flask, render_template, request
 from search import directQuery,web,detail,webDirect,WebKeyWord,load_history,APICallList
@@ -34,7 +34,17 @@ def get_bot_response():
     now = now.strftime("%Y-%m-%d %H:%M")
     if mode=="chat":
         q = str(userText)
-        res = parse_text(directQuery(q,conv_id=uuid))
+        promptName = str(request.args.get('prompt'))
+        if promptName != "":
+            if promptName in promptsDict:
+                prompt = promptsDict[promptName]
+            else:
+                prompt = str(SearchPrompt(promptName)[0])
+                print(prompt)
+                prompt = promptsDict[prompt]
+            res = parse_text(directQuery(q,conv_id=uuid,prompt=prompt))
+        else:
+            res = parse_text(directQuery(q,conv_id=uuid))
         return res
     elif mode == "web":
         q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
@@ -111,10 +121,12 @@ def set_chat_lists():
         json.dump(request.json,f,ensure_ascii=False)
         return 'ok'
     
-@app.route('api/promptsCompletion',methods=['get'])
+@app.route('/api/promptsCompletion',methods=['get'])
 def promptsCompletion():
     prompt = str(request.args.get('prompt'))
     res = json.dumps(SearchPrompt(prompt),ensure_ascii=False)
+    print(prompt)
+    print(res)
     return res
 
 if __name__ == "__main__":

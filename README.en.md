@@ -9,6 +9,7 @@ ChatGPT can act as a tool former without requiring adjustment, generating API re
 This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a service that uses the GPT3.5 Turbo API and Google,WolframAlpha,WikiMedia APIs, while the latter is a browser extension which update the origin WebChatGPT plugin to Enable adding external API, supportting ChatGPT webpage to call different APIs and prompts
 ![chatHistory](img/newPage.jpg)
 ![WebChatGPT](img/chatGPTChromeEnhance.png)
+
 ## Highlights
 
 - docker and proxy support
