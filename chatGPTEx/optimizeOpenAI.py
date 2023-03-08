@@ -20,6 +20,7 @@ chatHistoryPath = program_dir+'/chatHistory.json'
 hint_token_exceed = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Shortening your query since exceeding token limits..."}]},ensure_ascii=False))
 hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Auto summarizing our dialogs to save tokens…"}]},ensure_ascii=False))
 APICallList = []
+ExchatGPT_system_prompt = "You are ExChatGPT, a web-based large language model, Respond conversationally"
 class ExChatGPT:
     """
     Official ChatGPT API
@@ -62,11 +63,10 @@ class ExChatGPT:
             "default": [
                 {
                     "role": "system",
-                    "content": system_prompt,
+                    "content": ExchatGPT_system_prompt,
                 },
             ],
         }
-        self.system_prompt = system_prompt
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.top_p = top_p
@@ -120,7 +120,7 @@ class ExChatGPT:
         """
         # Make conversation if it doesn't exist
         if convo_id not in self.conversation:
-            self.reset(convo_id=convo_id, system_prompt=self.system_prompt)
+            self.reset(convo_id=convo_id)
         self.add_to_conversation(prompt, "user", convo_id=convo_id)
         self.__truncate_conversation(convo_id=convo_id)
         apiKey = self.api_keys.get()
@@ -161,7 +161,7 @@ class ExChatGPT:
         """
         # Make conversation if it doesn't exist
         if convo_id not in self.conversation:
-            self.reset(convo_id=convo_id, system_prompt=self.system_prompt)
+            self.reset(convo_id=convo_id)
         self.add_to_conversation(prompt, "user", convo_id=convo_id)
         self.__truncate_conversation(convo_id=convo_id)
         apiKey = self.api_keys.get()
@@ -236,9 +236,9 @@ class ExChatGPT:
         Reset the conversation
         """
         self.conversation[convo_id] = [
-            {"role": "system", "content": str(system_prompt or self.system_prompt)},
+            {"role": "system", "content": str(system_prompt or ExchatGPT_system_prompt)},
         ]
-        self.convo_history[convo_id] = [{"role": "system", "content": str(system_prompt or self.system_prompt)}]
+        self.convo_history[convo_id] = [{"role": "system", "content": str(system_prompt or ExchatGPT_system_prompt)}]
     def save(self, file: str, *convo_ids: str):
         try:
             with open(file, "w", encoding="utf-8") as f:
@@ -266,7 +266,7 @@ class ExChatGPT:
         prompt = prompt.replace("{conversation}", input)
         response = self.ask(prompt)
         self.conversation[convo_id] = [
-            {"role": "system", "content": self.system_prompt},
+            {"role": "system", "content": ExchatGPT_system_prompt},
             {"role": "user", "content": "Summariaze our diaglog"},
             {"role": 'assistant', "content": response},
         ]
