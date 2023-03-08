@@ -1,4 +1,4 @@
-fastapi==0.92.0
+fastapi==0.93.0
 Flask==2.0.2
 Markdown==3.3.4
 mdit_py_plugins==0.3.5
@@ -8,3 +8,7 @@ requests==2.26.0
 tiktoken==0.2.0
 uvicorn==0.20.0
 graiax-text2img-playwright==0.3.0
+python-Levenshtein==0.20.9
+fuzzywuzzy==0.18.0
+tiktoken==0.2.0
+xpinyin==0.7.6

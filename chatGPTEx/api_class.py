@@ -121,7 +121,7 @@ class WolframAPI(MetaAPI):
         base_url = 'https://api.wolframalpha.com/v2/query'
         
         query = query.replace('+', ' plus ')
-        APPID = str(config['WolframAlpha']['WOLFRAMALPHA_APP_ID'])
+        APPID = str(config['WolframAlpha']['WOLFRAMALPHA_APP_ID']) # type: ignore
         params = {
             'input': query,
             'format': 'plaintext',

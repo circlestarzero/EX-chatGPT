@@ -1,12 +1,12 @@
 import json
 import datetime
+import os
+from promptsSearch import SearchPrompt
+from markdown_it import MarkdownIt
 from flask import Flask, render_template, request
 from search import directQuery,web,detail,webDirect,WebKeyWord,load_history,APICallList
-from markdown_it import MarkdownIt
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import MarkdownConverter
-import os
-
 
 program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
@@ -110,6 +110,13 @@ def set_chat_lists():
     with open(program_dir+'/chatLists.json', 'w', encoding='utf-8') as f:
         json.dump(request.json,f,ensure_ascii=False)
         return 'ok'
+    
+@app.route('api/promptsCompletion',methods=['get'])
+def promptsCompletion():
+    prompt = str(request.args.get('prompt'))
+    res = json.dumps(SearchPrompt(prompt),ensure_ascii=False)
+    return res
+
 if __name__ == "__main__":
     app.config['JSON_AS_ASCII'] = False
     app.config['DEBUG'] = True
