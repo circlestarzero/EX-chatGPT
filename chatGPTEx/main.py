@@ -79,10 +79,18 @@ def send_history():
     msgs = []
     chats  = load_history(conv_id=uuid)[1:]
     for chat in chats:
+        queryTime = ''
+        firstLine = chat['content'].split('\n')[0]
+        # print(firstLine)
+        if firstLine.find('current Time:')!=-1:
+            queryTime = firstLine.split('current Time:')[-1]
+        if chat['content'].find('Query:')!=-1:
+            query = chat['content'].split('Query:')[1]
+            chat['content'] = query
         if chat['role']=='user':
-            msgs.append({'name': 'You', 'img': 'static/styles/person.jpg', 'side': 'right', 'text': parse_text(chat['content'])})
+            msgs.append({'name': 'You', 'img': 'static/styles/person.jpg', 'side': 'right', 'text': parse_text(chat['content']), 'time': queryTime})
         else:
-            msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content'])})
+            msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content']),'time': queryTime})
     return json.dumps(msgs,ensure_ascii=False)
 lastAPICallListLength = len(APICallList)
 

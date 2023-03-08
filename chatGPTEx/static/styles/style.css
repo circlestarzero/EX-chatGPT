@@ -2,8 +2,8 @@
   --body-bg: linear-gradient(135deg, #c9e4ff 0%, #ffe4e1 100%);
   --msger-bg: #fff;
   --border: 2px solid #ddd;
-  --right-msg-bg: #ffd4cf;
-  --left-msg-bg: #ffebcd;
+  --right-msg-bg: #5e86c1;
+  --left-msg-bg: #F5F5F5;
   --right-msg-text: #fff;
   --code-bg: #faebd7;
 } 
@@ -80,7 +80,7 @@ body {
   flex: 1;
   overflow-y: auto;
   padding: 10px;
-  margin-bottom: 50px;
+  margin-bottom: 70px;
 }
 .msger-chat::-webkit-scrollbar {
   width: 6px;
@@ -217,7 +217,8 @@ select#mode {
   align-content: center;
   border: none;
   padding: 5px;
-  width: 3em;
+  width: 2em;
+  font-optical-sizing: auto;
   font-size: 1em;
   border-radius: 5px;
   -webkit-appearance: none;
@@ -273,7 +274,6 @@ select#mode:hover, select#mode:focus {
   outline: none;
 }
 pre {
-  background-color: var(--code-bg)!important;
   font-family: monospace;
   font-size: 0.9rem!important;
   line-height: 1.3;
@@ -456,7 +456,7 @@ span.token.lf{
   visibility: hidden!important;
 }
 textarea{
-  padding-left: 10px;
+  padding-left: 2px;
   padding-top: 10px;
   padding-bottom: 10px;
   vertical-align:middle;

@@ -9,8 +9,9 @@ import time
 import requests
 import tiktoken
 import datetime
-import configparser
+from typing import Generator
 from queue import PriorityQueue as PQ
+import configparser
 
 
 ENGINE = os.environ.get("GPT_ENGINE") or "gpt-3.5-turbo"
@@ -33,24 +34,17 @@ class ExChatGPT:
     def __init__(
         self,
         api_keys: list,
-        engine: str = None,
-        proxy: str = None,
+        engine = None,
+        proxy = None,
         max_tokens: int = 3000,
         temperature: float = 0.5,
         top_p: float = 1.0,
         reply_count: int = 1,
-        system_prompt: str = "You are ExChatGPT, a web-based large language model, Respond conversationally",
+        system_prompt = "You are ExChatGPT, a web-based large language model, Respond conversationally",
         lastAPICallTime = time.time()-100,
         apiTimeInterval = 20,
     ) -> None:
-        self.convo_history = {}
-        if os.path.isfile(chatHistoryPath):
-            self.load(chatHistoryPath)
-        else:
-            self.reset('default')
-            self.save(chatHistoryPath)
-        with open(chatHistoryPath,'r',encoding="utf-8") as f:
-            self.convo_history = json.load(f)
+        self.system_prompt = system_prompt
         self.apiTimeInterval = apiTimeInterval
         self.engine = engine or ENGINE
         self.session = requests.Session()
@@ -68,11 +62,10 @@ class ExChatGPT:
             "default": [
                 {
                     "role": "system",
-                    "content": system_prompt,
+                    "content": self.system_prompt,
                 },
             ],
         }
-        self.system_prompt = system_prompt
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.top_p = top_p
@@ -83,6 +76,14 @@ class ExChatGPT:
         )
         if len(ENCODER.encode(initial_conversation)) > self.max_tokens:
             raise Exception("System prompt is too long")
+        self.convo_history = {}
+        if os.path.isfile(chatHistoryPath):
+            self.load(chatHistoryPath)
+        else:
+            self.reset('default')
+            self.save(chatHistoryPath)
+        with open(chatHistoryPath,'r',encoding="utf-8") as f:
+            self.convo_history = json.load(f)
 
 
     def add_to_conversation(self, message: str, role: str, convo_id: str = "default"):
@@ -131,7 +132,7 @@ class ExChatGPT:
         """
         # Make conversation if it doesn't exist
         if convo_id not in self.conversation:
-            self.reset(convo_id=convo_id, system_prompt=self.system_prompt)
+            self.reset(convo_id=convo_id)
         self.add_to_conversation(prompt, "user", convo_id=convo_id)
         self.__truncate_conversation(convo_id=convo_id)
         apiKey = self.api_keys.get()
@@ -169,13 +170,13 @@ class ExChatGPT:
         role: str = "user",
         convo_id: str = "default",
         **kwargs,
-    ) -> str:
+    ) -> Generator:
         """
         Ask a question
         """
         # Make conversation if it doesn't exist
         if convo_id not in self.conversation:
-            self.reset(convo_id=convo_id, system_prompt=self.system_prompt)
+            self.reset(convo_id=convo_id)
         self.add_to_conversation(prompt, "user", convo_id=convo_id)
         self.__truncate_conversation(convo_id=convo_id)
         apiKey = self.api_keys.get()
@@ -204,7 +205,7 @@ class ExChatGPT:
             raise Exception(
                 f"Error: {response.status_code} {response.reason} {response.text}",
             )
-        response_role: str = None
+        response_role: str = ""
         full_response: str = ""
         for line in response.iter_lines():
             if not line:
@@ -251,14 +252,14 @@ class ExChatGPT:
             self.conversation[convo_id].pop()
 
 
-    def reset(self, convo_id: str = "default", system_prompt: str = None):
+    def reset(self, convo_id: str = "default", system_prompt = None):
         """
         Reset the conversation
         """
         self.conversation[convo_id] = [
-            {"role": "system", "content": system_prompt or self.system_prompt},
+            {"role": "system", "content": str(system_prompt or self.system_prompt)},
         ]
-        self.convo_history[convo_id] = [{"role": "system", "content": system_prompt or self.system_prompt}]
+        self.convo_history[convo_id] = [{"role": "system", "content": str(system_prompt or self.system_prompt)}]
 
 
     def save(self, file: str, *convo_ids: str):

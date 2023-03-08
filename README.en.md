@@ -7,7 +7,8 @@
 ChatGPT can act as a tool former without requiring adjustment, generating API requests for questions to assist in answering. Ex-ChatGPT enables ChatGPT to call external APIs, such as WolframAlpha, Google, and WikiMedia, to provide more accurate and timely answers.
 
 This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a service that uses the GPT3.5 Turbo API and Google,WolframAlpha,WikiMedia APIs, while the latter is a browser extension which update the origin WebChatGPT plugin to Enable adding external APIs.
-![chatHistory](img/chatHistory.png)
+![chatHistory](img/newPage.jpg)
+
 ## Highlights
 
 - Supports OpenAI GPT-3.5 Turbo API
@@ -16,6 +17,8 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 - openAI API keys pool to accelerate
 - Markdown and MathJax renderer
 - New Bing like API processing and animation
+- chat history auto saving and loading like chatGPT
+- Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.
 
 ## Installation
 
@@ -44,8 +47,9 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.
 - update history chat management sidebar
-![chatHistory](img/chatHistory.png)
+![chatHistory](img/newPage.jpg)
 - update API calls processing animation
 ![APIAnimation](img/APIAnimation.png)
 - Web Page Beautification

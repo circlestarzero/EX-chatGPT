@@ -22,7 +22,7 @@ for i in range(0,10):
     else:
         break
 print(openAIAPIKeys)
-chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1)
+chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1,system_prompt="You are ExChatGPT, a web-based large language model, Respond conversationally")
 
 max_token = 1000
 hint_recall_dialog = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Recall our dialogs…"}]},ensure_ascii=False))
@@ -114,7 +114,7 @@ def WebKeyWord(query,conv_id = 'default'):
 def directQuery(query,conv_id = 'default'):
     global APICallList
     APICallList.append(hint_answer_generating)
-    response = chatbot.ask(query)
+    response = chatbot.ask(query,convo_id=conv_id)
     print(f'Direct Query: {query}\nChatGpt: {response}')
     return response +'\n\n token_cost: '+ str(chatbot.token_cost())
 def APIQuery(query,resp =''):

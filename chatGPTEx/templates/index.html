@@ -98,7 +98,7 @@
         })
         .catch(error => console.error(error));
     }
-    setInterval(fetchData, 2000);
+    setInterval(fetchData, 1000);
     //load History
     var intervalId = setInterval(pollFunction, 200);
     function pollFunction() {
@@ -115,7 +115,7 @@
       while (msgerChat.firstChild) {
         msgerChat.removeChild(msgerChat.firstChild);
       }
-      appendMessage(BOT_NAME, BOT_IMG, "left", "Hello, I'm EXChatGPT, what can I help you?😄", null);
+      appendMessage(BOT_NAME, BOT_IMG, "left", "Hello, I'm EXChatGPT, what can I help you?😄", null, '');
       console.log(document.querySelector('.sidebar-list'));
       const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
       console.log(uuid);
@@ -123,7 +123,7 @@
         .then(response => response.json())
         .then(data => {
           data.forEach(message => {
-            appendMessage(message.name, message.img, message.side, message.text, null);
+            appendMessage(message.name, message.img, message.side, message.text, null, message.time);
           });
           markdownMathRender();
         })
@@ -136,7 +136,7 @@
       const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
       if (!msgText) return;
       console.log(msgText)
-      appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode);
+      appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode, formatDate(new Date()));
       msgerInput.value = "";
       botResponse(msgText, mode, uuid);
     }
@@ -144,12 +144,16 @@
       event.preventDefault();
       submit();
     });
-    function appendMessage(name, img, side, text, mode) {
+    function appendMessage(name, img, side, text, mode, time) {
       let chatInfo = '';
       if (mode != null) {
         chatInfo = `
         <div class="msg-info-mode">${mode}</div>
-        <div class="msg-info-time">${formatDate(new Date())}</div>
+        <div class="msg-info-time">${time}</div>
+        `;
+      } else if (time != '') {
+        chatInfo = `
+        <div class="msg-info-time">${time}</div>
         `;
       }
       const msgHTML = `
@@ -186,7 +190,7 @@
         console.log(rawText);
         console.log(data);
         const msgText = data;
-        appendMessage(BOT_NAME, BOT_IMG, "left", msgText, mode);
+        appendMessage(BOT_NAME, BOT_IMG, "left", msgText, mode, formatDate(new Date()));
         markdownMathRender();
       });
     }
@@ -200,10 +204,33 @@
       return `${h.slice(-2)}:${m.slice(-2)}`;
     }
     const textarea = document.querySelector('textarea');
+    function selectNextMode() {
+      const modeSelect = document.getElementById('mode');
+      const selectedIndex = modeSelect.selectedIndex;
+      const nextIndex = selectedIndex + 1;
+      if (nextIndex < modeSelect.options.length) {
+        modeSelect.selectedIndex = nextIndex;
+      } else {
+        modeSelect.selectedIndex = 0; // wrap around to the first option
+      }
+    }
     textarea.addEventListener('keydown', (event) => {
-      if (event.shiftKey && event.key === 'Enter') {
+      if (event.shiftKey && event.key == 'Enter') {
+        const cursorPos = this.selectionStart;
+        const currentValue = this.value;
+        const newValue = currentValue.substring(0, cursorPos) + '\n' + currentValue.substring(this.selectionEnd);
+        this.value = newValue;
+        this.selectionStart = cursorPos + 1;
+        this.selectionEnd = cursorPos + 1;
+        event.preventDefault();
+      } else if (event.key == 'Enter') {
         event.preventDefault();
         submit();
+      }
+      if (event.key == 'Tab') {
+        event.preventDefault();
+        selectNextMode();
+        updateSelectWidth();
       }
     });
     textarea.style.height = '45px';
@@ -218,6 +245,14 @@
         textarea.style.height = `${textarea.scrollHeight + 5}px`;
       }
     });
+    const select = document.getElementById('mode');
+    function updateSelectWidth() {
+      const selectedOption = select.options[select.selectedIndex];
+      const selectedOptionWidth = selectedOption.text.length * 9 + 7;
+      select.style.width = selectedOptionWidth + 'px';
+    }
+    updateSelectWidth();
+    select.addEventListener('change', updateSelectWidth);
   </script>
   <script src="{{ url_for('static', filename='styles/newChat.js') }}"></script>
 </body>
