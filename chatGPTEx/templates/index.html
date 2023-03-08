@@ -130,8 +130,7 @@
         .catch(err => console.error(err));
       return uuid;
     }
-    msgerForm.addEventListener("submit", event => {
-      event.preventDefault();
+    function submit() {
       const mode = document.getElementById("mode").value;
       const msgText = msgerInput.value;
       const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
@@ -140,6 +139,10 @@
       appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode);
       msgerInput.value = "";
       botResponse(msgText, mode, uuid);
+    }
+    msgerForm.addEventListener("submit", event => {
+      event.preventDefault();
+      submit();
     });
     function appendMessage(name, img, side, text, mode) {
       let chatInfo = '';
@@ -197,16 +200,22 @@
       return `${h.slice(-2)}:${m.slice(-2)}`;
     }
     const textarea = document.querySelector('textarea');
+    textarea.addEventListener('keydown', (event) => {
+      if (event.shiftKey && event.key === 'Enter') {
+        event.preventDefault();
+        submit();
+      }
+    });
     textarea.style.height = '45px';
     textarea.style.paddingTop = '10px';
     textarea.addEventListener('input', () => {
       textarea.style.height = 'auto';
-      if(textarea.scrollHeight<90){
+      if (textarea.scrollHeight < 90) {
         textarea.style.height = '45px';
-      }else if(textarea.scrollHeight>400){
+      } else if (textarea.scrollHeight > 400) {
         textarea.style.height = `400px`;
-      }else{
-        textarea.style.height = `${textarea.scrollHeight+5}px`;
+      } else {
+        textarea.style.height = `${textarea.scrollHeight + 5}px`;
       }
     });
   </script>
