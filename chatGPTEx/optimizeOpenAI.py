@@ -11,6 +11,9 @@ import tiktoken
 import datetime
 from typing import Generator
 from queue import PriorityQueue as PQ
+import configparser
+
+
 ENGINE = os.environ.get("GPT_ENGINE") or "gpt-3.5-turbo"
 ENCODER = tiktoken.get_encoding("gpt2")
 program_path = os.path.realpath(__file__)
@@ -20,6 +23,10 @@ chatHistoryPath = program_dir+'/chatHistory.json'
 hint_token_exceed = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Shortening your query since exceeding token limits..."}]},ensure_ascii=False))
 hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Auto summarizing our dialogs to save tokens…"}]},ensure_ascii=False))
 APICallList = []
+config = configparser.ConfigParser()
+config.read(program_dir+'/apikey.ini')
+
+
 class ExChatGPT:
     """
     Official ChatGPT API
@@ -77,6 +84,8 @@ class ExChatGPT:
             self.save(chatHistoryPath)
         with open(chatHistoryPath,'r',encoding="utf-8") as f:
             self.convo_history = json.load(f)
+
+
     def add_to_conversation(self, message: str, role: str, convo_id: str = "default"):
         """
         Add a message to the conversation
@@ -84,6 +93,8 @@ class ExChatGPT:
         self.conversation[convo_id].append({"role": role, "content": message})
         self.convo_history[convo_id].append({"role": role, "content": message})
         self.save(chatHistoryPath)
+
+
     def __truncate_conversation(self, convo_id: str = "default"):
         """
         Truncate the conversation
@@ -107,7 +118,8 @@ class ExChatGPT:
                 self.convo_history[convo_id][-1] = self.convo_history[convo_id][-1][:-self.decrease_step]
             else:
                 break
-        
+
+
     def ask_stream_copy(
         self,
         prompt: str,
@@ -128,9 +140,10 @@ class ExChatGPT:
         if time.time() - apiKey[0]<self.apiTimeInterval:
             time.sleep(self.apiTimeInterval - (time.time() - apiKey[0]))
         self.api_keys.put((time.time(),apiKey[1]))
+        API_PROXY = str(config['Proxy']['api_proxy'])
         # Get response
         response = self.session.post(
-            "https://api.openai.com/v1/chat/completions",
+            API_PROXY,
             headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey[1])}"},
             json={
                 "model": self.engine,
@@ -149,6 +162,8 @@ class ExChatGPT:
                 f"Error: {response.status_code} {response.reason} {response.text}",
             )
         return response
+
+
     def ask_stream(
         self,
         prompt: str,
@@ -169,9 +184,10 @@ class ExChatGPT:
         if time.time() - apiKey[0]<self.apiTimeInterval:
             time.sleep(self.apiTimeInterval - (time.time() - apiKey[0]))
         self.api_keys.put((time.time(),apiKey[1]))
+        API_PROXY = str(config['Proxy']['api_proxy'])
         # Get response
         response = self.session.post(
-            "https://api.openai.com/v1/chat/completions",
+            API_PROXY,
             headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey[1])}"},
             json={
                 "model": self.engine,
@@ -212,6 +228,8 @@ class ExChatGPT:
                 full_response += content
                 yield content
         self.add_to_conversation(full_response, response_role, convo_id=convo_id)
+
+
     def ask(self, prompt: str, role: str = "user", convo_id: str = "default", **kwargs):
         """
         Non-streaming ask
@@ -224,12 +242,15 @@ class ExChatGPT:
         )
         full_response: str = "".join(response)
         return full_response
+
+
     def rollback(self, n: int = 1, convo_id: str = "default"):
         """
         Rollback the conversation
         """
         for _ in range(n):
             self.conversation[convo_id].pop()
+
 
     def reset(self, convo_id: str = "default", system_prompt = None):
         """
@@ -239,6 +260,8 @@ class ExChatGPT:
             {"role": "system", "content": str(system_prompt or self.system_prompt)},
         ]
         self.convo_history[convo_id] = [{"role": "system", "content": str(system_prompt or self.system_prompt)}]
+
+
     def save(self, file: str, *convo_ids: str):
         try:
             with open(file, "w", encoding="utf-8") as f:
@@ -250,6 +273,8 @@ class ExChatGPT:
             return False
         return True
         # print(f"Error: {file} could not be created")
+ 
+
     def conversation_summary(self, convo_id: str = "default"):
         global APICallList
         APICallList.append(hint_dialog_sum)
@@ -271,18 +296,35 @@ class ExChatGPT:
             {"role": 'assistant', "content": response},
         ]
         return self.conversation[convo_id]
+
+
     def delete_last2_conversation(self, convo_id: str = "default"):
-        self.conversation[convo_id].pop()
-        self.conversation[convo_id].pop()
-        self.convo_history[convo_id].pop()
-        self.convo_history[convo_id].pop()
+        """
+        当对话为空时删除会报错，导致页面无法正确返回回答的结果
+        """
+        if len(self.conversation[convo_id]) > 0:
+            self.conversation[convo_id].pop()
+        if len(self.conversation[convo_id]) > 0:
+            self.conversation[convo_id].pop()
+        if len(self.convo_history[convo_id]) > 0:
+            self.convo_history[convo_id].pop()
+        if len(self.convo_history[convo_id]) > 0:
+            self.convo_history[convo_id].pop()
         self.save(chatHistoryPath)
+
+
     def summarize_last_message(self, convo_id: str = "default"):
         last_message = self.conversation[convo_id][-1]["content"]
+
+
     def token_cost(self,convo_id: str = "default"):
         return len(ENCODER.encode("\n".join([x["content"] for x in self.conversation[convo_id]])))
+ 
+
     def token_str(self,content:str):
         return len(ENCODER.encode(content))
+
+
     def load(self, file: str, *convo_ids: str):
         """
         Load the conversation from a JSON  file
@@ -297,6 +339,7 @@ class ExChatGPT:
         except (FileNotFoundError, KeyError, json.decoder.JSONDecodeError):
             return False
         return True
+
 
     def print_config(self, convo_id: str = "default"):
         """
@@ -314,13 +357,5 @@ ChatGPT Configuration:
         )
 
 
-    
-
-
 def main():
     return
-
-
-
-
-

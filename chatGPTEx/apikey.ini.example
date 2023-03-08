@@ -7,3 +7,5 @@ key1 = sk-xxxx
 key2 = sk-xxxx
 [WolframAlpha]
 WOLFRAMALPHA_APP_ID = xxxx
+[Proxy]
+api_proxy = https://api.openai.com/v1/chat/completions

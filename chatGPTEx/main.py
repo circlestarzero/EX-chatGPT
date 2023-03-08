@@ -6,17 +6,25 @@ from markdown_it import MarkdownIt
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import MarkdownConverter
 import os
+
+
 program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
+
+
 def parse_text(text):
     md = MarkdownIt("commonmark", {"highlight": Highlighter()}).enable("table")
     res = MarkdownConverter(md).convert(text)
     return res
 app = Flask(__name__)
 app.static_folder = 'static'
+
+
 @app.route("/")
 def home():
     return render_template("index.html")
+
+
 @app.route("/api/query")
 def get_bot_response():
     mode = str(request.args.get('mode'))
@@ -45,6 +53,8 @@ def get_bot_response():
         res = parse_text(WebKeyWord(q,conv_id=uuid))
         return res
     return "Error"
+
+
 @app.route("/api/chatLists")
 def get_chat_lists():
     if os.path.isfile(program_dir+'/chatLists.json'):
@@ -61,6 +71,8 @@ def get_chat_lists():
             }]}
             json.dump(defaultChatLists,f,ensure_ascii=False)
             return json.dumps(defaultChatLists)
+
+
 @app.route("/api/history")
 def send_history():
     uuid = str(request.args.get('uuid'))
@@ -81,6 +93,8 @@ def send_history():
             msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content']),'time': queryTime})
     return json.dumps(msgs,ensure_ascii=False)
 lastAPICallListLength = len(APICallList)
+
+
 @app.route("/api/APIProcess")
 def APIProcess():
     global lastAPICallListLength
@@ -89,6 +103,8 @@ def APIProcess():
         return json.dumps(APICallList[lastAPICallListLength-1],ensure_ascii=False)
     else:
         return {}
+
+
 @app.route('/api/setChatLists',methods=['POST'])
 def set_chat_lists():
     with open(program_dir+'/chatLists.json', 'w', encoding='utf-8') as f:
@@ -97,4 +113,4 @@ def set_chat_lists():
 if __name__ == "__main__":
     app.config['JSON_AS_ASCII'] = False
     app.config['DEBUG'] = True
-    app.run(port = 1234)
+    app.run(host="0.0.0.0", port = 5000)
