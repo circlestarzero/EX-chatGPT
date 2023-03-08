@@ -33,7 +33,7 @@ class ExChatGPT:
         temperature: float = 0.5,
         top_p: float = 1.0,
         reply_count: int = 1,
-        system_prompt: str = "You are ExChatGPT, a web-based large language model, Respond conversationally",
+        system_prompt = "You are ExChatGPT, a web-based large language model, Respond conversationally",
         lastAPICallTime = time.time()-100,
         apiTimeInterval = 20,
     ) -> None:
