@@ -10,6 +10,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 
 ## Highlights
 
+- docker 和 proxy 支持
 - 支持 OpenAI GPT-3.5 Turbo API
 - 允许 ChatGPT 调用外部 API 接口
 - 可以使用 GPT-3.5 将外部接口返回的内容进行总结
@@ -46,6 +47,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 
 ## 更新日志
 
+- update docker 和 proxy 支持
 - 支持 OpenAI GPT-3.5 Turbo API，快速且价格低廉
 - 额外的 API 调用和搜索摘要，以提供更全面和详细的答案
 - 快捷键快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送`up`,`down`选择历史发送消息,类似终端

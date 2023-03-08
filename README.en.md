@@ -11,6 +11,7 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 
 ## Highlights
 
+- docker and proxy support
 - Supports OpenAI GPT-3.5 Turbo API
 - Allows ChatGPT to call external APIs(Google,WolframAlpha,WikiMedia)
 - Can summerize contents from external APIs using GPT-3.5 Turbo
@@ -45,8 +46,7 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 
 ## Update Log
 
-- update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
-- update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- update docker and proxy support
 - Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.`up`,`down` to select previously sent messages, similar to terminal.
 - update history chat management sidebar
 ![chatHistory](img/newPage.jpg)
@@ -66,4 +66,6 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 - update api config
 - update api pool
 - Automatic saving and loading of conversation history, ChatGPT can retrieve previous conversations.
+- update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
+- update extra API calls and search summarizations to give a more comprehensive and detailed answer.
   
