@@ -18,7 +18,7 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 - Markdown and MathJax renderer
 - New Bing like API processing and animation
 - chat history auto saving and loading like chatGPT
-- Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.
+- Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.`up`,`down` to select previously sent messages, similar to terminal.
 
 ## Installation
 
@@ -47,7 +47,7 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 
 - update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
 - update extra API calls and search summarizations to give a more comprehensive and detailed answer.
-- Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.
+- Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.`up`,`down` to select previously sent messages, similar to terminal.
 - update history chat management sidebar
 ![chatHistory](img/newPage.jpg)
 - update API calls processing animation

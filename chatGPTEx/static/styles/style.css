@@ -73,7 +73,7 @@ body {
   text-align: center;
   border-bottom: var(--border);
   background: #eee;
-  color: var(--right-msg-text);
+  color: #000;
 }
 
 .msger-chat {

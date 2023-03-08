@@ -19,7 +19,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 - Markdown and MathJax 渲染
 - 调用API过程显示动画, 类似必应
 - 历史对话管理载入,类chatgpt页面布局
-- 快捷键快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送
+- 快捷键快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送, `up`,`down`选择历史发送消息,类似终端
 
 ## 安装
 
@@ -48,7 +48,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 
 - 支持 OpenAI GPT-3.5 Turbo API，快速且价格低廉
 - 额外的 API 调用和搜索摘要，以提供更全面和详细的答案
-- 快捷键快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送
+- 快捷键快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送`up`,`down`选择历史发送消息,类似终端
 - 更新历史对话管理,支持载入删除保存历史对话
 ![chatHistory](img/newPage.jpg)
 - update API calls processing animation
