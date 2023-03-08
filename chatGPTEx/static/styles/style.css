@@ -2,10 +2,12 @@
   --body-bg: linear-gradient(135deg, #c9e4ff 0%, #ffe4e1 100%);
   --msger-bg: #fff;
   --border: 2px solid #ddd;
-  --left-msg-bg: #fff7bc;
-  --right-msg-bg: #d8bfd8;
+  --right-msg-bg: #ffd4cf;
+  --left-msg-bg: #ffebcd;
+  --right-msg-text: #fff;
+  --code-bg: #faebd7;
 } 
-
+ 
 html {
   box-sizing: border-box;
 }
@@ -22,7 +24,7 @@ body {
   transform: scale(0.985);
   height: 100vh;
   background-image: var(--body-bg);
-  font-family: "Fira Code";
+  font-family: monospace;
 }
 
 .container {
@@ -71,7 +73,7 @@ body {
   text-align: center;
   border-bottom: var(--border);
   background: #eee;
-  color: #666;
+  color: var(--right-msg-text);
 }
 
 .msger-chat {
@@ -163,7 +165,7 @@ body {
 }
 .right-msg .msg-bubble {
   background: var(--right-msg-bg);
-  color: #fff;
+  color: var(--right-msg-text);
   border-bottom-right-radius: 0;
 }
 .left-msg .msg-bubble{
@@ -184,8 +186,8 @@ body {
   background-color: transparent;
   border: none;
   font-size: 1.4em;
-  color: white;
-  font-family: 'Fira Code';
+  color: var(--right-msg-text);
+  font-family: monospace;
 }
 .msger-input {
   flex: 1;
@@ -209,7 +211,7 @@ body {
   background-color: #fcfcfe;
 }
 select#mode {
-  font-family: 'Fira Code';
+  font-family: monospace;
   color: white;
   background-color: transparent;
   align-content: center;
@@ -271,10 +273,10 @@ select#mode:hover, select#mode:focus {
   outline: none;
 }
 pre {
-  background-color: #fffbde!important;
-  font-family: "Fira Code";
-  font-size: 14px;
-  line-height: 1.5;
+  background-color: var(--code-bg)!important;
+  font-family: monospace;
+  font-size: 0.9rem!important;
+  line-height: 1.3;
   margin: 0;
   overflow: auto;
   padding: 1em;
