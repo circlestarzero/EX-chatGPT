@@ -20,7 +20,6 @@ chatHistoryPath = program_dir+'/chatHistory.json'
 hint_token_exceed = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Shortening your query since exceeding token limits..."}]},ensure_ascii=False))
 hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Auto summarizing our dialogs to save tokens…"}]},ensure_ascii=False))
 APICallList = []
-ExchatGPT_system_prompt = "You are ExChatGPT, a web-based large language model, Respond conversationally"
 class ExChatGPT:
     """
     Official ChatGPT API
@@ -38,14 +37,7 @@ class ExChatGPT:
         lastAPICallTime = time.time()-100,
         apiTimeInterval = 20,
     ) -> None:
-        self.convo_history = {}
-        if os.path.isfile(chatHistoryPath):
-            self.load(chatHistoryPath)
-        else:
-            self.reset('default')
-            self.save(chatHistoryPath)
-        with open(chatHistoryPath,'r',encoding="utf-8") as f:
-            self.convo_history = json.load(f)
+        self.system_prompt = system_prompt
         self.apiTimeInterval = apiTimeInterval
         self.engine = engine or ENGINE
         self.session = requests.Session()
@@ -63,7 +55,7 @@ class ExChatGPT:
             "default": [
                 {
                     "role": "system",
-                    "content": ExchatGPT_system_prompt,
+                    "content": self.system_prompt,
                 },
             ],
         }
@@ -77,6 +69,14 @@ class ExChatGPT:
         )
         if len(ENCODER.encode(initial_conversation)) > self.max_tokens:
             raise Exception("System prompt is too long")
+        self.convo_history = {}
+        if os.path.isfile(chatHistoryPath):
+            self.load(chatHistoryPath)
+        else:
+            self.reset('default')
+            self.save(chatHistoryPath)
+        with open(chatHistoryPath,'r',encoding="utf-8") as f:
+            self.convo_history = json.load(f)
     def add_to_conversation(self, message: str, role: str, convo_id: str = "default"):
         """
         Add a message to the conversation
@@ -236,9 +236,9 @@ class ExChatGPT:
         Reset the conversation
         """
         self.conversation[convo_id] = [
-            {"role": "system", "content": str(system_prompt or ExchatGPT_system_prompt)},
+            {"role": "system", "content": str(system_prompt or self.system_prompt)},
         ]
-        self.convo_history[convo_id] = [{"role": "system", "content": str(system_prompt or ExchatGPT_system_prompt)}]
+        self.convo_history[convo_id] = [{"role": "system", "content": str(system_prompt or self.system_prompt)}]
     def save(self, file: str, *convo_ids: str):
         try:
             with open(file, "w", encoding="utf-8") as f:
@@ -266,7 +266,7 @@ class ExChatGPT:
         prompt = prompt.replace("{conversation}", input)
         response = self.ask(prompt)
         self.conversation[convo_id] = [
-            {"role": "system", "content": ExchatGPT_system_prompt},
+            {"role": "system", "content": self.system_prompt},
             {"role": "user", "content": "Summariaze our diaglog"},
             {"role": 'assistant', "content": response},
         ]

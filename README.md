@@ -7,6 +7,7 @@
 ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮助回答。而 Ex-ChatGPT 使得 ChatGPT 能够自己调用外部 API，例如 WolframAlpha 和 Google, WikiMedia，从而给出更准确且具有时效性的回答。
 本项目分为 Ex-ChatGPT 和 WebChatGPTEnhance，前者是使用 ChatGPT API 的服务，后者是浏览器插件。
 ![chatHistory](img/chatHistory.png)
+
 ## Highlights
 
 - 支持 OpenAI GPT-3.5 Turbo API
@@ -23,6 +24,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 ## 安装
 
 ## Ex-chatGPT
+
 - `pip install`
 `pip install -r requirements.txt`
 - 在 `apikey.ini` 中填入你的 API 密钥
