@@ -25,7 +25,11 @@ for i in range(0,10):
         break
 print(openAIAPIKeys)
 chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1)
-chatbot.load(program_dir+'/chatHistory.json')
+if os.path.isfile(program_dir+'/chatLists.json'):
+    chatbot.load(program_dir+'/chatHistory.json')
+else:
+    chatbot.reset('default')
+    chatbot.save(program_dir+'/chatHistory.json')
 max_token = 1000
 APICallList = []
 hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Summarize our dialogs…"}]},ensure_ascii=False))

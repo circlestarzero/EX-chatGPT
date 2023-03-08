@@ -48,10 +48,20 @@ def get_bot_response():
     return "Error"
 @app.route("/api/chatLists")
 def get_chat_lists():
-    with open(program_dir+'/chatLists.json', 'r', encoding='utf-8') as f:
-        chatLists = json.load(f)
-        chatLists["chatLists"] = list(reversed(chatLists["chatLists"]))
-        return json.dumps(chatLists)
+    if os.path.isfile(program_dir+'/chatLists.json'):
+        with open(program_dir+'/chatLists.json', 'r', encoding='utf-8') as f:
+            chatLists = json.load(f)
+            chatLists["chatLists"] = list(reversed(chatLists["chatLists"]))
+            return json.dumps(chatLists)
+    else:
+        with open(program_dir+'/chatLists.json', 'w', encoding='utf-8') as f:
+            defaultChatLists = {
+            "chatLists": [{
+                    "uuid": "default",
+                    "chatName": "Default"
+            }]}
+            json.dump(defaultChatLists,f,ensure_ascii=False)
+            return json.dumps(defaultChatLists)
 @app.route("/api/history")
 def send_history():
     uuid = str(request.args.get('uuid'))
