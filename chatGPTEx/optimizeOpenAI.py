@@ -9,6 +9,7 @@ import time
 import requests
 import tiktoken
 import datetime
+import configparser
 from queue import PriorityQueue as PQ
 
 
@@ -21,6 +22,8 @@ chatHistoryPath = program_dir+'/chatHistory.json'
 hint_token_exceed = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Shortening your query since exceeding token limits..."}]},ensure_ascii=False))
 hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Auto summarizing our dialogs to save tokens…"}]},ensure_ascii=False))
 APICallList = []
+config = configparser.ConfigParser()
+config.read(program_dir+'/apikey.ini')
 
 
 class ExChatGPT:
@@ -136,9 +139,10 @@ class ExChatGPT:
         if time.time() - apiKey[0]<self.apiTimeInterval:
             time.sleep(self.apiTimeInterval - (time.time() - apiKey[0]))
         self.api_keys.put((time.time(),apiKey[1]))
+        API_PROXY = str(config['Proxy']['api_proxy'])
         # Get response
         response = self.session.post(
-            "https://api.openai.com/v1/chat/completions",
+            API_PROXY,
             headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey[1])}"},
             json={
                 "model": self.engine,
@@ -179,9 +183,10 @@ class ExChatGPT:
         if time.time() - apiKey[0]<self.apiTimeInterval:
             time.sleep(self.apiTimeInterval - (time.time() - apiKey[0]))
         self.api_keys.put((time.time(),apiKey[1]))
+        API_PROXY = str(config['Proxy']['api_proxy'])
         # Get response
         response = self.session.post(
-            "https://api.openai.com/v1/chat/completions",
+            API_PROXY,
             headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey[1])}"},
             json={
                 "model": self.engine,
