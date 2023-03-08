@@ -18,7 +18,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 
 ## Highlights
 
-- docker 和 proxy 支持
+- **docker 和 proxy 支持**
 - 支持 OpenAI GPT-3.5 Turbo API
 - 允许 ChatGPT 调用外部 API 接口(**Google,WolframAlpha,WikiMedia**)
 - 自动保存载入对话历史，**自动压缩对话**
