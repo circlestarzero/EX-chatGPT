@@ -166,5 +166,5 @@ cython_debug/
 /testPrompts.txt
 
 #chat history
-/chatLists.json
 /chatHistory.json
+/chatLists.json

@@ -69,9 +69,9 @@ def send_history():
     chats  = load_history(conv_id=uuid)[1:]
     for chat in chats:
         if chat['role']=='user':
-            msgs.append({'name': 'You', 'img': 'static/styles/person.jpg', 'side': 'right', 'text': parse_text(chat['content']), 'mode': ''})
+            msgs.append({'name': 'You', 'img': 'static/styles/person.jpg', 'side': 'right', 'text': parse_text(chat['content'])})
         else:
-            msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content']), 'mode': ''})
+            msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content'])})
     return json.dumps(msgs,ensure_ascii=False)
 lastAPICallListLength = len(APICallList)
 @app.route("/api/APIProcess")

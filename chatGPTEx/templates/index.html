@@ -30,36 +30,40 @@
       <ul class="sidebar-list">
       </ul>
     </div>
-    <section class="msger">
-      <header class="msger-header">
-        <div class="msger-header-title">
-          🤖️EXChatGPT Model: <span> </span>GPT3.5-Turbo
+    <div class="chat-page">
+      <section class="msger">
+        <header class="msger-header">
+          <div class="msger-header-title">
+            🤖️EXChatGPT Model: <span> </span>GPT3.5-Turbo
+          </div>
+        </header>
+        <main class="msger-chat">
+        </main>
+      </section>
+      <div class="row">
+        <div class="col col-first">
+          <form>
+            <select class="mode-selection" id="mode" name="mode">
+              <option value="web">web</option>
+              <option value="chat">chat</option>
+              <option value="WebKeyWord">WebKeyWord</option>
+              <option value="webDirect">webDirect</option>
+              <option value="detail">detail</option>
+            </select>
+            <br>
+          </form>
         </div>
-      </header>
-      <main class="msger-chat">
-      </main>
-    </section>
-  </div>
-  <div class="row">
-    <div class="col col-first">
-      <form>
-        <select class="mode-selection" id="mode" name="mode">
-          <option value="web">web</option>
-          <option value="chat">chat</option>
-          <option value="WebKeyWord">WebKeyWord</option>
-          <option value="webDirect">webDirect</option>
-          <option value="detail">detail</option>
-        </select>
-        <br>
-      </form>
+        <div class="col">
+          <form class="msger-inputarea">
+            <textarea type="text" class="msger-input" id="textInput" placeholder="..."></textarea>
+            <button type="submit" class="msger-send-btn">↵</button>
+          </form>
+        </div>
+      </div>
     </div>
-    <div class="col">
-      <form class="msger-inputarea">
-        <input type="text" class="msger-input" id="textInput" placeholder="...">
-        <button type="submit" class="msger-send-btn">↵</button>
-      </form>
-    </div>
+
   </div>
+
   <script>
     const msgerForm = get(".msger-inputarea");
     const msgerInput = get(".msger-input");
@@ -192,6 +196,19 @@
       const m = "0" + date.getMinutes();
       return `${h.slice(-2)}:${m.slice(-2)}`;
     }
+    const textarea = document.querySelector('textarea');
+    textarea.style.height = '45px';
+    textarea.style.paddingTop = '10px';
+    textarea.addEventListener('input', () => {
+      textarea.style.height = 'auto';
+      if(textarea.scrollHeight<90){
+        textarea.style.height = '45px';
+      }else if(textarea.scrollHeight>400){
+        textarea.style.height = `400px`;
+      }else{
+        textarea.style.height = `${textarea.scrollHeight+5}px`;
+      }
+    });
   </script>
   <script src="{{ url_for('static', filename='styles/newChat.js') }}"></script>
 </body>
