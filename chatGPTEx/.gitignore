@@ -164,3 +164,7 @@ cython_debug/
 /test.json
 /main_test.py
 /testPrompts.txt
+
+#chat history
+/chatLists.json
+/chatHistory.json

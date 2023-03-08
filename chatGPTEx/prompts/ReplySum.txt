@@ -8,4 +8,4 @@ Here are some guidelines to help you write your reply:
 - If the API calls suggest that there is an error in the original query, point it out and provide a corrected version.
 - Ensure that your reply is detailed and precise, providing all relevant information related to the query.
 - Use clear and concise language to ensure that your reply is easily understandable.
-Note that the language model is limited by token cost, so try to keep your reply as concise as possible while still providing all relevant information.
+Note that the language model is limited by token cost, so try to shorten you answer but still providing all relevant detailed information data.

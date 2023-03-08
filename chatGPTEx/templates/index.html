@@ -30,14 +30,12 @@
       <ul class="sidebar-list">
       </ul>
     </div>
-
     <section class="msger">
       <header class="msger-header">
         <div class="msger-header-title">
           🤖️EXChatGPT Model: <span> </span>GPT3.5-Turbo
         </div>
       </header>
-
       <main class="msger-chat">
       </main>
     </section>
@@ -55,9 +53,6 @@
         <br>
       </form>
     </div>
-    <!-- <div clas="col">
-    <button class="save-hisotry" onclick="saveHistory()">Save<br>History</button>
-  </div> -->
     <div class="col">
       <form class="msger-inputarea">
         <input type="text" class="msger-input" id="textInput" placeholder="...">
@@ -65,17 +60,11 @@
       </form>
     </div>
   </div>
-  <!-- partial -->
-
-  <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
   <script>
-
     const msgerForm = get(".msger-inputarea");
     const msgerInput = get(".msger-input");
     const msgerChat = get(".msger-chat");
     const msger = get(".msger");
-
-    // Icons made by Freepik from www.flaticon.com
     const BOT_IMG = "static/styles/ChatGPT_logo.png";
     const PERSON_IMG = "static/styles/person.jpg";
     const BOT_NAME = "EXChatGPT";
@@ -105,18 +94,8 @@
         })
         .catch(error => console.error(error));
     }
-    setInterval(fetchData, 1000);
-    msgerForm.addEventListener("submit", event => {
-      event.preventDefault();
-      const mode = document.getElementById("mode").value;
-      const msgText = msgerInput.value;
-      const uuid =  document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
-      if (!msgText) return;
-      console.log(msgText)
-      appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode);
-      msgerInput.value = "";
-      botResponse(msgText, mode,uuid);
-    });
+    setInterval(fetchData, 2000);
+    //load History
     var intervalId = setInterval(pollFunction, 1000);
     function pollFunction() {
       var result = loadHistory();
@@ -132,7 +111,7 @@
       while (msgerChat.firstChild) {
         msgerChat.removeChild(msgerChat.firstChild);
       }
-      appendHistoryMessage(BOT_NAME, BOT_IMG, "left", "Hello, I'm EXChatGPT, what can I help you?😄", "");
+      appendMessage(BOT_NAME, BOT_IMG, "left", "Hello, I'm EXChatGPT, what can I help you?😄", null);
       console.log(document.querySelector('.sidebar-list'));
       const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
       console.log(uuid);
@@ -140,37 +119,40 @@
         .then(response => response.json())
         .then(data => {
           data.forEach(message => {
-            appendHistoryMessage(message.name, message.img, message.side, message.text, message.mode);
+            appendMessage(message.name, message.img, message.side, message.text, null);
           });
-          Prism.highlightAll();
-          const script1 = document.createElement("script");
-          script1.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
-          document.body.appendChild(script1);
-          const script2 = document.createElement("script");
-          script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
-          document.body.appendChild(script2);
-          window.MathJax = {
-            tex: {
-              inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
-          };
+          markdownMathRender();
         })
         .catch(err => console.error(err));
       return uuid;
     }
+    msgerForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const mode = document.getElementById("mode").value;
+      const msgText = msgerInput.value;
+      const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
+      if (!msgText) return;
+      console.log(msgText)
+      appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode);
+      msgerInput.value = "";
+      botResponse(msgText, mode, uuid);
+    });
     function appendMessage(name, img, side, text, mode) {
-      //   Simple solution for small apps
+      let chatInfo = '';
+      if (mode != null) {
+        chatInfo = `
+        <div class="msg-info-mode">${mode}</div>
+        <div class="msg-info-time">${formatDate(new Date())}</div>
+        `;
+      }
       const msgHTML = `
 <div class="msg ${side}-msg">
   <div class="msg-img" style="background-image: url(${img})"></div>
-
   <div class="msg-bubble">
     <div class="msg-info">
       <div class="msg-info-name">${name}</div>
-      <div class="msg-info-mode">${mode}</div>
-      <div class="msg-info-time">${formatDate(new Date())}</div>
+      ${chatInfo} 
     </div>
-
     <div class="msg-text">${text}</div>
   </div>
 </div>
@@ -178,50 +160,33 @@
       msgerChat.insertAdjacentHTML("beforeend", msgHTML);
       msger.scrollTop = msger.scrollHeight;
     }
-    function appendHistoryMessage(name, img, side, text, mode) {
-      //   Simple solution for small apps
-      const msgHTML = `
-<div class="msg ${side}-msg">
-  <div class="msg-img" style="background-image: url(${img})"></div>
-
-  <div class="msg-bubble">
-    <div class="msg-info">
-      <div class="msg-info-name">${name}</div>
-    </div>
-
-    <div class="msg-text">${text}</div>
-  </div>
-</div>
-`;
-      msgerChat.insertAdjacentHTML("beforeend", msgHTML);
-      msger.scrollTop = msger.scrollHeight;
+    function markdownMathRender() {
+      Prism.highlightAll();
+      const script1 = document.createElement("script");
+      script1.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
+      document.body.appendChild(script1);
+      const script2 = document.createElement("script");
+      script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+      document.body.appendChild(script2);
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        }
+      };
     }
     function botResponse(rawText, mode, uuid) {
-      // Bot Response
-      $.get("/api/query", { mode: mode, msg: rawText ,uuid: uuid}).done(function (data) {
+      $.get("/api/query", { mode: mode, msg: rawText, uuid: uuid }).done(function (data) {
         console.log(rawText);
         console.log(data);
         const msgText = data;
         appendMessage(BOT_NAME, BOT_IMG, "left", msgText, mode);
-        Prism.highlightAll();
-        const script1 = document.createElement("script");
-        script1.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
-        document.body.appendChild(script1);
-        const script2 = document.createElement("script");
-        script2.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
-        document.body.appendChild(script2);
-        window.MathJax = {
-          tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']]
-          }
-        };
+        markdownMathRender();
       });
     }
     // Utils
     function get(selector, root = document) {
       return root.querySelector(selector);
     }
-
     function formatDate(date) {
       const h = "0" + date.getHours();
       const m = "0" + date.getMinutes();

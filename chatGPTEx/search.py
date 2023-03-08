@@ -56,6 +56,9 @@ def detail(query,conv_id = 'default'):
     call_res1 = search(APIExtraQuery(query,call_res0),1000)
     print(f'API calls response:\n {call_res1}')
     result  = SumReply(query, str(call_res0) + str(call_res1),max_token=2000,conv_id=conv_id)
+    chatbot.conversation[conv_id] = chatbot.conversation[conv_id][:-2]
+    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
+    chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def web(query,conv_id = 'default'):
     global APICallList
