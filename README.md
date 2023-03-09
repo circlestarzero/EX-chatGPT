@@ -4,9 +4,9 @@
 
 简体中文 [English](./README.en.md) / [Background](./BACKGROUND.md)
 
-ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API 请求来协助回答问题。`Ex-ChatGPT` 使得 ChatGPT 能够调用外部 API，例如**WolframAlpha、Google 和 WikiMedia**，以提供更准确和及时的答案。
+ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API 请求来协助回答问题。`Ex-ChatGPT` 使得 ChatGPT 能够调用外部 API，例如 **WolframAlpha、Google 和 WikiMedia**，以提供更准确和及时的答案。
 
-这个项目分为 `Ex-ChatGPT` 和 `WebChatGPTEnhance` 两部分。前者是一个使用了 `GPT3.5 Turbo API` 和**Google、WolframAlpha、WikiMedia **等 API 的服务，能够提供更强大的功能和更准确的答案。后者是一个**浏览器扩展程序**，它更新了原有的 WebChatGPT 插件以支持添加外部 API，支持 ChatGPT 网页调用不同的 API 和提示。
+这个项目分为 `Ex-ChatGPT` 和 `WebChatGPTEnhance` 两部分。前者是一个使用了 `GPT3.5 Turbo API`、**WolframAlpha、Google 和 WikiMedia** 等 API 的服务，能够提供更强大的功能和更准确的答案。后者是一个**浏览器扩展程序**，它更新了原有的 WebChatGPT 插件以支持添加外部 API，支持 ChatGPT 网页调用不同的 API 和提示。
 
 ## 交互界面
 
