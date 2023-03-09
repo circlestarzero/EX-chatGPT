@@ -138,12 +138,13 @@
         console.log(msgText)
         appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode, formatDate(new Date()));
         msgerInput.value = "";
-        if(promptSelect.options[promptSelect.selectedIndex]!=null && promptSelect.style.display!='none'){
+        msgerInput.height = '30px';
+        textAreaHeightAdjut();
+        if (promptSelect.options[promptSelect.selectedIndex] != null && promptSelect.style.display != 'none') {
           botResponse(msgText, mode, uuid, promptSelect.options[promptSelect.selectedIndex].text);
-        }else{
+        } else {
           botResponse(msgText, mode, uuid);
         }
-        
       }
       msgerForm.addEventListener("submit", event => {
         event.preventDefault();
@@ -191,7 +192,7 @@
         };
       }
       function botResponse(rawText, mode, uuid, prompt = '') {
-        $.get("/api/query", { mode: mode, msg: rawText, uuid: uuid , prompt : prompt}).done(function (data) {
+        $.get("/api/query", { mode: mode, msg: rawText, uuid: uuid, prompt: prompt }).done(function (data) {
           console.log(rawText);
           console.log(data);
           const msgText = data;
@@ -292,15 +293,18 @@
       }
       textarea.style.height = '45px';
       textarea.style.paddingTop = '10px';
-      textarea.addEventListener('input', () => {
+      function textAreaHeightAdjut() {
         textarea.style.height = 'auto';
-        if (textarea.scrollHeight < 80) {
+        if (textarea.scrollHeight < 70) {
           textarea.style.height = '45px';
         } else if (textarea.scrollHeight > 400) {
           textarea.style.height = `400px`;
         } else {
           textarea.style.height = `${textarea.scrollHeight + 5}px`;
         }
+      }
+      textarea.addEventListener('input', () => {
+        textAreaHeightAdjut();
         PromptsCompletion();
       });
       function calculateTextWidth(text) {
