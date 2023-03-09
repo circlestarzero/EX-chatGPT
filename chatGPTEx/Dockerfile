@@ -1,4 +1,5 @@
-FROM python:latest # slim or alpine
+FROM python:latest 
+# slim or alpine
 LABEL Maintainer="https://github.com/acdiost" Desc="EXChatGPT Docker"
 
 WORKDIR /app/
