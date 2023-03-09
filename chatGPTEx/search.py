@@ -48,10 +48,12 @@ def detail(query,conv_id = 'default'):
     call_res1 = search(APIExtraQuery(query,call_res0),1000)
     print(f'API calls response:\n {call_res1}')
     result  = SumReply(query, str(call_res0) + str(call_res1),max_token=2000,conv_id=conv_id)
+    for data in result:
+        yield data.encode()
+    chatbot.add_to_conversation('', "assistant", convo_id=conv_id)
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
-    return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
+    yield (str(result) +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))).encode()
 def web(query,conv_id = 'default'):
     global APICallList
     APICallList.append(hint_recall_dialog)
@@ -62,11 +64,13 @@ def web(query,conv_id = 'default'):
     APICallList.append(hint_api_finished)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}' ,str(call_res0),max_token=2000, conv_id=conv_id)
+    for data in result:
+        yield data.encode()
+    chatbot.add_to_conversation('', "assistant", convo_id=conv_id)
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
     chatbot.backup_chat_history()
-    return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
+    yield (str(result) +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))).encode()
 def webDirect(query,conv_id = 'default'):
     global APICallList
     apir = APIQuery(query)
@@ -74,11 +78,13 @@ def webDirect(query,conv_id = 'default'):
     APICallList.append(hint_api_finished)
     print(f'API calls response:\n {call_res0}')
     result = SumReply(f'{query}', str(call_res0), conv_id=conv_id)
+    for data in result:
+        yield data.encode()
+    chatbot.add_to_conversation('', "assistant", convo_id=conv_id)
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
     chatbot.backup_chat_history()
-    return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
+    yield (str(result) +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))).encode()
 def WebKeyWord(query,conv_id = 'default'):
     global APICallList
     q = chatbot.ask(
@@ -103,23 +109,34 @@ def WebKeyWord(query,conv_id = 'default'):
         convo_id=conv_id,
     )
     APICallList.append(hint_answer_generating)
-    result = chatbot.ask(query, "user", convo_id=conv_id)
+    result = chatbot.ask_stream(query, "user", convo_id=conv_id)
+    for data in result:
+        yield data.encode()
+    chatbot.add_to_conversation('', "assistant", convo_id=conv_id)
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
     chatbot.backup_chat_history()
-    print(result)
-    return result +'\n\n token_cost: '+ str(chatbot.token_cost())
+    yield (str(result) +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))).encode()
 def directQuery(query,conv_id = 'default',prompt = ''):
     global APICallList
     APICallList.append(hint_answer_generating)
     response = chatbot.ask(prompt+'\n'+query,convo_id=conv_id)
-    print(chatbot.convo_history[conv_id])
-    # chatbot.delete_last2_conversation(conv_id)
-    # chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    # chatbot.add_to_conversation(str(response), "assistant", convo_id=conv_id)
+    chatbot.delete_last2_conversation(conv_id)
+    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
+    chatbot.add_to_conversation(str(response), "assistant", convo_id=conv_id)
     print(f'Direct Query: {query}\nChatGpt: {response}')
-    return response +'\n\n token_cost: '+ str(chatbot.token_cost())
+    return response+ '\n\n token_cost: '+ str(chatbot.token_cost())
+def directQuery_stream(query,conv_id = 'default',prompt = ''):
+    global APICallList
+    APICallList.append(hint_answer_generating)
+    response = chatbot.ask_stream(prompt+'\n'+query,convo_id=conv_id)
+    for data in response:
+        yield data.encode()
+    chatbot.add_to_conversation('TEST!', "assistant", convo_id=conv_id)
+    chatbot.delete_last2_conversation(conv_id)
+    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
+    print(f'Direct Query: {query}\nChatGpt: {response}')
+    yield ('\n\n token_cost: '+ str(chatbot.token_cost())).encode()
 def APIQuery(query,resp =''):
     with open(program_dir+"/prompts/APIPrompt.txt", "r", encoding='utf-8') as f:
         prompt = f.read()
@@ -166,16 +183,17 @@ def SumReply(query, apicalls, max_token=2000, conv_id = 'default'):
         apicalls = apicalls[:-100]
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{apicalls}", apicalls)
-    response = chatbot.ask(prompt,convo_id=conv_id)
+    response = chatbot.ask_stream(prompt,convo_id=conv_id)
+    for data in response:
+        yield data
     print(f'ChatGPT SumReply:\n  {response}\n')
-    return response
 def Summary(query, callResponse):
     with open(program_dir+"/prompts/summary.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{callResponse}", callResponse)
     chatbot.reset(convo_id='sum',system_prompt='Your need to summarize the information you got from the APIs.')
-    response = chatbot.ask(prompt,convo_id='sum')
+    response = chatbot.ask_stream(prompt,convo_id='sum')
     print(f'Summary : {response}\n')
     return response
 def search(content,max_token=2000,max_query=5):
@@ -236,9 +254,12 @@ def search(content,max_token=2000,max_query=5):
     while chatbot.token_str(res) > max_token:
         res = res[:-100]
     return res
+
 if __name__ == "__main__":
-    response = chatbot.ask_stream(
+    response = chatbot.ask(
             prompt='hello',
             role='user',
             convo_id='default',
     )
+    for data in response:
+        print(data,end="",flush=True)

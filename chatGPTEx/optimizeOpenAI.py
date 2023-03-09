@@ -104,9 +104,9 @@ class ExChatGPT:
             self.reset('default')
             self.backup_chat_history()
     def add_to_conversation(self, message: str, role: str, convo_id: str = "default"):
-        print('a:'+ str(self.convo_history[convo_id]))
+        if(convo_id not in self.conversation):
+            self.reset(convo_id)
         self.conversation[convo_id].append({"role": role, "content": message})
-        print('b:'+ str(self.convo_history[convo_id]))
         self.convo_history[convo_id].append({"role": role, "content": message})
         
         self.backup_chat_history()
@@ -130,7 +130,6 @@ class ExChatGPT:
         self.conversation[convo_id].append(last_dialog)
         self.convo_history[convo_id].append(last_dialog)
         while True:
-            print(self.conversation[convo_id])
             full_conversation = ""
             for x in self.conversation[convo_id]:
                 full_conversation = x["content"] + "\n"
@@ -181,8 +180,6 @@ class ExChatGPT:
             raise Exception(
                 f"Error: {response.status_code} {response.reason} {response.text}",
             )
-        response_role: str = ""
-        full_response: str = ""
         for line in response.iter_lines():
             if not line:
                 continue
@@ -197,15 +194,9 @@ class ExChatGPT:
             delta = choices[0].get("delta")
             if not delta:
                 continue
-            if "role" in delta:
-                response_role = delta["role"]
             if "content" in delta:
                 content = delta["content"]
-                full_response += content
                 yield content
-        self.add_to_conversation(full_response, response_role, convo_id=convo_id)
-
-
     def ask(self, prompt: str, role: str = "user", convo_id: str = "default", **kwargs):
         """
         Non-streaming ask
@@ -217,6 +208,7 @@ class ExChatGPT:
             **kwargs,
         )
         full_response: str = "".join(response)
+        self.add_to_conversation(full_response, role, convo_id=convo_id)
         return full_response
 
 

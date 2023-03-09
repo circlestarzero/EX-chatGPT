@@ -83,21 +83,6 @@
         msgerChat.insertAdjacentHTML("beforeend", msgHTML);
         msger.scrollTop = msger.scrollHeight;
       }
-      function fetchData() {
-        fetch('/api/APIProcess')
-          .then(response => response.json())
-          .then(data => {
-            if (data.hasOwnProperty('calls')) {
-              console.log(data)
-              data.calls.forEach(message => {
-                appendAPIresults(message.API, BOT_IMG, 'left', message.query);
-                msger.scrollTop = msger.scrollHeight;
-              });
-            }
-          })
-          .catch(error => console.error(error));
-      }
-      setInterval(fetchData, 1000);
       //load History
       var intervalId = setInterval(pollFunction, 200);
       function pollFunction() {
@@ -129,7 +114,31 @@
           .catch(err => console.error(err));
         return uuid;
       }
-      function submit() {
+      function fetchAPIProcess() {
+        console.log('hi!')
+        fetch('/api/APIProcess')
+          .then(response => response.json())
+          .then(data => {
+            if (data.hasOwnProperty('calls')) {
+              console.log(data)
+              data.calls.forEach(message => {
+                appendAPIresults(message.API, BOT_IMG, 'left', message.query);
+                msger.scrollTop = msger.scrollHeight;
+              });
+            }
+          })
+          .catch(error => console.error(error));
+      }
+      async function addChat(uuid, msg) {
+        return fetch(`/api/addChat?uuid=${encodeURIComponent(uuid)}&msg=${encodeURIComponent(msg)}`)
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+            return data;
+          })
+          .catch(error => console.error(error));
+      }
+      async function submit() {
         const mode = document.getElementById("mode").value;
         const msgText = msgerInput.value;
         messageHistory.unshift(msgText);
@@ -140,11 +149,16 @@
         msgerInput.value = "";
         msgerInput.height = '30px';
         textAreaHeightAdjut();
+        var fetchAPIProcessID = setInterval(fetchAPIProcess, 500);
+        var prompt = '';
         if (promptSelect.options[promptSelect.selectedIndex] != null && promptSelect.style.display != 'none') {
-          botResponse(msgText, mode, uuid, promptSelect.options[promptSelect.selectedIndex].text);
-        } else {
-          botResponse(msgText, mode, uuid);
+          prompt = promptSelect.options[promptSelect.selectedIndex].text;
         }
+        const res = await botResponse(msgText, mode, uuid, prompt);
+        clearInterval(fetchAPIProcessID);
+        const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
+        lastMsgText.innerHTML = await addChat(uuid, res);
+        markdownMathRender();
       }
       msgerForm.addEventListener("submit", event => {
         event.preventDefault();
@@ -191,14 +205,36 @@
           }
         };
       }
-      function botResponse(rawText, mode, uuid, prompt = '') {
-        $.get("/api/query", { mode: mode, msg: rawText, uuid: uuid, prompt: prompt }).done(function (data) {
-          console.log(rawText);
-          console.log(data);
-          const msgText = data;
-          appendMessage(BOT_NAME, BOT_IMG, "left", msgText, mode, formatDate(new Date()));
-          markdownMathRender();
+
+      async function botResponse(rawText, mode, uuid, prompt = '') {
+
+        const response = await fetch(`/api/query?mode=${encodeURIComponent(mode)}&uuid=${encodeURIComponent(uuid)}&prompt=${encodeURIComponent(prompt)}&msg=${encodeURIComponent(rawText)}`, {
+          method: 'GET',
+          headers: { 'Accept': 'application/octet-stream' }
         });
+        const stream = await response.body.pipeThrough(new TextDecoderStream()).pipeThrough(new TransformStream({
+          transform(chunk, controller) {
+            controller.enqueue(chunk);
+          }
+        })).pipeThrough(new TextEncoderStream());
+
+        const reader = stream.getReader();
+        const decoder = new TextDecoder();
+        appendMessage(BOT_NAME, BOT_IMG, "left", '', mode, formatDate(new Date()));
+        const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+          const msg = decoder.decode(value);
+          const formattedMsg = msg.replace(/\n/g, "\n\n</br>");
+          lastMsgText.innerHTML += formattedMsg;
+          msger.scrollTop = msger.scrollHeight;
+          // lastMsgText.textContent += value;
+          console.log(value);
+        }
+        return lastMsgText.textContent
       }
       // Utils
       function get(selector, root = document) {

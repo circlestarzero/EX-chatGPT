@@ -110,6 +110,7 @@ body {
   border-radius: 50%;
 }
 .msg-bubble {
+  font-family: "Fira Code"!important;
   max-width: 75%;
   padding: 20px;
   border-radius: 15px;

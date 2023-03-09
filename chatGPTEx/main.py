@@ -3,8 +3,8 @@ import datetime
 import os
 from promptsSearch import SearchPrompt,promptsDict
 from markdown_it import MarkdownIt
-from flask import Flask, render_template, request
-from search import directQuery,web,detail,webDirect,WebKeyWord,load_history,APICallList
+from flask import Flask, render_template, request,  Response
+from search import directQuery,web,detail,webDirect,WebKeyWord,load_history,APICallList,directQuery_stream,chatbot
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import MarkdownConverter
 
@@ -25,6 +25,12 @@ def home():
     return render_template("index.html")
 
 
+@app.route('/api/test',methods=['get'])
+def test():
+    def generate():
+        for chunk in directQuery_stream('test', conv_id='test'):
+            yield str(chunk).encode()
+    return Response(generate(), direct_passthrough=True, mimetype='application/octet-stream')
 @app.route("/api/query")
 def get_bot_response():
     mode = str(request.args.get('mode'))
@@ -40,31 +46,30 @@ def get_bot_response():
                 prompt = promptsDict[promptName]
             else:
                 prompt = str(SearchPrompt(promptName)[0])
-                print(prompt)
                 prompt = promptsDict[prompt]
-            res = parse_text(directQuery(q,conv_id=uuid,prompt=prompt))
+            return Response(directQuery_stream(q,conv_id=uuid,prompt=prompt), direct_passthrough=True, mimetype='application/octet-stream')
         else:
-            res = parse_text(directQuery(q,conv_id=uuid))
-        return res
+            return Response(directQuery_stream(q,conv_id=uuid), direct_passthrough=True, mimetype='application/octet-stream')
     elif mode == "web":
         q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
-        res = parse_text(web(q,conv_id=uuid))
-        return res
+        return  Response(web(q,conv_id=uuid), direct_passthrough=True, mimetype='application/octet-stream')
     elif mode == "detail":
         q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
-        res = parse_text(detail(q,conv_id=uuid))
-        return res
+        return Response(detail(q,conv_id=uuid), direct_passthrough=True, mimetype='application/octet-stream')
     elif mode =='webDirect':
         q = 'current Time: '+ str(now) + '\n\nQuery:'+ str(userText)
-        res = parse_text(webDirect(q,conv_id=uuid))
-        return res
+        return Response(webDirect(q,conv_id=uuid), direct_passthrough=True, mimetype='application/octet-stream')
     elif mode == 'WebKeyWord':
         q = str(userText)
-        res = parse_text(WebKeyWord(q,conv_id=uuid))
-        return res
+        return Response(WebKeyWord(q,conv_id=uuid), direct_passthrough=True, mimetype='application/octet-stream')
     return "Error"
 
-
+@app.route("/api/addChat")
+def add_chat():
+    uuid = str(request.args.get('uuid'))
+    message = str(request.args.get('msg'))
+    chatbot.add_to_conversation(message,role='assistant',convo_id=str(uuid))
+    return parse_text(message) 
 @app.route("/api/chatLists")
 def get_chat_lists():
     if os.path.isfile(program_dir+'/chatLists.json'):
@@ -104,7 +109,6 @@ def send_history():
     return json.dumps(msgs,ensure_ascii=False)
 lastAPICallListLength = len(APICallList)
 
-
 @app.route("/api/APIProcess")
 def APIProcess():
     global lastAPICallListLength
@@ -126,6 +130,7 @@ def promptsCompletion():
     prompt = str(request.args.get('prompt'))
     res = json.dumps(SearchPrompt(prompt),ensure_ascii=False)
     return res
+
 
 if __name__ == "__main__":
     app.config['JSON_AS_ASCII'] = False
