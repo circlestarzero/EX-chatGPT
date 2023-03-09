@@ -23,10 +23,7 @@ for i in name_list:
         pinlist.append([re.sub('-','',pin.get_pinyin(i)),i])
 def SearchPrompt(name,resultLimit=7):
         searchResults=process.extract(name, name_list, limit=resultLimit)
-        if name == pin.get_pinyin(name):
-                searchResultsPin=[]
-        else:
-                searchResultsPin=process.extract(name, pinlist, limit=resultLimit)
+        searchResultsPin=process.extract(name, pinlist, limit=resultLimit)
         finalResult=[]
         for searchResult in searchResults:
                 finalResult.append([searchResult[1],searchResult[0]])
@@ -50,7 +47,7 @@ def SearchPrompt(name,resultLimit=7):
                 if cnt>=resultLimit:break
         return finalResultList
 if __name__ == '__main__':
-        print(SearchPrompt('英语ssss'))
+        print(SearchPrompt('zhengze'))
 
 
  

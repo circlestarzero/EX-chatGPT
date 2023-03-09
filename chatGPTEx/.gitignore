@@ -169,3 +169,4 @@ cython_debug/
 /chatHistory.json
 /chatLists.json
 /backup/
+/promtsGrab.py
