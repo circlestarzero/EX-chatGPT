@@ -77,15 +77,18 @@ class ExChatGPT:
         if len(ENCODER.encode(initial_conversation)) > self.max_tokens:
             raise Exception("System prompt is too long")
         self.convo_history = {}
-        if os.path.isfile(chatHistoryPath):
-            self.load(chatHistoryPath)
+        if os.path.isfile(chatHistoryPath) and os.path.getsize(chatHistoryPath) > 0:
+                try:
+                    self.load(chatHistoryPath)
+                except Exception as e:
+                    print("Error while loading chat history:", e)
+                    self.reset('default')
+                    self.save(chatHistoryPath)
         else:
             self.reset('default')
             self.save(chatHistoryPath)
         with open(chatHistoryPath,'r',encoding="utf-8") as f:
             self.convo_history = json.load(f)
-
-
     def add_to_conversation(self, message: str, role: str, convo_id: str = "default"):
         """
         Add a message to the conversation
@@ -112,7 +115,7 @@ class ExChatGPT:
             )
             if (len(ENCODER.encode(full_conversation)) > self.max_tokens):
                 flag = True
-                self.conversation[convo_id][1] = self.conversation[convo_id][1][:-self.decrease_step]
+                self.conversation[convo_id][-1] = self.conversation[convo_id][-1][:-self.decrease_step]
                 self.convo_history[convo_id][-1] = self.convo_history[convo_id][-1][:-self.decrease_step]
             else:
                 break
@@ -287,7 +290,8 @@ class ExChatGPT:
         with open(program_dir+"/prompts/conversationSummary.txt", "r", encoding='utf-8') as f:
             prompt = f.read()
         prompt = prompt.replace("{conversation}", input)
-        response = self.ask(prompt)
+        response = self.ask(prompt,convo_id='conversationSummary')
+        self.reset(convo_id='conversationSummary',system_prompt='Summariaze our diaglog')
         self.conversation[convo_id] = [
             {"role": "system", "content": self.system_prompt},
             {"role": "user", "content": "Summariaze our diaglog"},

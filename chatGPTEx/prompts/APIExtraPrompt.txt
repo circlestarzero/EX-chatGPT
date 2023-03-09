@@ -16,4 +16,4 @@ Add new API calls to verify the previous responses and improve the accuracy of y
 Call at least 3 APIs to ensure that the API call results are detailed and relevant.
 Use clear and concise language to ensure that your reply is easily understandable.
 Keep in mind the token cost limitation when writing your reply.
-Ensure that the Google API question is in the same language as the input query.
+Sort the JSON order based on relevance and importance as requested by the API query, with the most relevant item at the beginning of the list for easier understanding.
