@@ -12,8 +12,11 @@ import datetime
 from typing import Generator
 from queue import PriorityQueue as PQ
 import configparser
-
-
+import copy
+import json
+import shutil
+import os
+import time
 ENGINE = os.environ.get("GPT_ENGINE") or "gpt-3.5-turbo"
 ENCODER = tiktoken.get_encoding("gpt2")
 program_path = os.path.realpath(__file__)
@@ -25,7 +28,7 @@ hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Au
 APICallList = []
 config = configparser.ConfigParser()
 config.read(program_dir+'/apikey.ini')
-
+backup_dir = program_dir+"/backup"
 
 class ExChatGPT:
     """
@@ -43,7 +46,9 @@ class ExChatGPT:
         system_prompt = "You are ExChatGPT, a web-based large language model, Respond conversationally",
         lastAPICallTime = time.time()-100,
         apiTimeInterval = 20,
+        maxBackup = 10,
     ) -> None:
+        self.maxBackup = maxBackup
         self.system_prompt = system_prompt
         self.apiTimeInterval = apiTimeInterval
         self.engine = engine or ENGINE
@@ -52,51 +57,59 @@ class ExChatGPT:
         for key in api_keys:
             self.api_keys.put((lastAPICallTime,key))
         self.proxy = proxy
+        
         if self.proxy:
             proxies = {
                 "http": self.proxy,
                 "https": self.proxy,
             }
             self.session.proxies = proxies
-        self.conversation: dict = {
-            "default": [
-                {
-                    "role": "system",
-                    "content": self.system_prompt,
-                },
-            ],
-        }
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.top_p = top_p
         self.reply_count = reply_count
         self.decrease_step = 250
+        self.conversation = {}
+        self.convo_history = {}
+        self.load_chat_history()
         initial_conversation = "\n".join(
             [x["content"] for x in self.conversation["default"]],
         )
         if len(ENCODER.encode(initial_conversation)) > self.max_tokens:
             raise Exception("System prompt is too long")
-        self.convo_history = {}
-        if os.path.isfile(chatHistoryPath) and os.path.getsize(chatHistoryPath) > 0:
-                try:
-                    self.load(chatHistoryPath)
-                except Exception as e:
-                    print("Error while loading chat history:", e)
-                    self.reset('default')
-                    self.save(chatHistoryPath)
-        else:
+        
+    def backup_chat_history(self):
+        if not os.path.exists(backup_dir):
+            os.mkdir(backup_dir)
+        backup_filename = "chathistory_backup_" + time.strftime("%Y%m%d-%H%M") + ".json"
+        backup_filepath = os.path.join(backup_dir, backup_filename)
+        with open(backup_filepath, "w", encoding="utf-8") as f:
+            json.dump(self.convo_history,f, ensure_ascii=False, indent=4)
+        print("Chat history backup completed:", backup_filename)
+    def load_chat_history(self):
+        if not os.path.exists(backup_dir):
+            os.mkdir(backup_dir)
+        backup_files = sorted(os.listdir(backup_dir), key=lambda x: os.path.getmtime(os.path.join(backup_dir, x)), reverse=True)
+        if(len(backup_files)>self.maxBackup):
+                for outDatedFile in backup_files[self.maxBackup+1:]:
+                    os.remove(os.path.join(backup_dir, outDatedFile))
+        for backup_file in backup_files:
+            latest_backup_file = backup_file
+            backup_filepath = os.path.join(backup_dir, latest_backup_file)
+            if self.load(backup_filepath):
+                break
+            print(f"Chat history: {backup_filepath} can't be loaded, try next one")
+            os.remove(backup_filepath)
+        if self.convo_history == {}:
             self.reset('default')
-            self.save(chatHistoryPath)
-        with open(chatHistoryPath,'r',encoding="utf-8") as f:
-            self.convo_history = json.load(f)
+            self.backup_chat_history()
     def add_to_conversation(self, message: str, role: str, convo_id: str = "default"):
-        """
-        Add a message to the conversation
-        """
+        print('a:'+ str(self.convo_history[convo_id]))
         self.conversation[convo_id].append({"role": role, "content": message})
+        print('b:'+ str(self.convo_history[convo_id]))
         self.convo_history[convo_id].append({"role": role, "content": message})
-        self.save(chatHistoryPath)
-
+        
+        self.backup_chat_history()
 
     def __truncate_conversation(self, convo_id: str = "default"):
         """
@@ -104,66 +117,21 @@ class ExChatGPT:
         """
         query = self.conversation[convo_id][-1]
         self.conversation[convo_id] = self.conversation[convo_id][:-1]
+        self.convo_history[convo_id] = self.convo_history[convo_id][:-1]
         full_conversation = "\n".join([x["content"] for x in self.conversation[convo_id][:-1]],)
         if len(ENCODER.encode(full_conversation)) > self.max_tokens:
             self.conversation_summary(convo_id=convo_id)
         self.conversation[convo_id].append(query)
-        flag = True
+        self.convo_history[convo_id].append(query)
         while True:
             full_conversation = "\n".join(
-                [x["content"] for x in self.conversation[convo_id][:-1]],
+                [x["content"] for x in self.conversation[convo_id]],
             )
             if (len(ENCODER.encode(full_conversation)) > self.max_tokens):
-                flag = True
                 self.conversation[convo_id][-1] = self.conversation[convo_id][-1][:-self.decrease_step]
                 self.convo_history[convo_id][-1] = self.convo_history[convo_id][-1][:-self.decrease_step]
             else:
                 break
-
-
-    def ask_stream_copy(
-        self,
-        prompt: str,
-        role: str = "user",
-        convo_id: str = "default",
-        **kwargs,
-    ) -> any: # type: ignore
-        """
-        Ask a question
-        """
-        # Make conversation if it doesn't exist
-        if convo_id not in self.conversation:
-            self.reset(convo_id=convo_id)
-        self.add_to_conversation(prompt, "user", convo_id=convo_id)
-        self.__truncate_conversation(convo_id=convo_id)
-        apiKey = self.api_keys.get()
-        print(time.time() - apiKey[0])
-        if time.time() - apiKey[0]<self.apiTimeInterval:
-            time.sleep(self.apiTimeInterval - (time.time() - apiKey[0]))
-        self.api_keys.put((time.time(),apiKey[1]))
-        API_PROXY = str(config['Proxy']['api_proxy'])
-        # Get response
-        response = self.session.post(
-            API_PROXY,
-            headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey[1])}"},
-            json={
-                "model": self.engine,
-                "messages": self.conversation[convo_id],
-                "stream": True,
-                # kwargs
-                "temperature": kwargs.get("temperature", self.temperature),
-                "top_p": kwargs.get("top_p", self.top_p),
-                "n": kwargs.get("n", self.reply_count),
-                "user": role,
-            },
-            stream=True,
-        ) 
-        if response.status_code != 200:
-            raise Exception(
-                f"Error: {response.status_code} {response.reason} {response.text}",
-            )
-        return response
-
 
     def ask_stream(
         self,
@@ -289,8 +257,15 @@ class ExChatGPT:
             input+=role+' : '+conv['content']+'\n'
         with open(program_dir+"/prompts/conversationSummary.txt", "r", encoding='utf-8') as f:
             prompt = f.read()
+        if(self.token_cost(str(input)+prompt)>self.max_tokens):
+            input = input[self.token_cost(str(input))-self.max_tokens:]
+        while self.token_cost(str(input)+prompt)>self.max_tokens:
+            input = input[self.decrease_step:]
         prompt = prompt.replace("{conversation}", input)
+        self.reset(convo_id='conversationSummary')
         response = self.ask(prompt,convo_id='conversationSummary')
+        while self.token_cost(str(response))>self.max_tokens:
+            response = response[:-self.decrease_step]
         self.reset(convo_id='conversationSummary',system_prompt='Summariaze our diaglog')
         self.conversation[convo_id] = [
             {"role": "system", "content": self.system_prompt},
@@ -301,9 +276,6 @@ class ExChatGPT:
 
 
     def delete_last2_conversation(self, convo_id: str = "default"):
-        """
-        当对话为空时删除会报错，导致页面无法正确返回回答的结果
-        """
         if len(self.conversation[convo_id]) > 0:
             self.conversation[convo_id].pop()
         if len(self.conversation[convo_id]) > 0:
@@ -312,7 +284,7 @@ class ExChatGPT:
             self.convo_history[convo_id].pop()
         if len(self.convo_history[convo_id]) > 0:
             self.convo_history[convo_id].pop()
-        self.save(chatHistoryPath)
+        self.backup_chat_history()
 
 
     def summarize_last_message(self, convo_id: str = "default"):
@@ -338,6 +310,7 @@ class ExChatGPT:
                     self.conversation.update({k: convos[k] for k in convo_ids})
                 else:
                     self.conversation = json.load(f)
+                self.convo_history = copy.deepcopy(self.conversation) 
         except (FileNotFoundError, KeyError, json.decoder.JSONDecodeError):
             return False
         return True

@@ -27,12 +27,11 @@ chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1,system_prompt="You 
 max_token = 1000
 hint_recall_dialog = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Recall our dialogs…"}]},ensure_ascii=False))
 hint_api_finished = json.loads(json.dumps({"calls":[{"API":"System","query":"API calls finished"}]},ensure_ascii=False))
-def chatReplyProcess(prompt):
-    return chatbot.ask_stream_copy(prompt)
+
 def load_history(conv_id = 'default'):
     if(conv_id not in chatbot.convo_history):
         chatbot.reset(conv_id)
-        chatbot.save(program_dir+'/chatHistory.json')
+        chatbot.backup_chat_history()
     return chatbot.convo_history[conv_id]
 def detail_old(query):
     call_res0 = search(APIQuery(query))
@@ -66,7 +65,7 @@ def web(query,conv_id = 'default'):
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
-    chatbot.save(program_dir+'/chatHistory.json')
+    chatbot.backup_chat_history()
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def webDirect(query,conv_id = 'default'):
     global APICallList
@@ -78,7 +77,7 @@ def webDirect(query,conv_id = 'default'):
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
-    chatbot.save(program_dir+'/chatHistory.json')
+    chatbot.backup_chat_history()
     return result +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))
 def WebKeyWord(query,conv_id = 'default'):
     global APICallList
@@ -108,16 +107,17 @@ def WebKeyWord(query,conv_id = 'default'):
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     chatbot.add_to_conversation(str(result), "assistant", convo_id=conv_id)
-    chatbot.save(program_dir+'/chatHistory.json')
+    chatbot.backup_chat_history()
     print(result)
     return result +'\n\n token_cost: '+ str(chatbot.token_cost())
 def directQuery(query,conv_id = 'default',prompt = ''):
     global APICallList
     APICallList.append(hint_answer_generating)
     response = chatbot.ask(prompt+'\n'+query,convo_id=conv_id)
-    chatbot.delete_last2_conversation(conv_id)
-    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    chatbot.add_to_conversation(str(response), "assistant", convo_id=conv_id)
+    print(chatbot.convo_history[conv_id])
+    # chatbot.delete_last2_conversation(conv_id)
+    # chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
+    # chatbot.add_to_conversation(str(response), "assistant", convo_id=conv_id)
     print(f'Direct Query: {query}\nChatGpt: {response}')
     return response +'\n\n token_cost: '+ str(chatbot.token_cost())
 def APIQuery(query,resp =''):
@@ -202,23 +202,13 @@ def search(content,max_token=2000,max_query=5):
         search_data = WolframAPI.call(query, num_results)
         call_res['wolfram/' + query] = search_data
     all_threads = []
-    google_summarize = False
-    google_cnt = 0
-    wiki_summarize = False
-    wiki_cnt = 0
-    for call in call_list[:max_query]:
-        q = call['API']
-        if q.lower() == 'google':
-            google_cnt += 1
-        if q.lower() == 'wikisearch':
-            wiki_cnt += 1
     for call in call_list[:max_query]:
         q = call['query']
         api = call['API']
         if api.lower() == 'google':
-            t = threading.Thread(target=google_search, args=[q, 6, google_summarize])
+            t = threading.Thread(target=google_search, args=[q, 6, False])
         elif api.lower() == 'wikisearch':
-            t = threading.Thread(target=wiki_search, args=[q, 1, wiki_summarize])
+            t = threading.Thread(target=wiki_search, args=[q, 1, False])
         elif api.lower() == 'calculator':
             t = threading.Thread(target=wolfram_search, args=[q])
         else:
@@ -228,6 +218,9 @@ def search(content,max_token=2000,max_query=5):
         t.start()
     for t in all_threads:
         t.join()
+    for key,value in call_res.items():
+        if len(str(value)) < 10:
+            del call_res[key]
     call_res = json.loads(json.dumps(call_res,ensure_ascii=False))
     res = str(call_res)
     while chatbot.token_str(res) > max_token:
