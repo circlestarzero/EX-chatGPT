@@ -138,7 +138,7 @@
         console.log(msgText)
         appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode, formatDate(new Date()));
         msgerInput.value = "";
-        if(promptSelect.options[promptSelect.selectedIndex]!=null){
+        if(promptSelect.options[promptSelect.selectedIndex]!=null && promptSelect.style.display!='none'){
           botResponse(msgText, mode, uuid, promptSelect.options[promptSelect.selectedIndex].text);
         }else{
           botResponse(msgText, mode, uuid);

@@ -12,5 +12,5 @@ Input: Out of 1400 participants, 400 passed the test.
 Output: {"calls":[{"API": "Calculator", "query": "400 / 1400"}]}
 Input: 电视剧狂飙怎么样, 和三体比应该看哪一部?
 Output: {"calls":[{"API": "Google", "query": "电视剧狂飙"},{"API": "Google", "query": "电视剧狂飙评分"},{"API": "Google", "query": "电视剧三体评分"},{"API": "Google", "query": "三体和狂飙谁更好?"}]}
-The Google API question should in the same language as the Input query.
-The apicalls should verify every detial of the response of chatgpt!!!!
+To ensure better understanding, the Google API question must match the input query language. Additionally, the API calls should thoroughly validate every detail in ChatGPT's response.
+Sort the JSON order based on relevance and importance as requested by the API query, with the most relevant item at the beginning of the list for easier understanding.

@@ -178,7 +178,7 @@ def Summary(query, callResponse):
     response = chatbot.ask(prompt,convo_id='sum')
     print(f'Summary : {response}\n')
     return response
-def search(content,max_token=2000):
+def search(content,max_token=2000,max_query=5):
     call_list = content['calls']
     # global search_data
     global call_res
@@ -206,13 +206,13 @@ def search(content,max_token=2000):
     google_cnt = 0
     wiki_summarize = False
     wiki_cnt = 0
-    for call in call_list[:]:
+    for call in call_list[:max_query]:
         q = call['API']
         if q.lower() == 'google':
             google_cnt += 1
         if q.lower() == 'wikisearch':
             wiki_cnt += 1
-    for call in call_list[:]:
+    for call in call_list[:max_query]:
         q = call['query']
         api = call['API']
         if api.lower() == 'google':
