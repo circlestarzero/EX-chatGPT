@@ -140,11 +140,12 @@
       }
       async function submit() {
         const mode = document.getElementById("mode").value;
-        const msgText = msgerInput.value;
+        var msgText = msgerInput.value;
         messageHistory.unshift(msgText);
         const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
         if (!msgText) return;
         console.log(msgText)
+        msgText = msgText.replace(/\n/g, "\n\n</br>")
         appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode, formatDate(new Date()));
         msgerInput.value = "";
         msgerInput.height = '30px';
