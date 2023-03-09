@@ -130,7 +130,13 @@
           .catch(error => console.error(error));
       }
       async function addChat(uuid, msg) {
-        return fetch(`/api/addChat?uuid=${encodeURIComponent(uuid)}&msg=${encodeURIComponent(msg)}`)
+        return fetch('/api/addChat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: `uuid=${encodeURIComponent(uuid)}&msg=${encodeURIComponent(msg)}`
+        })
           .then(response => response.text())
           .then(data => {
             console.log(data);
@@ -139,30 +145,35 @@
           .catch(error => console.error(error));
       }
       async function submit() {
+
         const mode = document.getElementById("mode").value;
         var msgText = msgerInput.value;
         messageHistory.unshift(msgText);
         const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
         if (!msgText) return;
         console.log(msgText)
-        msgText = msgText.replace(/\n/g, "\n\n</br>")
+        msgText = msgText.replace(/\n/g, "\n</br>")
         appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode, formatDate(new Date()));
         msgerInput.value = "";
         msgerInput.height = '30px';
+        
         textAreaHeightAdjut();
         var fetchAPIProcessID = setInterval(fetchAPIProcess, 500);
         var prompt = '';
         if (promptSelect.options[promptSelect.selectedIndex] != null && promptSelect.style.display != 'none') {
           prompt = promptSelect.options[promptSelect.selectedIndex].text;
         }
+        console.log(prompt);
         const res = await botResponse(msgText, mode, uuid, prompt);
         clearInterval(fetchAPIProcessID);
         const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
         lastMsgText.innerHTML = await addChat(uuid, res);
         markdownMathRender();
+        PromptsCompletion();
       }
       msgerForm.addEventListener("submit", event => {
         event.preventDefault();
+
         submit();
       });
       function appendMessage(name, img, side, text, mode, time) {

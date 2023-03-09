@@ -40,13 +40,15 @@ def get_bot_response():
     if mode=="chat":
         q = str(userText)
         promptName = str(request.args.get('prompt'))
+        print(promptName)
         if promptName != "":
             if promptName in promptsDict:
                 prompt = promptsDict[promptName]
             else:
                 prompt = str(SearchPrompt(promptName)[0])
                 prompt = promptsDict[prompt]
-            return Response(directQuery_stream(q,conv_id=uuid,prompt=prompt), direct_passthrough=True, mimetype='application/octet-stream')
+            print(prompt)
+            return Response(directQuery_stream(prompt+' '+q,conv_id=uuid,prompt=prompt), direct_passthrough=True, mimetype='application/octet-stream')
         else:
             return Response(directQuery_stream(q,conv_id=uuid), direct_passthrough=True, mimetype='application/octet-stream')
     elif mode == "web":
@@ -63,10 +65,10 @@ def get_bot_response():
         return Response(WebKeyWord(q,conv_id=uuid), direct_passthrough=True, mimetype='application/octet-stream')
     return "Error"
 
-@app.route("/api/addChat")
+@app.route("/api/addChat",methods=['POST'])
 def add_chat():
-    uuid = str(request.args.get('uuid'))
-    message = str(request.args.get('msg'))
+    uuid = str(request.form.get('uuid'))
+    message = str(request.form.get('msg'))
     chatbot.add_to_conversation(message,role='assistant',convo_id=str(uuid))
     return parse_text(message+"\n\ntoken cost:"+str(chatbot.token_cost(convo_id=uuid))) 
 @app.route("/api/chatLists")
