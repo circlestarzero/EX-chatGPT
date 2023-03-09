@@ -31,7 +31,7 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 - API call process displayed with an animation, similar to Bing
 - Conversation management with **load and chat** modes similar to ChatGPT web page layout
 - **Shortcut keys** for quickly selecting modes (`Tab`), line breaks (`Shift+Enter`), sending messages (`Enter`), and selecting message history (`up` and `down`), similar to a terminal.
-- Automatic **prompt completion** in Chat Mode with support for fuzzy search, pinyin search, and custom prompt selection.
+- Automatic **prompt completion** in `Chat Mode` with support for fuzzy search, pinyin search, and custom prompt selection.The project comes with prompt from [awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts).
 ![promptCompletion](img/promptCompletion.gif)
 
 ## Installation
@@ -40,14 +40,14 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 
 - `pip install`
 `pip install -r requirements.txt`
-- fill your `API keys` in `apikey.ini`
+- Copy `apikey.ini.example` and rename it as `apikey.ini`. Then, fill in your `API key` and `proxy` in `apikey.ini`. If you only have one OpenAI API key, you should delete `key1 = sk-xxxx；key2 = sk-xxxx`.
   - `Google api key and search engine id` [apply](https://developers.google.com/custom-search/v1/overview?hl=en)
   - `wolframAlpha app id key` [apply](https://products.wolframalpha.com/api/)
   - `openAI api key`(new feature) or `chatGPT access_token`(old version) [apply](https://platform.openai.com)
 - run the `main.py` and click the local url like `http://127.0.0.1:1234/`
 - change the mode in the selection box, now have `chat,detail,web,webDirect,WebKeyWord`
 
-### WebChatGPTEnhance
+### WebChatGPTEnhanceExtension
 
 - fill you `Googgle api key and client id` in `chatGPTChromeEhance/src/util/apiManager.ts/getDefaultAPI`
 - run `npm install`

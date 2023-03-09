@@ -31,7 +31,7 @@ ChatGPT是一个强大的工具平台，可以无需任何调整就生成API请�
 - 调用**API过程显示动画**, 类似必应
 - **历史对话管理**载入,类chatgpt页面布局
 - **快捷键**快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送, `up`,`down`选择历史发送消息,类似终端
-- chat模式下**prompt自动补全**选择,支持模糊搜索, 拼音搜索, 支持自定义prompt
+- chat模式下**prompt自动补全**选择,支持模糊搜索, 拼音搜索, 支持自定义prompt, 项目中自带[awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts) 中的`prompt`
 ![promptCompletion](img/promptCompletion.gif)
 
 ## 安装
@@ -40,12 +40,14 @@ ChatGPT是一个强大的工具平台，可以无需任何调整就生成API请�
 
 - `pip install`
 `pip install -r requirements.txt`
-- 在 `apikey.ini` 中填入你的 API 密钥
-  - `Google api key and search engine id` [apply](https://developers.google.com/custom-search/v1/overview?hl=en)
-  - `wolframAlpha app id key` [apply](https://products.wolframalpha.com/api/)
-  - `openAI api key`(新功能) 或 `chatGPT access_token`(旧版本) [apply](https://platform.openai.com)
+- 将`apikey.ini.example`复制改名为`apikey.ini`,然后在 `apikey.ini` 中填入你的 API 密钥, 以及代理(如果只有一个 `openAI` 的 `API key`,将`key1 = sk-xxxx；key2 = sk-xxxx`删除即可)
+  - `Google api key and search engine id` [申请](https://developers.google.com/custom-search/v1/overview?hl=en)
+  - `wolframAlpha app id key` [申请](https://products.wolframalpha.com/api/)
+  - `openAI api key`(新功能) 或 `chatGPT access_token`(旧版本) [申请](https://platform.openai.com)
 - 运行 `main.py` 并打开 `http://127.0.0.1:1234/`
-- 调整模式，例如 `chat,detail,web,webDirect,WebKeyWord`
+- 选择模式(可以使用`Tab`)，例如 `chat,detail,web,webDirect,WebKeyWord`
+- `chat` 模式下 使用 `\{promptname} {query}` 格式来模糊搜索选择prompt
+- **快捷键**快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送, `up`,`down`选择历史发送消息,类似终端
 
 ### WebChatGPTEnhance Installation
 
