@@ -27,7 +27,7 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 
 ## Installation
 
-## Ex-chatGPT
+### Ex-chatGPT
 
 - `pip install`
 `pip install -r requirements.txt`
@@ -38,7 +38,7 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 - run the `main.py` and click the local url like `http://127.0.0.1:1234/`
 - change the mode in the selection box, now have `chat,detail,web,webDirect,WebKeyWord`
 
-## WebChatGPTEnhance
+### WebChatGPTEnhance
 
 - fill you `Googgle api key and client id` in `chatGPTChromeEhance/src/util/apiManager.ts/getDefaultAPI`
 - run `npm install`
@@ -47,6 +47,28 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 - add your `prompts` and `APIs` in option page.
   - `APIs` and `prompts` examples are in `/WebChatGPTAPI`
   - `wolframAlpha` needs to run local sever - `WebChatGPTAPI/WolframLocalServer.py`
+
+## Mode Introduction
+
+### Web Mode
+
+The Web Mode starts by asking ChatGPT a question directly. ChatGPT generates a series of API calls related to the query and uses the first returned result and question to verify and supplement with an API call. Finally, ChatGPT summarizes the information. Web Mode has a better chat ability than just summarizing the response.
+
+### Chat Mode
+
+Chat Mode only calls the OpenAI API interface, similar to the web version of ChatGPT. You can search and choose different prompts by typing `/promtname`, and it supports fuzz search.
+
+### WebDirect Mode
+
+WebDirect Mode first lets ChatGPT generate a series of API calls related to the query. Then, it directly calls a third-party API to search for the answer to each query, and finally, ChatGPT summarizes the information. WebDirect Mode is faster and relatively more accurate for single query information.
+
+### Detail Mode
+
+Detail Mode is an extension of the WebDirect Mode, where an additional API call is made to supplement the current results with further inquiries (such as information not found in the previous search). Finally, ChatGPT summarizes the information.
+
+### Keyword Mode
+
+Keyword Mode generates keywords directly from ChatGPT for querying, using DDG. It doesn't require other API keys. However, its accuracy is relatively poor.
 
 ## Update Log
 

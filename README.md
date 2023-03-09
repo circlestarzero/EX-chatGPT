@@ -34,7 +34,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 
 ## 安装
 
-## Ex-chatGPT Installation
+### Ex-chatGPT Installation
 
 - `pip install`
 `pip install -r requirements.txt`
@@ -45,7 +45,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 - 运行 `main.py` 并打开 `http://127.0.0.1:1234/`
 - 调整模式，例如 `chat,detail,web,webDirect,WebKeyWord`
 
-## WebChatGPTEnhance Installation
+### WebChatGPTEnhance Installation
 
 - 在 `chatGPTChromeEhance/src/util/apiManager.ts/getDefaultAPI` 中填入 Google API 信息
 - 运行 `npm install`
@@ -54,6 +54,28 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 - add your `prompts` and `APIs` in option page.
   - `APIs` and `prompts` examples are in `/WebChatGPTAPI`
   - `wolframAlpha` needs to run local sever - `WebChatGPTAPI/WolframLocalServer.py`
+
+## 模式介绍
+
+### Web Mode
+
+Web Mode 开始时会直接询问 ChatGPT 一个问题。ChatGPT 会生成一系列与查询相关的 API 调用，并使用第一个返回的结果和问题进行验证和补充。最后，ChatGPT 会对信息进行总结。Web Mode 具有比仅总结响应更好的聊天能力。
+
+### Chat Mode
+
+Chat Mode 仅调用 OpenAI API 接口，类似于 ChatGPT 的 Web 版本。您可以通过输入 `/promtname` 来搜索和选择不同的提示，它还支持模糊搜索。
+
+### WebDirect Mode
+
+WebDirect Mode 首先让 ChatGPT 生成一系列与查询相关的 API 调用。然后，它直接调用第三方 API 搜索每个查询的答案，最后 ChatGPT 对信息进行总结。WebDirect Mode 对于单个查询信息更快且相对更准确。
+
+### Detail Mode
+
+Detail Mode 是 WebDirect Mode 的扩展，它会进行额外的 API 调用来补充当前结果中未找到的信息（例如之前未搜索到的信息）。最后，ChatGPT 对信息进行总结。
+
+### Keyword Mode
+
+Keyword Mode 直接从 ChatGPT 中生成关键词进行查询，使用 DDG 进行查询，不需要其他 API 密钥。但是其准确性相对较差。
 
 ## 更新日志
 
