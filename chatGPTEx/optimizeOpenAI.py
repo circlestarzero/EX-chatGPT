@@ -115,18 +115,25 @@ class ExChatGPT:
         """
         Truncate the conversation
         """
-        query = self.conversation[convo_id][-1]
+        last_dialog = self.conversation[convo_id][-1]
+        query = str(last_dialog['content'])
+        if(len(ENCODER.encode(str(query)))>self.max_tokens):
+            query = query[:int(1.5*self.max_tokens)]
+        while(len(ENCODER.encode(str(query)))>self.max_tokens):
+            query = query[:self.decrease_step]
         self.conversation[convo_id] = self.conversation[convo_id][:-1]
         self.convo_history[convo_id] = self.convo_history[convo_id][:-1]
-        full_conversation = "\n".join([x["content"] for x in self.conversation[convo_id][:-1]],)
+        full_conversation = "\n".join([x["content"] for x in self.conversation[convo_id]],)
         if len(ENCODER.encode(full_conversation)) > self.max_tokens:
             self.conversation_summary(convo_id=convo_id)
-        self.conversation[convo_id].append(query)
-        self.convo_history[convo_id].append(query)
+        last_dialog['content'] = query
+        self.conversation[convo_id].append(last_dialog)
+        self.convo_history[convo_id].append(last_dialog)
         while True:
-            full_conversation = "\n".join(
-                [x["content"] for x in self.conversation[convo_id]],
-            )
+            print(self.conversation[convo_id])
+            full_conversation = ""
+            for x in self.conversation[convo_id]:
+                full_conversation = x["content"] + "\n"
             if (len(ENCODER.encode(full_conversation)) > self.max_tokens):
                 self.conversation[convo_id][-1] = self.conversation[convo_id][-1][:-self.decrease_step]
                 self.convo_history[convo_id][-1] = self.convo_history[convo_id][-1][:-self.decrease_step]
@@ -257,14 +264,14 @@ class ExChatGPT:
             input+=role+' : '+conv['content']+'\n'
         with open(program_dir+"/prompts/conversationSummary.txt", "r", encoding='utf-8') as f:
             prompt = f.read()
-        if(self.token_cost(str(input)+prompt)>self.max_tokens):
-            input = input[self.token_cost(str(input))-self.max_tokens:]
-        while self.token_cost(str(input)+prompt)>self.max_tokens:
+        if(self.token_str(str(input)+prompt)>self.max_tokens):
+            input = input[self.token_str(str(input))-self.max_tokens:]
+        while self.token_str(str(input)+prompt)>self.max_tokens:
             input = input[self.decrease_step:]
         prompt = prompt.replace("{conversation}", input)
         self.reset(convo_id='conversationSummary')
         response = self.ask(prompt,convo_id='conversationSummary')
-        while self.token_cost(str(response))>self.max_tokens:
+        while self.token_str(str(response))>self.max_tokens:
             response = response[:-self.decrease_step]
         self.reset(convo_id='conversationSummary',system_prompt='Summariaze our diaglog')
         self.conversation[convo_id] = [
