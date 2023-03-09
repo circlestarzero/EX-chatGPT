@@ -169,7 +169,6 @@
         const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
         lastMsgText.innerHTML = await addChat(uuid, res);
         markdownMathRender();
-        PromptsCompletion();
       }
       msgerForm.addEventListener("submit", event => {
         event.preventDefault();

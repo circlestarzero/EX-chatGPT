@@ -48,7 +48,7 @@ def get_bot_response():
                 prompt = str(SearchPrompt(promptName)[0])
                 prompt = promptsDict[prompt]
             print(prompt)
-            return Response(directQuery_stream(prompt+' '+q,conv_id=uuid,prompt=prompt), direct_passthrough=True, mimetype='application/octet-stream')
+            return Response(directQuery_stream(q,conv_id=uuid,prompt=prompt), direct_passthrough=True, mimetype='application/octet-stream')
         else:
             return Response(directQuery_stream(q,conv_id=uuid), direct_passthrough=True, mimetype='application/octet-stream')
     elif mode == "web":
