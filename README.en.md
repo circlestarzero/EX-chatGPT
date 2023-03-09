@@ -31,6 +31,8 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 - API call process displayed with an animation, similar to Bing
 - Conversation management with **load and chat** modes similar to ChatGPT web page layout
 - **Shortcut keys** for quickly selecting modes (`Tab`), line breaks (`Shift+Enter`), sending messages (`Enter`), and selecting message history (`up` and `down`), similar to a terminal.
+- `stream` feature is similar to that of a typewriter, it responds faster with results instead of loading everything at once. Stream outputs the results in steps, as shown in the example:
+![stream](img/stream.gif)
 - Automatic **prompt completion** in `Chat Mode` with support for fuzzy search, pinyin search, and custom prompt selection.The project comes with prompt from [awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts).
 ![promptCompletion](img/promptCompletion.gif)
 
@@ -81,6 +83,8 @@ Keyword Mode generates keywords directly from ChatGPT for querying, using DDG. I
 
 ## Update Log
 
+- `stream` feature is similar to that of a typewriter, it responds faster with results instead of loading everything at once. Stream outputs the results in steps, as shown in the example:
+![stream](img/stream.gif)
 - Redundant backup of chat history.
 - Auto-complete prompt selection in chat mode with **fuzzy search** and **Pinyin search** support.
 ![promptCompletion](img/promptCompletion.gif)

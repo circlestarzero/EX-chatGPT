@@ -7,7 +7,6 @@ from flask import Flask, render_template, request,  Response
 from search import directQuery,web,detail,webDirect,WebKeyWord,load_history,APICallList,directQuery_stream,chatbot
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import MarkdownConverter
-
 program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
 
@@ -69,7 +68,7 @@ def add_chat():
     uuid = str(request.args.get('uuid'))
     message = str(request.args.get('msg'))
     chatbot.add_to_conversation(message,role='assistant',convo_id=str(uuid))
-    return parse_text(message) 
+    return parse_text(message+"\n\ntoken cost:"+str(chatbot.token_cost(convo_id=uuid))) 
 @app.route("/api/chatLists")
 def get_chat_lists():
     if os.path.isfile(program_dir+'/chatLists.json'):

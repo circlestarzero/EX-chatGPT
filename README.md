@@ -31,7 +31,9 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
 -   调用**API 过程显示动画**, 类似必应
 -   **历史对话管理**载入，类 chatgpt 页面布局
 -   **快捷键**快速选择模式 `Tab` 和换行 `Shift+Enter`,`Enter` 发送， `up`,`down` 选择历史发送消息，类似终端
--   chat 模式下**prompt 自动补全**选择，支持模糊搜索， 拼音搜索， 支持自定义 prompt, 项目中自带 [awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts) 中的 `prompt`
+-   `stream` 特性，它类似于打字机的效果，可以更快地响应结果。与一次性加载所有内容不同，stream会逐步输出结果。如示例中所示：
+![stream](img/stream.gif)
+-   `chat` 模式下**prompt 自动补全**选择，支持模糊搜索， 拼音搜索， 支持自定义 prompt, 项目中自带 [awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts) 中的 `prompt`
 ![promptCompletion](img/promptCompletion.gif)
 
 ## 安装
@@ -102,6 +104,8 @@ Keyword Mode 直接从 ChatGPT 中生成关键词进行查询，使用 DDG 进�
 
 ## 更新日志
 
+-   `stream` 特性，它类似于打字机的效果，可以更快地响应结果。与一次性加载所有内容不同，stream会逐步输出结果。如示例中所示：
+![stream](img/stream.gif)
 -   聊天记录冗余备份
 -   chat 模式下 prompt 自动补全选择，支持模糊搜索和拼音搜索
 

@@ -53,7 +53,6 @@ def detail(query,conv_id = 'default'):
     chatbot.add_to_conversation('', "assistant", convo_id=conv_id)
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    yield (str(result) +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))).encode()
 def web(query,conv_id = 'default'):
     global APICallList
     APICallList.append(hint_recall_dialog)
@@ -70,7 +69,6 @@ def web(query,conv_id = 'default'):
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     chatbot.backup_chat_history()
-    yield (str(result) +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))).encode()
 def webDirect(query,conv_id = 'default'):
     global APICallList
     apir = APIQuery(query)
@@ -84,7 +82,6 @@ def webDirect(query,conv_id = 'default'):
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     chatbot.backup_chat_history()
-    yield (str(result) +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))).encode()
 def WebKeyWord(query,conv_id = 'default'):
     global APICallList
     q = chatbot.ask(
@@ -116,7 +113,6 @@ def WebKeyWord(query,conv_id = 'default'):
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     chatbot.backup_chat_history()
-    yield (str(result) +'\n\n token_cost: '+ str(chatbot.token_cost(conv_id))).encode()
 def directQuery(query,conv_id = 'default',prompt = ''):
     global APICallList
     APICallList.append(hint_answer_generating)
@@ -136,7 +132,6 @@ def directQuery_stream(query,conv_id = 'default',prompt = ''):
     chatbot.delete_last2_conversation(conv_id)
     chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
     print(f'Direct Query: {query}\nChatGpt: {response}')
-    yield ('\n\n token_cost: '+ str(chatbot.token_cost())).encode()
 def APIQuery(query,resp =''):
     with open(program_dir+"/prompts/APIPrompt.txt", "r", encoding='utf-8') as f:
         prompt = f.read()
