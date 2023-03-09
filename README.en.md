@@ -4,25 +4,34 @@
 
 [简体中文](./README.md) English / [Background](./BACKGROUND.md)
 
-ChatGPT can act as a tool former without requiring adjustment, generating API requests for questions to assist in answering. Ex-ChatGPT enables ChatGPT to call external APIs, such as WolframAlpha, Google, and WikiMedia, to provide more accurate and timely answers.
+ChatGPT can act as a **tool former** without requiring adjustment, generating API requests for questions to assist in answering. Ex-ChatGPT enables ChatGPT to call external APIs, such as **WolframAlpha, Google, and WikiMedia**, to provide more accurate and timely answers.
 
-This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a service that uses the GPT3.5 Turbo API and Google,WolframAlpha,WikiMedia APIs, while the latter is a browser extension which update the origin WebChatGPT plugin to Enable adding external API, supportting ChatGPT webpage to call different APIs and prompts
+This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is a service that uses the `GPT3.5 Turbo API` and **Google,WolframAlpha,WikiMedia APIs**, while the latter is a **browser extension** which update the origin WebChatGPT plugin to Enable adding external API, supportting ChatGPT webpage to call different APIs and prompts
+
+## user interface display
+
+### ExChatGPT
+
 ![chatHistory](img/newPage.jpg)
+
+### WebChatGPTEnhance
+
 ![WebChatGPT](img/chatGPTChromeEnhance.png)
 
 ## Highlights
 
-- docker and proxy support
-- Redundant backup of chat history.
-- Supports OpenAI GPT-3.5 Turbo API
-- Allows ChatGPT to call external APIs(Google,WolframAlpha,WikiMedia)
-- Can summerize contents from external APIs using GPT-3.5 Turbo
-- openAI API keys pool to accelerate
-- Markdown and MathJax renderer
-- New Bing like API processing and animation
-- chat history auto saving and loading like chatGPT
-- Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.`up`,`down` to select previously sent messages, similar to terminal.
-- Auto-complete selection for prompt in chat mode, supporting fuzzy search and Pinyin search.
+- **Docker and Proxy support**
+- **Redundant backup of chat history**
+- Support for OpenAI GPT-3.5 Turbo API
+- Ability for ChatGPT to call external API interfaces, such as **Google, WolframAlpha, and WikiMedia**
+- Automatic saving and loading of conversation history with **automatic compression**
+- Ability to display the number of tokens used
+- **OpenAI API key pool**
+- **Markdown and MathJax rendering**
+- API call process displayed with an animation, similar to Bing
+- Conversation management with **load and chat** modes similar to ChatGPT web page layout
+- **Shortcut keys** for quickly selecting modes (`Tab`), line breaks (`Shift+Enter`), sending messages (`Enter`), and selecting message history (`up` and `down`), similar to a terminal.
+- Automatic **prompt completion** in Chat Mode with support for fuzzy search, pinyin search, and custom prompt selection.
 ![promptCompletion](img/promptCompletion.gif)
 
 ## Installation
@@ -73,28 +82,39 @@ Keyword Mode generates keywords directly from ChatGPT for querying, using DDG. I
 ## Update Log
 
 - Redundant backup of chat history.
-- Auto-complete selection for prompt in chat mode, supporting fuzzy search and Pinyin search.
+- Auto-complete prompt selection in chat mode with **fuzzy search** and **Pinyin search** support.
 ![promptCompletion](img/promptCompletion.gif)
-- update docker and proxy support
-- Shortcut key for quick selection mode is `Tab`. And for line break use `Shift + Enter`, while `Enter` sends the message.`up`,`down` to select previously sent messages, similar to terminal.
-- update history chat management sidebar
+
+- Update docker and proxy support.
+
+- Shortcut keys for quick mode selection (`Tab`) and line break (`Shift + Enter`), while `Enter` sends the message. Message history selection (`up`, `down`) is similar to a terminal.
+
+- Update chat history management sidebar.
 ![chatHistory](img/newPage.jpg)
-- update API calls processing animation
+
+- Update API calls processing animation.
 ![APIAnimation](img/APIAnimation.png)
-- Web Page Beautification
+
+- Web page beautification.
 ![WebBeautification](img/WebPageBeautification.jpg)
-- update Markdown and MathJax renderer
+
+- Update Markdown and MathJax renderer.
 ![MathJax](img/mathjax.jpg)
-- update chat history token optimizer, and the web mode can response according to the chat history.Add token cost counter.
+
+- Update chat history token optimizer, and web mode can respond according to chat history. Add token cost counter.
 ![history](img/webHistory.jpg)
-- upate web chatmode selection in webpage and optimize the prompt and the token cost, and restrict the token limit.
+
+- Update web chat mode selection in the webpage and optimize prompt and token cost. Restrict the token limit.
 ![mode](img/mode.jpg)
-- update better suppoer chinese query and add current date info
+
+- Update better support for Chinese queries and add current date info.
 ![date](img/date.jpg)
-- update web chatmode and fix some bugs
-- update api config
-- update api pool
+
+- Update web chat mode and fix some bugs.
+- Update API configuration.
+- Update API pool.
 - Automatic saving and loading of conversation history, ChatGPT can retrieve previous conversations.
-- update OpenAI GPT3.5 Turbo offical API support, super fast and cheap.
-- update extra API calls and search summarizations to give a more comprehensive and detailed answer.
+- Update official support for OpenAI GPT3.5 Turbo API, which is super fast and cheap.
+- Update extra API calls and search summarizations to provide a more comprehensive and detailed answer.
+
   

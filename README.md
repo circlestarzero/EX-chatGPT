@@ -4,9 +4,11 @@
 
 简体中文 [English](./README.en.md) / [Background](./BACKGROUND.md)
 
-ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮助回答。而 Ex-ChatGPT 使得 ChatGPT 能够自己调用外部 API，例如 WolframAlpha 和 Google, WikiMedia，从而给出更准确且具有时效性的回答。
+ChatGPT是一个强大的工具平台，可以无需任何调整就生成API请求来协助回答问题。`Ex-ChatGPT`使得ChatGPT能够调用外部API，例如**WolframAlpha、Google和WikiMedia**，以提供更准确和及时的答案。
 
-本项目分为 Ex-ChatGPT 和 WebChatGPTEnhance，前者是使用 ChatGPT API 的服务，后者是浏览器插件,支持chatgpt网页调用不同api和propmts。
+这个项目分为`Ex-ChatGPT`和`WebChatGPTEnhance`两部分。前者是一个使用了`GPT3.5 Turbo API`和**Google、WolframAlpha、WikiMedia**等API的服务，能够提供更强大的功能和更准确的答案。后者是一个**浏览器扩展程序**，它更新了原有的WebChatGPT插件以支持添加外部API，支持ChatGPT网页调用不同的API和提示。
+
+## 交互界面
 
 ### ExChatGPT
 
@@ -80,27 +82,43 @@ Keyword Mode 直接从 ChatGPT 中生成关键词进行查询，使用 DDG 进�
 ## 更新日志
 
 - 聊天记录冗余备份
-- chat模式下prompt自动补全选择,支持模糊搜索, 拼音搜索
+- chat 模式下 prompt 自动补全选择，支持模糊搜索和拼音搜索
+
 ![promptCompletion](img/promptCompletion.gif)
-- update docker 和 proxy 支持
+
+- 更新 Docker 和 proxy 支持
 - 支持 OpenAI GPT-3.5 Turbo API，快速且价格低廉
-- 额外的 API 调用和搜索摘要，以提供更全面和详细的答案
-- 快捷键快速选择模式`Tab`和换行`Shift+Enter`,`Enter`发送`up`,`down`选择历史发送消息,类似终端
-- 更新历史对话管理,支持载入删除保存历史对话
+- 提供额外的 API 调用和搜索摘要，以提供更全面和详细的答案
+- 使用快捷键快速选择模式 `Tab` 和换行 `Shift+Enter`，同时使用 `Enter` 发送消息。使用 `up` 和 `down` 选择历史发送消息，类似终端操作
+- 更新历史对话管理，支持载入、删除和保存历史对话
+
 ![chatHistory](img/newPage.jpg)
-- update API calls processing animation
+
+- 更新 API 调用处理动画
+
 ![APIAnimation](img/APIAnimation.png)
+
 - 页面美化
+
 ![WebBeautification](img/WebPageBeautification.jpg)
-- Markdown and MathJax renderer
+
+- Markdown 和 MathJax 渲染器
+
 ![MathJax](img/mathjax.jpg)
-- 更新聊天记录token优化器，web模式可以根据聊天记录进行响应；添加token成本计数器
+
+- 更新聊天记录 token 优化器，Web 模式可以根据聊天记录进行响应；添加 token 成本计数器
+
 ![history](img/webHistory.jpg)
-- upate web chatmode selection in webpage and optimize the prompt and the token cost, and restrict the token limit.
+
+- 更新 Web 聊天模式选择，优化 prompt 和 token 成本，限制 token 上限
+
 ![mode](img/mode.jpg)
-- update better suppoer chinese query and add current date info
+
+- 改进对中文查询的支持，并添加当前日期信息
+
 ![date](img/date.jpg)
-- update web chatmode and fix some bugs
-- update api config
-- 更新api池
+
+- 更新 Web 聊天模式并修复一些错误
+- 更新 API 配置
+- 更新 API 池
 - 自动保存载入对话历史，ChatGPT 可联系之前对话
