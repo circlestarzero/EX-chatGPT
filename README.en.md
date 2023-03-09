@@ -13,6 +13,7 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 ## Highlights
 
 - docker and proxy support
+- Redundant backup of chat history.
 - Supports OpenAI GPT-3.5 Turbo API
 - Allows ChatGPT to call external APIs(Google,WolframAlpha,WikiMedia)
 - Can summerize contents from external APIs using GPT-3.5 Turbo
@@ -49,6 +50,7 @@ This project is divided into Ex-ChatGPT and WebChatGPTEnhance. The former is a s
 
 ## Update Log
 
+- Redundant backup of chat history.
 - Auto-complete selection for prompt in chat mode, supporting fuzzy search and Pinyin search.
 ![promptCompletion](img/promptCompletion.gif)
 - update docker and proxy support

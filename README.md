@@ -19,6 +19,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 ## Highlights
 
 - **docker 和 proxy 支持**
+- **聊天记录冗余备份**
 - 支持 OpenAI GPT-3.5 Turbo API
 - 允许 ChatGPT 调用外部 API 接口(**Google,WolframAlpha,WikiMedia**)
 - 自动保存载入对话历史，**自动压缩对话**
@@ -56,6 +57,7 @@ ChatGPT 无需调整就能自己作为toolformer, 生成问题的API请求来帮
 
 ## 更新日志
 
+- 聊天记录冗余备份
 - chat模式下prompt自动补全选择,支持模糊搜索, 拼音搜索
 ![promptCompletion](img/promptCompletion.gif)
 - update docker 和 proxy 支持

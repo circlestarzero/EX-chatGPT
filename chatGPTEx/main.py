@@ -125,8 +125,6 @@ def set_chat_lists():
 def promptsCompletion():
     prompt = str(request.args.get('prompt'))
     res = json.dumps(SearchPrompt(prompt),ensure_ascii=False)
-    print(prompt)
-    print(res)
     return res
 
 if __name__ == "__main__":
