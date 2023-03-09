@@ -84,7 +84,7 @@
         msger.scrollTop = msger.scrollHeight;
       }
       //load History
-      var intervalId = setInterval(pollFunction, 200);
+      var intervalId = setInterval(pollFunction, 100);
       function pollFunction() {
         var result = loadHistory();
         if (result !== null) {
@@ -229,7 +229,7 @@
             break;
           }
           const msg = decoder.decode(value);
-          const formattedMsg = msg.replace(/\n/g, "\n\n</br>");
+          const formattedMsg = msg.replace(/\n/g, "\n</br>");
           lastMsgText.innerHTML += formattedMsg;
           msger.scrollTop = msger.scrollHeight;
           // lastMsgText.textContent += value;
