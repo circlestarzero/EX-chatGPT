@@ -22,8 +22,7 @@ for i in range(0,10):
     else:
         break
 print(openAIAPIKeys)
-chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1,system_prompt="You are ExChatGPT, a web-based large language model, Respond conversationally")
-
+chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1)
 max_token = 1000
 hint_recall_dialog = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Recall our dialogs…"}]},ensure_ascii=False))
 hint_api_finished = json.loads(json.dumps({"calls":[{"API":"System","query":"API calls finished"}]},ensure_ascii=False))
