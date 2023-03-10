@@ -12,6 +12,8 @@
   <script src="{{ url_for('static', filename='styles/prism.js') }}"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="{{ url_for('static', filename='styles/microsoft.cognitiveservices.speech.sdk.bundle.js') }}"></script>
+  <script src="{{ url_for('static', filename='styles/tts.js') }}"></script>
 </head>
 
 <body>
@@ -59,11 +61,12 @@
             <button type="submit" class="msger-send-btn">↵</button>
           </form>
         </div>
+        <button type="submit" class="msger-send-record" onclick="fromMic()">🎤</button>
       </div>
-
     </div>
 
     <script>
+      
       const msgerForm = get(".msger-inputarea");
       const msgerInput = get(".msger-input");
       const msgerChat = get(".msger-chat");
@@ -145,7 +148,6 @@
           .catch(error => console.error(error));
       }
       async function submit() {
-
         const mode = document.getElementById("mode").value;
         var msgText = msgerInput.value;
         messageHistory.unshift(msgText);
@@ -155,8 +157,9 @@
         msgText = msgText.replace(/\n/g, "\n</br>")
         appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode, formatDate(new Date()));
         msgerInput.value = "";
+        lastRecordmsg = "";
         msgerInput.height = '30px';
-        
+
         textAreaHeightAdjut();
         var fetchAPIProcessID = setInterval(fetchAPIProcess, 500);
         var prompt = '';
@@ -164,7 +167,7 @@
           prompt = promptSelect.options[promptSelect.selectedIndex].text;
         }
         console.log(prompt);
-        const res = await botResponse(msgText, mode, uuid, prompt);
+        const res = await botResponse(msgText, mode, uuid, prompt, enableRecord);
         clearInterval(fetchAPIProcessID);
         const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
         lastMsgText.innerHTML = await addChat(uuid, res);
@@ -172,7 +175,6 @@
       }
       msgerForm.addEventListener("submit", event => {
         event.preventDefault();
-
         submit();
       });
       function appendMessage(name, img, side, text, mode, time) {
@@ -217,7 +219,7 @@
         };
       }
 
-      async function botResponse(rawText, mode, uuid, prompt = '') {
+      async function botResponse(rawText, mode, uuid, prompt = '',enableTTS = true) {
 
         const response = await fetch(`/api/query?mode=${encodeURIComponent(mode)}&uuid=${encodeURIComponent(uuid)}&prompt=${encodeURIComponent(prompt)}&msg=${encodeURIComponent(rawText)}`, {
           method: 'GET',
@@ -233,12 +235,22 @@
         const decoder = new TextDecoder();
         appendMessage(BOT_NAME, BOT_IMG, "left", '', mode, formatDate(new Date()));
         const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
+        let buffer = "";
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
             break;
           }
           const msg = decoder.decode(value);
+          buffer += msg;
+          const sentences = buffer.match(/[^.!?。！？;，]+[.!?。！？;，]/g);
+          if (sentences) {
+            console.log(sentences.join(""));
+            if(enableTTS){
+              TTS(sentences.join(""));
+            }
+            buffer = buffer.slice(sentences.join("").length); // Remove complete sentences from the buffer
+          }
           const formattedMsg = msg.replace(/\n/g, "\n</br>");
           lastMsgText.innerHTML += formattedMsg;
           msger.scrollTop = msger.scrollHeight;
@@ -342,7 +354,7 @@
       textarea.style.paddingTop = '10px';
       function textAreaHeightAdjut() {
         textarea.style.height = 'auto';
-        if (textarea.scrollHeight < 70) {
+        if (textarea.scrollHeight < 60) {
           textarea.style.height = '45px';
         } else if (textarea.scrollHeight > 400) {
           textarea.style.height = `400px`;

@@ -170,3 +170,7 @@ cython_debug/
 /chatLists.json
 /backup/
 /promtsGrab.py
+
+#tts
+/YourAudioFile.wav
+/TTS.py
