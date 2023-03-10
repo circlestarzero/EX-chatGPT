@@ -115,6 +115,7 @@
             markdownMathRender();
           })
           .catch(err => console.error(err));
+        msger.scrollTop = msger.scrollHeight;
         return uuid;
       }
       function fetchAPIProcess() {
@@ -354,7 +355,7 @@
       textarea.style.paddingTop = '10px';
       function textAreaHeightAdjut() {
         textarea.style.height = 'auto';
-        if (textarea.scrollHeight < 60) {
+        if (textarea.scrollHeight < 80) {
           textarea.style.height = '45px';
         } else if (textarea.scrollHeight > 400) {
           textarea.style.height = `400px`;

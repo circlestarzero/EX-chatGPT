@@ -124,6 +124,8 @@ def directQuery(query,conv_id = 'default',prompt = ''):
 def directQuery_stream(query,conv_id = 'default',prompt = ''):
     global APICallList
     APICallList.append(hint_answer_generating)
+    if(prompt!=''):
+        chatbot.add_to_conversation(prompt, "system", convo_id=conv_id)
     response = chatbot.ask_stream(prompt+'\n'+query,convo_id=conv_id)
     for data in response:
         yield data.encode()

@@ -23,13 +23,6 @@ app.static_folder = 'static'
 def home():
     return render_template("index.html")
 
-
-@app.route('/api/test',methods=['get'])
-def test():
-    def generate():
-        for chunk in directQuery_stream('test', conv_id='test'):
-            yield str(chunk).encode()
-    return Response(generate(), direct_passthrough=True, mimetype='application/octet-stream')
 @app.route("/api/query")
 def get_bot_response():
     mode = str(request.args.get('mode'))
@@ -47,7 +40,6 @@ def get_bot_response():
             else:
                 prompt = str(SearchPrompt(promptName)[0])
                 prompt = promptsDict[prompt]
-            print(prompt)
             return Response(directQuery_stream(q,conv_id=uuid,prompt=prompt), direct_passthrough=True, mimetype='application/octet-stream')
         else:
             return Response(directQuery_stream(q,conv_id=uuid), direct_passthrough=True, mimetype='application/octet-stream')
@@ -93,7 +85,7 @@ def get_chat_lists():
 def send_history():
     uuid = str(request.args.get('uuid'))
     msgs = []
-    chats  = load_history(conv_id=uuid)[1:]
+    chats  = load_history(conv_id=uuid)
     for chat in chats:
         queryTime = ''
         firstLine = chat['content'].split('\n')[0]
@@ -105,7 +97,7 @@ def send_history():
             chat['content'] = query
         if chat['role']=='user':
             msgs.append({'name': 'You', 'img': 'static/styles/person.jpg', 'side': 'right', 'text': parse_text(chat['content']), 'time': queryTime})
-        else:
+        elif chat['role']=='assistant':
             msgs.append({'name': 'ExChatGPT', 'img': 'static/styles/ChatGPT_logo.png', 'side': 'left', 'text': parse_text(chat['content']),'time': queryTime})
     return json.dumps(msgs,ensure_ascii=False)
 lastAPICallListLength = len(APICallList)
