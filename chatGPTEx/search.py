@@ -6,27 +6,32 @@ import re
 import configparser
 import os
 import requests
-import tiktoken
-ENCODER = tiktoken.get_encoding("gpt2")
 program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
-# api config load
+config_path = os.path.join(program_dir, 'apikey.ini')
 config = configparser.ConfigParser()
 config.read(program_dir+'/apikey.ini')
+if not os.path.exists(config_path):
+    print("Config file doesn't exist!")
+    exit()
+config.read(config_path)
+if not config.has_section('OpenAI'):
+    print("OpenAI section doesn't exist in config file!")
+    exit()
 openAIAPIKeys = []
-for i in range(0,10):
-    key = 'key'+str(i)
-    
-    if key in config['OpenAI']:
-        openAIAPIKeys.append(config['OpenAI'][key])
-    else:
-        break
+try:
+    items = config.items('OpenAI')
+    for key, value in items:
+        if key.startswith('key'):
+            openAIAPIKeys.append(value)
+except configparser.Error as e:
+    print(f"Error reading config file: {str(e)}")
+    exit()
 print(openAIAPIKeys)
 chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1)
 max_token = 1000
 hint_recall_dialog = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Recall our dialogs…"}]},ensure_ascii=False))
 hint_api_finished = json.loads(json.dumps({"calls":[{"API":"System","query":"API calls finished"}]},ensure_ascii=False))
-
 def load_history(conv_id = 'default'):
     if(conv_id not in chatbot.convo_history):
         chatbot.reset(conv_id)

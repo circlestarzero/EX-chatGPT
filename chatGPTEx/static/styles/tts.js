@@ -1,10 +1,35 @@
 const enableChinese = true;
 // https://clearn.microsoft.com/zh-cn/azure/cognitive-services/speech-service/language-support?tabs=tts
-var subscriptionKey = "xxx";
-var region = "xxx";
-var speechConfig = SpeechSDK.SpeechConfig.fromSubscription(subscriptionKey, region);
-const synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig);
+const createSpeechConfig = (() => {
+    let speechConfig;
+    return async () => {
+        if (!speechConfig) {
+            try {
+                const response = await fetch('/api/getAzureAPIKey');
+                const data = await response.json();
+                const subscriptionKey = data.subscriptionKey;
+                const region = data.region;
+                console.log('Subscription Key:', subscriptionKey);
+                console.log('Region:', region);
+                speechConfig = SpeechSDK.SpeechConfig.fromSubscription(subscriptionKey, region);
+                speechConfig.speechRecognitionLanguage = "en-US";
+                if (enableChinese) {
+                    speechConfig.speechRecognitionLanguage = "zh-CN";
+                }
+            } catch (error) {
+                console.error('Error fetching Azure API Key:', error);
+            }
+        }
+
+        return speechConfig;
+    };
+})();
+let synthesizer;
 async function TTS(text) {
+    if (!synthesizer) {
+        const speechConfig = await createSpeechConfig();
+        synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig);
+      }
     const EnglishSsml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en-US">
 <voice name="en-US-JennyNeural">
     <prosody rate="+40.00%">
@@ -12,19 +37,19 @@ async function TTS(text) {
     </prosody>
 </voice>
 </speak>`;
-const ChineseSsml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-CN">
+    const ChineseSsml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-CN">
 <voice name="zh-CN-XiaoshuangNeural">
     <prosody rate="+55.00%">
         ${text}
     </prosody>
 </voice>
 </speak>`;
-var ssml;
-if(enableChinese){
-    ssml = ChineseSsml;
-}else{
-    ssml = EnglishSsml;
-}
+    var ssml;
+    if (enableChinese) {
+        ssml = ChineseSsml;
+    } else {
+        ssml = EnglishSsml;
+    }
     return new Promise((resolve, reject) => {
         synthesizer.speakSsmlAsync(
             ssml,
@@ -46,16 +71,12 @@ if(enableChinese){
     });
 }
 var enableRecord = false
-const audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+var lastRecordmsg = ''
 
-speechConfig.speechRecognitionLanguage = "en-US";
-if (enableChinese) {
-    speechConfig.speechRecognitionLanguage = "zh-CN";
-}
-const speechRecognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
-
-var  lastRecordmsg = ''
 async function fromMic() {
+    const speechConfig = await createSpeechConfig();
+    const audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+    const speechRecognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
     console.log(enableRecord)
     if (enableRecord) {
         speechRecognizer.stopContinuousRecognitionAsync();
@@ -66,15 +87,15 @@ async function fromMic() {
     speechRecognizer.recognizing = (s, e) => {
         enableRecord = true;
         console.log(`RECOGNIZING: Text=${e.result.text}`);
-        msgerInput.value = lastRecordmsg+e.result.text;
+        msgerInput.value = lastRecordmsg + e.result.text;
         textAreaHeightAdjut();
     };
     speechRecognizer.recognized = (s, e) => {
         enableRecord = true;
         if (e.result.reason == SpeechSDK.ResultReason.RecognizedSpeech) {
             textAreaHeightAdjut();
-            msgerInput.value = lastRecordmsg+e.result.text;
-            lastRecordmsg = msgerInput.value 
+            msgerInput.value = lastRecordmsg + e.result.text;
+            lastRecordmsg = msgerInput.value
             console.log(`RECOGNIZED: Text=${e.result.text}`);
         }
         else if (e.result.reason == SpeechSDK.ResultReason.NoMatch) {
@@ -96,7 +117,6 @@ async function fromMic() {
     };
     speechRecognizer.startContinuousRecognitionAsync();
     enableRecord = true;
-  }
-  
-  
-  
+}
+
+

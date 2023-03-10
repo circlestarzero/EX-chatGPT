@@ -1,20 +1,17 @@
 """
 A simple wrapper for the official ChatGPT API
 """
-import argparse
 import json
 import os
-import sys
+import threading
 import time
 import requests
 import tiktoken
-import datetime
 from typing import Generator
 from queue import PriorityQueue as PQ
 import configparser
 import copy
 import json
-import shutil
 import os
 import time
 ENGINE = os.environ.get("GPT_ENGINE") or "gpt-3.5-turbo"
@@ -29,7 +26,11 @@ APICallList = []
 config = configparser.ConfigParser()
 config.read(program_dir+'/apikey.ini')
 backup_dir = program_dir+"/backup"
-
+API_PROXY_DEFAULT = "https://api.openai.com/v1/chat/completions"
+if 'Proxy' in config and 'api_proxy' in config['Proxy']:
+    API_PROXY = config['Proxy']['api_proxy']
+else:
+    API_PROXY = API_PROXY_DEFAULT
 class ExChatGPT:
     """
     Official ChatGPT API
@@ -57,7 +58,6 @@ class ExChatGPT:
         for key in api_keys:
             self.api_keys.put((lastAPICallTime,key))
         self.proxy = proxy
-        
         if self.proxy:
             proxies = {
                 "http": self.proxy,
@@ -72,12 +72,26 @@ class ExChatGPT:
         self.conversation = {}
         self.convo_history = {}
         self.load_chat_history()
+        self.lock = threading.Lock()
         initial_conversation = "\n".join(
             [x["content"] for x in self.conversation["default"]],
         )
         if len(ENCODER.encode(initial_conversation)) > self.max_tokens:
             raise Exception("System prompt is too long")
-        
+    def get_api_key(self):
+        with self.lock:
+            apiKey = self.api_keys.get()
+            delay = self._calculate_delay(apiKey)
+            time.sleep(delay)
+            self.api_keys.put((time.time(), apiKey[1]))
+            return apiKey[1]
+
+    def _calculate_delay(self, apiKey):
+        elapsed_time = time.time() - apiKey[0]
+        if elapsed_time < self.apiTimeInterval:
+            return self.apiTimeInterval - elapsed_time
+        else:
+            return 0
     def backup_chat_history(self):
         if not os.path.exists(backup_dir):
             os.mkdir(backup_dir)
@@ -146,24 +160,14 @@ class ExChatGPT:
         convo_id: str = "default",
         **kwargs,
     ) -> Generator:
-        """
-        Ask a question
-        """
-        # Make conversation if it doesn't exist
         if convo_id not in self.conversation:
             self.reset(convo_id=convo_id)
         self.add_to_conversation(prompt, "user", convo_id=convo_id)
         self.__truncate_conversation(convo_id=convo_id)
-        apiKey = self.api_keys.get()
-        print(time.time() - apiKey[0])
-        if time.time() - apiKey[0]<self.apiTimeInterval:
-            time.sleep(self.apiTimeInterval - (time.time() - apiKey[0]))
-        self.api_keys.put((time.time(),apiKey[1]))
-        API_PROXY = str(config['Proxy']['api_proxy'])
-        # Get response
+        apiKey = self.get_api_key()
         response = self.session.post(
             API_PROXY,
-            headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey[1])}"},
+            headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey)}"},
             json={
                 "model": self.engine,
                 "messages": self.conversation[convo_id],

@@ -7,10 +7,11 @@ from flask import Flask, render_template, request,  Response
 from search import directQuery,web,detail,webDirect,WebKeyWord,load_history,APICallList,directQuery_stream,chatbot
 from graiax.text2img.playwright.plugins.code.highlighter import Highlighter
 from graiax.text2img.playwright import MarkdownConverter
+import configparser
 program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
-
-
+config = configparser.ConfigParser()
+config.read(program_dir+'/apikey.ini')
 def parse_text(text):
     md = MarkdownIt("commonmark", {"highlight": Highlighter()}).enable("table")
     res = MarkdownConverter(md).convert(text)
@@ -111,7 +112,6 @@ def APIProcess():
     else:
         return {}
 
-
 @app.route('/api/setChatLists',methods=['POST'])
 def set_chat_lists():
     with open(program_dir+'/chatLists.json', 'w', encoding='utf-8') as f:
@@ -124,6 +124,16 @@ def promptsCompletion():
     res = json.dumps(SearchPrompt(prompt),ensure_ascii=False)
     return res
 
+subscriptionKey = None
+region = None
+if 'Azure' in config:
+    if 'subscriptionKey' in config['Azure']:
+        subscriptionKey = config['Azure']['subscriptionKey']
+    if 'region' in config['Azure']:
+        region = config['Azure']['region']
+@app.route('/api/getAzureAPIKey',methods=['GET'])
+def AzureAPIKey():
+    return json.dumps({'subscriptionKey':subscriptionKey, 'region':region},ensure_ascii=False)
 
 if __name__ == "__main__":
     app.config['JSON_AS_ASCII'] = False

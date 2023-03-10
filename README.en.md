@@ -47,9 +47,10 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
   - `Google api key and search engine id` [apply](https://developers.google.com/custom-search/v1/overview?hl=en)
   - `wolframAlpha app id key` [apply](https://products.wolframalpha.com/api/)
   - `openAI api key`(new feature) or `chatGPT access_token`(old version) [apply](https://platform.openai.com)
+  - (optional, Text To Speech And Speech recognition) fill in `Azure API key` and `region` [apply](https://clearn.microsoft.com/zh-cn/azure/cognitive-services/speech-service)
 - run the `main.py` and click the local url like `http://127.0.0.1:1234/`
 - change the mode in the selection box, now have `chat,detail,web,webDirect,WebKeyWord`
-- **Voice Conversation Chat**(optional feature), select language and voice in `chatGPTEx/static/styles/tts.js`, fill in `Azure API key` and `region` [apply](https://clearn.microsoft.com/zh-cn/azure/cognitive-services/speech-service), click the microphone on chat interface to `start/close` conversation mode.
+- **Voice Conversation Chat**(optional feature), select language and voice in `chatGPTEx/static/styles/tts.js`, click the microphone on chat interface to `start/close` conversation mode.
 
 ### WebChatGPTEnhanceExtension
 
@@ -122,5 +123,3 @@ Keyword Mode generates keywords directly from ChatGPT for querying, using DDG. I
 - Automatic saving and loading of conversation history, ChatGPT can retrieve previous conversations.
 - Update official support for OpenAI GPT3.5 Turbo API, which is super fast and cheap.
 - Update extra API calls and search summarizations to provide a more comprehensive and detailed answer.
-
-  
