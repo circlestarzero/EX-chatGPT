@@ -20,6 +20,7 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
 
 ## Highlights
 
+-   **语音对话功能**，使用微软Azure API，优化响应速度（1-2秒左右），包含语音识别和文字转语音，支持多种音色和语言，自定义声音。
 -   **docker 和 proxy 支持**
 -   **聊天记录冗余备份**
 -   支持 OpenAI GPT-3.5 Turbo API
@@ -50,6 +51,7 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
 -   选择模式 ( 可以使用 `Tab` ) ，例如 `chat,detail,web,webDirect,WebKeyWord`
 -   `chat` 模式下 使用 `\{promptname} {query}` 格式来模糊搜索选择 prompt
 -   **快捷键**快速选择模式 `Tab` 和换行 `Shift+Enter`,`Enter` 发送， `up`,`down` 选择历史发送消息，类似终端
+-   **语音对话聊天**(可选功能), 在 `chatGPTEx/static/styles/tts.js` 中选择语言和音色, 填写`Azure API key` 和 `region` [申请](https://clearn.microsoft.com/zh-cn/azure/cognitive-services/speech-service), 在聊天界面中点击麦克风`启动/关闭`对话模式
 
 #### Docker 快速部署
 
@@ -104,6 +106,7 @@ Keyword Mode 直接从 ChatGPT 中生成关键词进行查询，使用 DDG 进�
 
 ## 更新日志
 
+-   **语音对话功能**, 使用微软azureAPI, 优化响应速度, 包含识别语音和文字转语音, 支持多种音色和语言,自定义声音
 -   `stream` 特性，它类似于打字机的效果，可以更快地响应结果。与一次性加载所有内容不同，stream会逐步输出结果。如示例中所示：
 ![stream](img/stream.gif)
 -   聊天记录冗余备份

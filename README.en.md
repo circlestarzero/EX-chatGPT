@@ -20,6 +20,7 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 
 ## Highlights
 
+- **Speech Dialogue Functionality**, utilizing Microsoft Azure API to optimize response time (around 1-2 seconds), featuring both speech recognition and text-to-speech capabilities, supporting multiple languages and voices, and allowing for customized voices.
 - **Docker and Proxy support**
 - **Redundant backup of chat history**
 - Support for OpenAI GPT-3.5 Turbo API
@@ -48,6 +49,7 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
   - `openAI api key`(new feature) or `chatGPT access_token`(old version) [apply](https://platform.openai.com)
 - run the `main.py` and click the local url like `http://127.0.0.1:1234/`
 - change the mode in the selection box, now have `chat,detail,web,webDirect,WebKeyWord`
+- **Voice Conversation Chat**(optional feature), select language and voice in `chatGPTEx/static/styles/tts.js`, fill in `Azure API key` and `region` [apply](https://clearn.microsoft.com/zh-cn/azure/cognitive-services/speech-service), click the microphone on chat interface to `start/close` conversation mode.
 
 ### WebChatGPTEnhanceExtension
 
