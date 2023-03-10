@@ -60,13 +60,13 @@ def detail(query,conv_id = 'default'):
 def web(query,conv_id = 'default'):
     global APICallList
     APICallList.append(hint_recall_dialog)
-    resp = directQuery(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}', conv_id=  conv_id)
+    resp = directQuery(f'Query: {query}', conv_id=  conv_id)
     chatbot.delete_last2_conversation(conv_id)
     apir = APIQuery(query,resp=resp)
     call_res0 = search(apir,1600)
     APICallList.append(hint_api_finished)
     print(f'API calls response:\n {call_res0}')
-    result = SumReply(f'Chat History info: {chatbot.conversation[conv_id]}\n Query: {query}' ,str(call_res0),max_token=2000, conv_id=conv_id)
+    result = SumReply(f'Query: {query}' ,str(call_res0),max_token=2000, conv_id=conv_id)
     for data in result:
         yield data.encode()
     chatbot.add_to_conversation('', "assistant", convo_id=conv_id)

@@ -243,7 +243,7 @@
           }
           const msg = decoder.decode(value);
           buffer += msg;
-          const sentences = buffer.match(/[^.!?。！？;，]+[.!?。！？;，]/g);
+          const sentences = buffer.match(/[^.!?。！？;\uFF0C,\n]+[.!?。！？;\uFF0C,\n]/g);
           if (sentences) {
             console.log(sentences.join(""));
             if(enableTTS){
