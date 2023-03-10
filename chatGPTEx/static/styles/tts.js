@@ -1,4 +1,4 @@
-const enableChinese = true;
+const enableChinese = false;
 // https://clearn.microsoft.com/zh-cn/azure/cognitive-services/speech-service/language-support?tabs=tts
 const createSpeechConfig = (() => {
     let speechConfig;
@@ -72,11 +72,13 @@ async function TTS(text) {
 }
 var enableRecord = false
 var lastRecordmsg = ''
-
+let speechRecognizer
 async function fromMic() {
-    const speechConfig = await createSpeechConfig();
-    const audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
-    const speechRecognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
+    if(!speechRecognizer){
+        const speechConfig = await createSpeechConfig();
+        const audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+        speechRecognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
+    }
     console.log(enableRecord)
     if (enableRecord) {
         speechRecognizer.stopContinuousRecognitionAsync();
