@@ -27,7 +27,7 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
 -   允许 ChatGPT 调用外部 API 接口 ( **Google,WolframAlpha,WikiMedia** )
 -   自动保存载入对话历史，**自动压缩对话**
 -   **可显示使用的 Token 数量**
--   **openAI api key 池**
+-   **API池**, **API** 冷却
 -   **Markdown and MathJax** 渲染
 -   调用**API 过程显示动画**, 类似必应
 -   **历史对话管理**载入，类 chatgpt 页面布局
@@ -107,6 +107,7 @@ Keyword Mode 直接从 ChatGPT 中生成关键词进行查询，使用 DDG 进�
 
 ## 更新日志
 
+-   更新所有API代理池, 增加API限制冷却机制(Google 403 冷却1天)
 -   **语音对话功能**, 使用微软azureAPI, 优化响应速度, 包含识别语音和文字转语音, 支持多种音色和语言,自定义声音
 -   `stream` 特性，它类似于打字机的效果，可以更快地响应结果。与一次性加载所有内容不同，stream会逐步输出结果。如示例中所示：
 ![stream](img/stream.gif)

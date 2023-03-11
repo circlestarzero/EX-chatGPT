@@ -27,7 +27,7 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 - Ability for ChatGPT to call external API interfaces, such as **Google, WolframAlpha, and WikiMedia**
 - Automatic saving and loading of conversation history with **automatic compression**
 - Ability to display the number of tokens used
-- **OpenAI API key pool**
+- **API pool**
 - **Markdown and MathJax rendering**
 - API call process displayed with an animation, similar to Bing
 - Conversation management with **load and chat** modes similar to ChatGPT web page layout
@@ -86,6 +86,8 @@ Keyword Mode generates keywords directly from ChatGPT for querying, using DDG. I
 
 ## Update Log
 
+- Update all API proxy pools and add API restriction cooldown mechanism (Google 403 cooldown for 1 day).
+- Voice dialogue function, using Microsoft Azure API, optimized response speed, including voice recognition and text-to-speech, supporting multiple voices and languages, custom voice.
 - `stream` feature is similar to that of a typewriter, it responds faster with results instead of loading everything at once. Stream outputs the results in steps, as shown in the example:
 ![stream](img/stream.gif)
 - Redundant backup of chat history.
