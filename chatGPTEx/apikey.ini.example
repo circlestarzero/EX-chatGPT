@@ -1,14 +1,14 @@
 [Google]
-GOOGLE_API_KEY = x
-SEARCH_ENGINE_ID = x
+GOOGLE_API_KEY0 = x
+SEARCH_ENGINE_ID0 = x
 [OpenAI]
 key0 = sk-xxxx
 key1 = sk-xxxx
 key2 = sk-xxxx
 [WolframAlpha]
-WOLFRAMALPHA_APP_ID = xxxx
+WOLFRAMALPHA_APP_ID0 = xxxx
 [Proxy]
-api_proxy = https://api.openai.com/v1/chat/completions
+api_proxy = 
 [Azure]
 subscriptionKey = xxx
 region = xxx

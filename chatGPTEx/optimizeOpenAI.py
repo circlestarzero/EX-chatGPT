@@ -23,14 +23,8 @@ chatHistoryPath = program_dir+'/chatHistory.json'
 hint_token_exceed = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Shortening your query since exceeding token limits..."}]},ensure_ascii=False))
 hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Auto summarizing our dialogs to save tokens…"}]},ensure_ascii=False))
 APICallList = []
-config = configparser.ConfigParser()
-config.read(program_dir+'/apikey.ini')
 backup_dir = program_dir+"/backup"
-API_PROXY_DEFAULT = "https://api.openai.com/v1/chat/completions"
-if 'Proxy' in config and 'api_proxy' in config['Proxy']:
-    API_PROXY = config['Proxy']['api_proxy']
-else:
-    API_PROXY = API_PROXY_DEFAULT
+
 class ExChatGPT:
     """
     Official ChatGPT API
@@ -40,6 +34,7 @@ class ExChatGPT:
         api_keys: list,
         engine = None,
         proxy = None,
+        api_proxy = None,
         max_tokens: int = 3000,
         temperature: float = 0.5,
         top_p: float = 1.0,
@@ -166,7 +161,7 @@ class ExChatGPT:
         self.__truncate_conversation(convo_id=convo_id)
         apiKey = self.get_api_key()
         response = self.session.post(
-            API_PROXY,
+            "https://api.openai.com/v1/chat/completions",
             headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey)}"},
             json={
                 "model": self.engine,
