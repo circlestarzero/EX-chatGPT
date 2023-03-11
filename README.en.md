@@ -25,6 +25,7 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 - **Redundant backup of chat history**
 - Support for OpenAI GPT-3.5 Turbo API
 - Ability for ChatGPT to call external API interfaces, such as **Google, WolframAlpha, and WikiMedia**
+- Clean up Google search results data to reduce token usage.
 - Automatic saving and loading of conversation history with **automatic compression**
 - Ability to display the number of tokens used
 - **API pool**
@@ -86,6 +87,7 @@ Keyword Mode generates keywords directly from ChatGPT for querying, using DDG. I
 
 ## Update Log
 
+- Clean up Google search results data to reduce token usage.
 - Update all API proxy pools and add API restriction cooldown mechanism (Google 403 cooldown for 1 day).
 - Voice dialogue function, using Microsoft Azure API, optimized response speed, including voice recognition and text-to-speech, supporting multiple voices and languages, custom voice.
 - `stream` feature is similar to that of a typewriter, it responds faster with results instead of loading everything at once. Stream outputs the results in steps, as shown in the example:
