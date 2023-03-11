@@ -1,5 +1,5 @@
 :root {
-  --body-bg: linear-gradient(135deg, #c9e4ff 0%, #ffe4e1 100%);
+  --body-bg: linear-gradient(135deg,#ffe4e1  0%,#c9e4ff  100%);
   --msger-bg: #fff;
   --border: 2px solid #ddd;
   --right-msg-bg: #5e86c1;
@@ -440,7 +440,7 @@ pre {
   cursor: pointer;
   word-break: break-all;
   padding-right: 3.5rem;
-  background: #ffe6ff;
+  background: linear-gradient(135deg,#ffe4e1  0%,#fff5ff  100%);
 }
 
 .chat-list a:hover {
