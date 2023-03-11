@@ -18,12 +18,9 @@ def parse_text(text):
     return res
 app = Flask(__name__)
 app.static_folder = 'static'
-
-
 @app.route("/")
 def home():
     return render_template("index.html")
-
 @app.route("/api/query")
 def get_bot_response():
     mode = str(request.args.get('mode'))

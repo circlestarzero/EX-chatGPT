@@ -1,4 +1,4 @@
-const enableChinese = false;
+const enableChinese = true;
 // https://clearn.microsoft.com/zh-cn/azure/cognitive-services/speech-service/language-support?tabs=tts
 const createSpeechConfig = (() => {
     let speechConfig;
