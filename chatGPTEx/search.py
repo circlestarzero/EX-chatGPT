@@ -285,5 +285,35 @@ def search(content,max_token=2000,max_query=5):
     while chatbot.token_str(res) > max_token:
         res = res[:-100]
     return res
+import re
+
+def clean_string(input_str):
+    # Replace multiple spaces with a single space
+    res = re.sub(r'\s+', ' ', input_str)
+    # Remove spaces except between words
+    res = re.sub(r'(?<!\w)\s+|\s+(?!\w)', '', res)
+    # Replace Chinese symbols with English equivalents
+    symbol_dict = {
+        '，': ',',
+        '。': '.',
+        '！': '!',
+        '？': '?',
+        '；': ';',
+        '：': ':',
+        '“': '"',
+        '”': '"',
+        '‘': "'",
+        '’': "'",
+        '（': '(',
+        '）': ')',
+        '《': '<',
+        '》': '>'
+    }
+    pattern = re.compile('|'.join(re.escape(key) for key in symbol_dict.keys()))
+    res = pattern.sub(lambda x: symbol_dict[x.group()], res)
+    # Remove consecutive periods
+    res = re.sub(r'\.\.+', '', res)
+    return res
+
 if __name__ == "__main__":
-    print(Google.call('test', num_results=4))
+    print(Google.call('狂飙电视剧', num_results=10))
