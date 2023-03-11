@@ -9,11 +9,11 @@
   <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/prism.css') }}">
-  <script src="{{ url_for('static', filename='styles/prism.js') }}"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script src="{{ url_for('static', filename='styles/microsoft.cognitiveservices.speech.sdk.bundle.js') }}"></script>
-  <script src="{{ url_for('static', filename='styles/tts.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/microsoft.cognitiveservices.speech.sdk.bundle.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/tts.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/prism.js') }}"></script>
 </head>
 
 <body>
@@ -239,11 +239,12 @@
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
+            TTS(buffer);
             break;
           }
           const msg = decoder.decode(value);
           buffer += msg;
-          const sentences = buffer.match(/[^.!?。！？;\uFF0C,\n]+[.!?。！？;\uFF0C,\n]/g);
+          const sentences = buffer.match(/[^.!?。！？;\uFF0C,\n~]+[.!?。！？;\uFF0C,\n~]/g);
           if (sentences) {
             console.log(sentences.join(""));
             if(enableTTS){
@@ -253,6 +254,7 @@
           }
           const formattedMsg = msg.replace(/\n/g, "\n</br>");
           lastMsgText.innerHTML += formattedMsg;
+          textAreaHeightAdjut();
           msger.scrollTop = msger.scrollHeight;
           // lastMsgText.textContent += value;
           console.log(value);
@@ -396,7 +398,7 @@
       promptSelect.addEventListener('change', updatePromptSelectWidth);
       modeselect.addEventListener('change', updateModeSelectWidth);
     </script>
-    <script src="{{ url_for('static', filename='styles/newChat.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/newChat.js') }}"></script>
 </body>
 
 </html>
