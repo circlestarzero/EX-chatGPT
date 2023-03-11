@@ -18,6 +18,11 @@ config.read(config_path)
 if not config.has_section('OpenAI'):
     print("OpenAI section doesn't exist in config file!")
     exit()
+API_PROXY = None
+if 'Proxy' in config and 'api_proxy' in config['Proxy']:
+    API_PROXY = config['Proxy']['api_proxy']
+    if(API_PROXY == ''):
+        API_PROXY = None
 openAIAPIKeys = []
 try:
     items = config.items('OpenAI')
@@ -27,8 +32,33 @@ try:
 except configparser.Error as e:
     print(f"Error reading config file: {str(e)}")
     exit()
-print(openAIAPIKeys)
-chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=1)
+chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=20,proxy=API_PROXY)
+
+googleAPIKeys = []
+SEARCH_ENGINE_IDs = []
+try:
+    items = config.items('Google')
+    for key, value in items:
+        if key.startswith('google_api_key'):
+            googleAPIKeys.append(value)
+        if key.startswith('search_engine_id'):
+            SEARCH_ENGINE_IDs.append(value)
+    for i in range(min(len(googleAPIKeys),len(SEARCH_ENGINE_IDs))):
+        googleAPIKeys[i] = (googleAPIKeys[i],SEARCH_ENGINE_IDs[i])
+    Google = GoogleSearchAPI(googleAPIKeys,proxy=API_PROXY)
+except configparser.Error as e:
+    print(f"Error reading config file: {str(e)}")
+
+WolframAPIKeys = []
+try:
+    items = config.items('WolframAlpha')
+    for key, value in items:
+        if key.startswith('wolframalpha_app_id'):
+            WolframAPIKeys.append(value)
+    Wolfram = WolframAPI(WolframAPIKeys,proxy=API_PROXY)
+except configparser.Error as e:
+    print(f"Error reading config file: {str(e)}")
+Wiki = WikiSearchAPI([],proxy=API_PROXY)
 max_token = 1000
 hint_recall_dialog = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Recall our dialogs…"}]},ensure_ascii=False))
 hint_api_finished = json.loads(json.dumps({"calls":[{"API":"System","query":"API calls finished"}]},ensure_ascii=False))
@@ -203,14 +233,14 @@ def search(content,max_token=2000,max_query=5):
     global call_res
     call_res = {}
     def google_search(query, num_results=4,summarzie = False):
-        search_data = GoogleSearchAPI.call(query, num_results=num_results)
+        search_data = Google.call(query, num_results=num_results)
         if summarzie:
             summary_data = search_data
             call_res['google/' + query] = summary_data
         else:
             call_res['google/' + query] = search_data
     def wiki_search(query, num_results=3,summarzie = False):
-        search_data = WikiSearchAPI.call(query, num_results=num_results)
+        search_data = Wiki.call(query, num_results=num_results)
         if summarzie:
             summary_data = search_data
             call_res['wiki/' + query] = summary_data
@@ -218,14 +248,14 @@ def search(content,max_token=2000,max_query=5):
             call_res['wiki/' + query] = search_data
         call_res['wiki/' + query] = search_data
     def wolfram_search(query, num_results=3):
-        search_data = WolframAPI.call(query, num_results)
+        search_data = Wolfram.call(query, num_results)
         call_res['wolfram/' + query] = search_data
     all_threads = []
     for call in call_list[:max_query]:
         q = call['query']
         api = call['API']
         if api.lower() == 'google':
-            t = threading.Thread(target=google_search, args=[q, 6, False])
+            t = threading.Thread(target=google_search, args=[q, 4, False])
         elif api.lower() == 'wikisearch':
             t = threading.Thread(target=wiki_search, args=[q, 1, False])
         elif api.lower() == 'calculator':
@@ -255,12 +285,5 @@ def search(content,max_token=2000,max_query=5):
     while chatbot.token_str(res) > max_token:
         res = res[:-100]
     return res
-
 if __name__ == "__main__":
-    response = chatbot.ask(
-            prompt='hello',
-            role='user',
-            convo_id='default',
-    )
-    for data in response:
-        print(data,end="",flush=True)
+    print(Google.call('test', num_results=4))
