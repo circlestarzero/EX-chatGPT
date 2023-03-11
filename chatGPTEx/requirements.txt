@@ -12,3 +12,4 @@ python-Levenshtein==0.20.9
 fuzzywuzzy==0.18.0
 tiktoken==0.2.0
 xpinyin==0.7.6
+jieba==0.42.1

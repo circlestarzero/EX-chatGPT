@@ -1,0 +1,10 @@
+azure_storage==0.37.0
+beautifulsoup4==4.11.2
+fastapi==0.94.0
+Flask==2.0.2
+fuzzywuzzy==0.18.0
+jieba==0.42.1
+requests==2.26.0
+tiktoken==0.2.0
+uvicorn==0.21.0
+xpinyin==0.7.6
