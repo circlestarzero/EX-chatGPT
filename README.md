@@ -20,7 +20,7 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
 
 ## Highlights
 
--   **语音对话功能**，使用微软Azure API，优化响应速度（1-2秒左右），包含语音识别和文字转语音，支持多种音色和语言，自定义声音。
+-   **语音对话功能**，使用微软 Azure API，优化响应速度 ( 1-2 秒左右 ) ，包含语音识别和文字转语音，支持多种音色和语言，自定义声音。
 -   **docker 和 proxy 支持**
 -   **聊天记录冗余备份**
 -   支持 OpenAI GPT-3.5 Turbo API
@@ -58,11 +58,13 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
 
 ```bash
 # 克隆代码
-git clone https://github.com/circlestarzero/EX-chatGPT.git
+git clone https://github.com/circlestarzero/EX-chatGPT.git --depth=1
 # 进入项目目录
 cd EX-chatGPT/chatGPTEx
 # 将配置补充完整
 cp apikey.ini.example apikey.ini
+# 修改 main.py
+sed -i 's/app.run(host="127\.0\.0\.1",port=1234)/#app.run(host="127\.0\.0\.1",port=1234)/g; s/# app.run(host="0\.0\.0\.0", port = 5000)/app.run(host="0\.0\.0\.0", port = 5000)/g' main.py
 # 配置补充完整后启动
 docker compose up -d
 
