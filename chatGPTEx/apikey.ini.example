@@ -8,7 +8,7 @@ key2 = sk-xxxx
 [WolframAlpha]
 WOLFRAMALPHA_APP_ID0 = xxxx
 [Proxy]
-api_proxy = https://api.openai.com/v1/chat/completions
+api_proxy = 
 [Azure]
 subscriptionKey = xxx
 region = xxx
