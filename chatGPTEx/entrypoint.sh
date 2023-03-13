@@ -1,3 +1,4 @@
+#!/bin/sh
 cd ${WORKDIR}
 
 # 自动更新
