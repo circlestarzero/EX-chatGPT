@@ -17,7 +17,7 @@ USER www-data
 WORKDIR ${WORKDIR}
 
 RUN git clone -b main ${REPO_URL} ${WORKDIR} --depth=1 --recurse-submodule \
-    && chmod +x ${WORKDIR}/EX-chatGPT/chatGPTEx/entrypoint.sh \
+    && chmod +x ${WORKDIR}/chatGPTEx/entrypoint.sh \
     && chown -R www-data:www-data ${WORKDIR}
 
 EXPOSE 5000
