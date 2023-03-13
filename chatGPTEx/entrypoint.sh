@@ -3,6 +3,7 @@ cd ${WORKDIR}
 
 # 复制配置文件
 if ! [ -e /config/apikey.ini ]; then
+  echo "配置文件已复制"
   cp /app/chatGPTEx/apikey.ini.example /config/apikey.ini
 else
   echo "config exists."
