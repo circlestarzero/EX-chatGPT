@@ -38,6 +38,17 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 - Automatic **prompt completion** in `Chat Mode` with support for fuzzy search, pinyin search, and custom prompt selection.The project comes with prompt from [awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts).
 ![promptCompletion](img/promptCompletion.gif)
 
+## To Do List
+
+-   [ ] Mobile interface adaptation
+-   [ ] OCR recognition of formula text in images sent by users
+-   [ ] OAuth2.0 multi-user authentication
+-   [ ] Call the diffusing model to generate images (achieving similar multimodal effects)
+-   [ ] Further spider summary and data cleansing of web search results
+-   [ ] Add code running API, and more APIs
+-   [ ] Embedding alignment retrieval of chat records/local knowledge databases
+
+
 ## Installation
 
 ### Ex-chatGPT

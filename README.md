@@ -38,6 +38,16 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
 -   `chat` 模式下**prompt 自动补全**选择，支持模糊搜索， 拼音搜索， 支持自定义 prompt, 项目中自带 [awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts) 中的 `prompt`
 ![promptCompletion](img/promptCompletion.gif)
 
+## 计划更新
+
+-   [ ] 移动端界面适配
+-   [ ] 发送图片OCR识别公式文字
+-   [ ] OAuth2.0多用户鉴权
+-   [ ] 调用diffusing model生成图片(达到类似多模态效果)
+-   [ ] 网页搜索结果进一步爬虫总结清洗数据
+-   [ ] 增加代码运行API,以及更多API
+-   [ ] 聊天记录/本地知识数据库embedding对齐检索
+
 ## 安装
 
 ### Ex-chatGPT Installation
