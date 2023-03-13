@@ -66,8 +66,9 @@ class ExChatGPT:
         self.decrease_step = 250
         self.conversation = {}
         self.convo_history = {}
+        if self.token_str(self.system_prompt) > self.max_tokens:
+            raise Exception("System prompt is too long")
         self.load_chat_history()
-        # self.__truncate_conversation(convo_id="default")
         self.lock = threading.Lock()
         
     def get_api_key(self):
