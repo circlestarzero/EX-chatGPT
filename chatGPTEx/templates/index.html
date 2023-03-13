@@ -11,7 +11,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/prism.css') }}">
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/microsoft-cognitiveservices-speech-sdk/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/microsoft-cognitiveservices-speech-sdk/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
   <script src="{{ url_for('static', filename='js/tts.js') }}"></script>
   <script src="{{ url_for('static', filename='js/prism.js') }}"></script>
 </head>
@@ -66,7 +67,7 @@
     </div>
 
     <script>
-      
+
       const msgerForm = get(".msger-inputarea");
       const msgerInput = get(".msger-input");
       const msgerChat = get(".msger-chat");
@@ -147,6 +148,7 @@
           })
           .catch(error => console.error(error));
       }
+      let fetchAPIProcessID 
       async function submit() {
         const mode = document.getElementById("mode").value;
         var msgText = msgerInput.value;
@@ -159,9 +161,11 @@
         msgerInput.value = "";
         lastRecordmsg = "";
         msgerInput.height = '30px';
-
         textAreaHeightAdjut();
-        var fetchAPIProcessID = setInterval(fetchAPIProcess, 500);
+        fetchAPIProcessID = setInterval(fetchAPIProcess, 200);
+        setTimeout(function () {
+          clearInterval(fetchAPIProcessID);
+        }, 20000);
         var prompt = '';
         if (promptSelect.options[promptSelect.selectedIndex] != null && promptSelect.style.display != 'none') {
           prompt = promptSelect.options[promptSelect.selectedIndex].text;
@@ -169,8 +173,7 @@
         console.log(prompt);
         const res = await botResponse(msgText, mode, uuid, prompt, enableRecord);
         clearInterval(fetchAPIProcessID);
-        const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
-        lastMsgText.innerHTML = await addChat(uuid, res);
+
         markdownMathRender();
       }
       msgerForm.addEventListener("submit", event => {
@@ -219,8 +222,7 @@
         };
       }
 
-      async function botResponse(rawText, mode, uuid, prompt = '',enableTTS = true) {
-
+      async function botResponse(rawText, mode, uuid, prompt = '', enableTTS = true) {
         const response = await fetch(`/api/query?mode=${encodeURIComponent(mode)}&uuid=${encodeURIComponent(uuid)}&prompt=${encodeURIComponent(prompt)}&msg=${encodeURIComponent(rawText)}`, {
           method: 'GET',
           headers: { 'Accept': 'application/octet-stream' }
@@ -238,16 +240,21 @@
         let buffer = "";
         while (true) {
           const { done, value } = await reader.read();
+          clearInterval(fetchAPIProcessID);
           if (done) {
-            TTS(buffer);
+            if (enableTTS) {
+              TTS(sentences.join(""));
+            }
+            const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
+            lastMsgText.innerHTML = await addChat(uuid, lastMsgText.innerHTML);
             break;
           }
           const msg = decoder.decode(value);
           buffer += msg;
-          const sentences = buffer.match(/[^.!?。！？;\uFF0C,\n~]+[.!?。！？;\uFF0C,\n~]/g);
+          const sentences = buffer.match(/[^.!?。！？;\uFF0C,\n~]+[.!?。！？;\uFF0C,\n~][\s\u3000]*/g);
           if (sentences) {
             console.log(sentences.join(""));
-            if(enableTTS){
+            if (enableTTS) {
               TTS(sentences.join(""));
             }
             buffer = buffer.slice(sentences.join("").length); // Remove complete sentences from the buffer

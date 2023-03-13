@@ -87,7 +87,6 @@ async function fromMic() {
     }
     lastRecordmsg = msgerInput.value;
     speechRecognizer.recognizing = (s, e) => {
-        enableRecord = true;
         console.log(`RECOGNIZING: Text=${e.result.text}`);
         msgerInput.value = lastRecordmsg + e.result.text;
         textAreaHeightAdjut();
@@ -105,6 +104,7 @@ async function fromMic() {
         }
     };
     speechRecognizer.canceled = (s, e) => {
+        enableRecord = false;
         console.log(`CANCELED: Reason=${e.reason}`);
         if (e.reason == SpeechSDK.CancellationReason.Error) {
             console.log(`"CANCELED: ErrorCode=${e.errorCode}`);
@@ -114,6 +114,7 @@ async function fromMic() {
         speechRecognizer.stopContinuousRecognitionAsync();
     };
     speechRecognizer.sessionStopped = (s, e) => {
+        enableRecord = false;
         console.log("\n    Session stopped event.");
         speechRecognizer.stopContinuousRecognitionAsync();
     };

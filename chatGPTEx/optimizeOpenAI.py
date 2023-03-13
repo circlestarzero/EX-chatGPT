@@ -67,6 +67,7 @@ class ExChatGPT:
         self.conversation = {}
         self.convo_history = {}
         self.load_chat_history()
+        self.__truncate_conversation(convo_id="default")
         self.lock = threading.Lock()
         initial_conversation = "\n".join(
             [x["content"] for x in self.conversation["default"]],
