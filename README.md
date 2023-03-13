@@ -48,7 +48,7 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
   -   `Google api key and search engine id` [申请](https://developers.google.com/custom-search/v1/overview?hl=en)
   -   `wolframAlpha app id key` [申请](https://products.wolframalpha.com/api/)
   -   `openAI api key`( 新功能 ) 或 `chatGPT access_token` ( 旧版本 ) [申请](https://platform.openai.com)
-  -   (可选) 在 `apikey.ini` 中填写`Azure API key` 和 `region` [申请](https://clearn.microsoft.com/zh-cn/azure/cognitive-services/speech-service)
+  -   (可选) 在 `apikey.ini` 中填写`Azure API key` 和 `region` [申请](https://learn.microsoft.com/zh-cn/azure/cognitive-services/speech-service)
 -   运行 `main.py` 并打开 `http://127.0.0.1:1234/`
 -   选择模式 ( 可以使用 `Tab` ) ，例如 `chat,detail,web,webDirect,WebKeyWord`
 -   `chat` 模式下 使用 `\{promptname} {query}` 格式来模糊搜索选择 prompt

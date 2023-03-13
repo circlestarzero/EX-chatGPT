@@ -48,7 +48,7 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
   - `Google api key and search engine id` [apply](https://developers.google.com/custom-search/v1/overview?hl=en)
   - `wolframAlpha app id key` [apply](https://products.wolframalpha.com/api/)
   - `openAI api key`(new feature) or `chatGPT access_token`(old version) [apply](https://platform.openai.com)
-  - (optional, Text To Speech And Speech recognition) fill in `Azure API key` and `region` [apply](https://clearn.microsoft.com/zh-cn/azure/cognitive-services/speech-service)
+  - (optional, Text To Speech And Speech recognition) fill in `Azure API key` and `region` [apply](https://learn.microsoft.com/zh-cn/azure/cognitive-services/speech-service)
 - run the `main.py` and click the local url like `http://127.0.0.1:1234/`
 - change the mode in the selection box, now have `chat,detail,web,webDirect,WebKeyWord`
 - **Voice Conversation Chat**(optional feature), select language and voice in `chatGPTEx/static/styles/tts.js`, click the microphone on chat interface to `start/close` conversation mode.
