@@ -22,4 +22,4 @@ RUN git clone -b main ${REPO_URL} ${WORKDIR} --depth=1 --recurse-submodule \
 
 EXPOSE 5000
 
-ENTRYPOINT ["/app/EX-chatGPT/chatGPTEx/entrypoint.sh"]
+ENTRYPOINT ["/app/chatGPTEx/entrypoint.sh"]
