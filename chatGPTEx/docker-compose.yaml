@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: exchatgpt
+    volumes:
+      - ~/config:/config   # 冒号左边请修改为你想保存配置的路径
     container_name: exchatgpt
     restart: unless-stopped
     logging:
