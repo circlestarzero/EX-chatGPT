@@ -2,7 +2,7 @@
 cd ${WORKDIR}
 
 # 自动更新
-git pull
+git config pull.rebase false
 if [ ! -s /tmp/requirements.txt.sha256sum ]; then
     sha256sum /app/chatGPTEx/requirements.txt > /tmp/requirements.txt.sha256sum
 fi
@@ -16,18 +16,6 @@ if [ "${hash_old}" != "${hash_new}" ]; then
     else
         echo "依赖安装成功..."
         sha256sum requirements.txt > /tmp/requirements.txt.sha256sum
-        hash_old=$(cat /tmp/third_party.txt.sha256sum)
-        hash_new=$(sha256sum third_party.txt)
-        if [ "${hash_old}" != "${hash_new}" ]; then
-            echo "检测到third_party.txt有变化，更新第三方组件..."
-            git submodule update --init --recursive
-            if [ $? -ne 0 ]; then
-                echo "无法更新第三方组件，请更新镜像..."
-            else
-                echo "第三方组件安装成功..."
-                sha256sum third_party.txt > /tmp/third_party.txt.sha256sum
-            fi
-        fi
     fi
 fi
 # 启动主程序
