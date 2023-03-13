@@ -8,6 +8,19 @@ services:
     image: exchatgpt
     container_name: exchatgpt
     restart: unless-stopped
-    working_dir: /app/
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1024m"
+        max-file: "3"
     ports:
       - "5000:5000"
+    # TODO: 添加环境变量以直接启动
+    environment:
+      - "GOOGLE_API_KEY="
+      - "SEARCH_ENGINE_ID="
+      - "OPENAI_SECRET=sk-1,sk-2"
+      - "WOLFRAMALPHA_APP_ID="
+      - "API_PROXY=https://api.openai.com/v1/chat/completions"
+      - "AZURE_SUBSCRIPTIONKEY="
+      - "AZURE_REGION="
