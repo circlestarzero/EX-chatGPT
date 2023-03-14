@@ -8,6 +8,7 @@ ENV LANG="C.UTF-8" \
     TZ="Asia/Shanghai" \
     REPO_URL="https://ghproxy.com/https://github.com/onlyLTY/EX-chatGPT.git" \
     WORKDIR="/app"
+    AUTO_UPDATE="true"
 
 WORKDIR ${WORKDIR}
 
