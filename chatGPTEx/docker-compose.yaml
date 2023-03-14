@@ -26,4 +26,4 @@ services:
       - "API_PROXY=https://api.openai.com/v1/chat/completions"
       - "AZURE_SUBSCRIPTIONKEY="
       - "AZURE_REGION="
-      - "AUTO_UPDATE=ture"
+      - "AUTO_UPDATE=true"
