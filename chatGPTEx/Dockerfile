@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir -r https://raw.githubusercontent.com/circlestarze
 ENV LANG="C.UTF-8" \
     TZ="Asia/Shanghai" \
     REPO_URL="https://ghproxy.com/https://github.com/onlyLTY/EX-chatGPT.git" \
-    WORKDIR="/app"
+    WORKDIR="/app" \
     AUTO_UPDATE="true"
 
 WORKDIR ${WORKDIR}
