@@ -1,7 +1,6 @@
 import json
 import datetime
 import os
-import shutil
 from promptsSearch import SearchPrompt,promptsDict
 from markdown_it import MarkdownIt
 from flask import Flask, render_template, request,  Response
