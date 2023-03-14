@@ -67,18 +67,57 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
 
 #### Docker 快速部署
 
-```bash
-# 克隆代码
-git clone https://github.com/circlestarzero/EX-chatGPT.git --depth=1
-# 进入项目目录
-cd EX-chatGPT/chatGPTEx
-# 将配置补充完整
-cp apikey.ini.example apikey.ini
-# 修改 main.py
-sed -i 's/app.run(host="127\.0\.0\.1",port=1234)/#app.run(host="127\.0\.0\.1",port=1234)/g; s/# app.run(host="0\.0\.0\.0", port = 5000)/app.run(host="0\.0\.0\.0", port = 5000)/g' main.py
-# 配置补充完整后启动
-docker compose up -d
+##### 方法一 使用构建好的镜像
 
+1. 创建配置文件目录并拉取配置文件
+
+   `mkdir config && wget https://raw.githubusercontent.com/circlestarzero/EX-chatGPT/main/chatGPTEx/apikey.ini.example -O ./config/apikey.ini`	
+
+2. 编辑配置文件或者把编辑好的配置文件传到config文件夹下。
+
+   `vim ./config/apikey.ini`
+
+3. 拉取docker镜像
+
+   `docker pull 0nlylty/exchatgpt:latest`
+
+4. 创建容器
+
+   ```bash
+   docker run -dit \
+     -v ~/config1:/config \
+     -p 5001:5000 \
+     --name exchatgpt1 \
+     --restart unless-stopped \
+    0nlylty/exchatgpt:latest
+   ```
+
+##### 方法二 自己构建镜像
+
+1. 创建配置文件目录并拉取配置文件
+
+   `mkdir config && wget https://raw.githubusercontent.com/circlestarzero/EX-chatGPT/main/chatGPTEx/apikey.ini.example -O ./config/apikey.ini`	
+
+2. 编辑配置文件或者把编辑好的配置文件传到config文件夹下。
+
+   `vim ./config/apikey.ini`
+
+3. 构建并运行
+
+   ```
+   # 克隆代码
+   git clone https://github.com/circlestarzero/EX-chatGPT.git --depth=1
+   # 进入项目目录
+   cd EX-chatGPT/chatGPTEx
+   # 编辑docker-compose.yaml的挂载路径
+   ~/config:/config   # 冒号左边请修改为保存配置的路径
+   # 配置补充完整后启动
+   docker compose up -d
+   ```
+
+##### 使用
+
+```bash
 # 访问
 http://your_ip:5000
 
