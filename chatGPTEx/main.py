@@ -140,6 +140,3 @@ if __name__ == "__main__":
     app.run(host="127.0.0.1",port=1234)
     #docker config uncomment this line
     # app.run(host="0.0.0.0", port = 5000)
-    source_file = '/app/chatGPTEx/apikey.ini.example'
-    target_file = '/config/apikey.ini'
-    shutil.copy(source_file, target_file)
