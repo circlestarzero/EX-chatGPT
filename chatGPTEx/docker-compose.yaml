@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: exchatgpt
+    volumes:
+      - ~/config:/config   # 冒号左边请修改为你想保存配置的路径
     container_name: exchatgpt
     restart: unless-stopped
     logging:
@@ -17,10 +19,11 @@ services:
       - "5000:5000"
     # TODO: 添加环境变量以直接启动
     environment:
-      - "GOOGLE_API_KEY="
-      - "SEARCH_ENGINE_ID="
-      - "OPENAI_SECRET=sk-1,sk-2"
-      - "WOLFRAMALPHA_APP_ID="
+      - "GOOGLE_API_KEY0=XXX"
+      - "SEARCH_ENGINE_ID0=XXX"
+      - "key0=XXX"
+      - "WOLFRAMALPHA_APP_ID0=XXX"
       - "API_PROXY=https://api.openai.com/v1/chat/completions"
       - "AZURE_SUBSCRIPTIONKEY="
       - "AZURE_REGION="
+      - "AUTO_UPDATE=true"
