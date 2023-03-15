@@ -242,7 +242,7 @@
           clearInterval(fetchAPIProcessID);
           if (done) {
             if (enableTTS) {
-              TTS(sentences.join(""));
+              TTS(buffer);
             }
             const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
             const lastMsg = lastMsgText.textContent;
@@ -260,7 +260,6 @@
             }
             buffer = buffer.slice(sentences.join("").length); // Remove complete sentences from the buffer
           }
-          // const formattedMsg = msg.replace(/\n/g, "\n<br>");
           lastMsgText.textContent += msg;
           textAreaHeightAdjut();
           msger.scrollTop = msger.scrollHeight;
