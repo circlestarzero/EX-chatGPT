@@ -33,7 +33,6 @@ except configparser.Error as e:
     print(f"Error reading config file: {str(e)}")
     exit()
 chatbot = ExChatGPT(api_keys=openAIAPIKeys,apiTimeInterval=20,proxy=API_PROXY)
-
 googleAPIKeys = []
 SEARCH_ENGINE_IDs = []
 try:

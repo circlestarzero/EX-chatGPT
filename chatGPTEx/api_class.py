@@ -10,7 +10,7 @@ from queue import PriorityQueue as PQ
 import jieba
 program_path = os.path.realpath(__file__)
 program_dir = os.path.dirname(program_path)
-with open(program_dir+'/cn_stopwords.txt', encoding='utf-8') as f:
+with open(program_dir+'/prompts/cn_stopwords.txt', encoding='utf-8') as f:
     zh_stopwords = [line.strip() for line in f]
 def remove_stopwords(text):
     zh_words = jieba.cut(text, cut_all=False)
