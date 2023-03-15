@@ -156,7 +156,7 @@
         const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
         if (!msgText) return;
         msgText = msgText.replace(/\n/g, "\n<br>")
-        appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText , mode, formatDate(new Date()));
+        appendMessage(PERSON_NAME, PERSON_IMG, "right",msgText , mode, formatDate(new Date()));
         msgerInput.value = "";
         lastRecordmsg = "";
         msgerInput.height = '30px';
@@ -252,7 +252,7 @@
           }
           const msg = decoder.decode(value);
           buffer += msg;
-          const sentences = buffer.match(/[^.!?。！？;\uFF0C,\n~]+[.!?。！？;\uFF0C,\n~][\s\u3000]*/g);
+          const sentences = buffer.match(/.*(?<![0-9])[,，。？！～；.]/g);
           if (sentences) {
             console.log(sentences.join(""));
             if (enableTTS) {
