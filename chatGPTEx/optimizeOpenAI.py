@@ -133,11 +133,10 @@ class ExChatGPT:
         full_conversation = "\n".join([x["content"] for x in self.conversation[convo_id]],)
         if len(ENCODER.encode(full_conversation)) > self.max_tokens:
             self.conversation_summary(convo_id=convo_id)
-        
+        full_conversation = ""
+        for x in self.conversation[convo_id]:
+            full_conversation = x["content"] + "\n"
         while True:
-            full_conversation = ""
-            for x in self.conversation[convo_id]:
-                full_conversation = x["content"] + "\n"
             if (len(ENCODER.encode(full_conversation+query)) > self.max_tokens):
                 query = query[:-self.decrease_step]
             else:
