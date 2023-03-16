@@ -20,6 +20,7 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 
 ## Highlights
 
+- Multi-User OAuth2 Authentication Management
 - **Speech Dialogue Functionality**, utilizing Microsoft Azure API to optimize response time (around 1-2 seconds), featuring both speech recognition and text-to-speech capabilities, supporting multiple languages and voices, and allowing for customized voices.
 - **Docker and Proxy support**
 - **Redundant backup of chat history**
@@ -42,7 +43,7 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 
 -   [ ] Mobile interface adaptation
 -   [ ] OCR recognition of formula text in images sent by users
--   [ ] OAuth2.0 multi-user authentication
+-   [x] OAuth2.0 multi-user authentication
 -   [ ] Call the diffusing model to generate images (achieving similar multimodal effects)
 -   [ ] Further spider summary and data cleansing of web search results
 -   [ ] Add code running API, and more APIs
@@ -98,6 +99,7 @@ Keyword Mode generates keywords directly from ChatGPT for querying, using DDG. I
 
 ## Update Log
 
+- Multi-User OAuth2 Authentication Management
 - Clean up Google search results data to reduce token usage.
 - Update all API proxy pools and add API restriction cooldown mechanism (Google 403 cooldown for 1 day).
 - Voice dialogue function, using Microsoft Azure API, optimized response speed, including voice recognition and text-to-speech, supporting multiple voices and languages, custom voice.

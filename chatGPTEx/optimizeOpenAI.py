@@ -14,6 +14,7 @@ import copy
 import json
 import os
 import time
+from chatSQL import *
 ENGINE = os.environ.get("GPT_ENGINE") or "gpt-3.5-turbo"
 ENCODER = tiktoken.get_encoding("gpt2")
 program_path = os.path.realpath(__file__)
@@ -22,9 +23,13 @@ apiTime = 20
 chatHistoryPath = program_dir+'/chatHistory.json'
 hint_token_exceed = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Shortening your query since exceeding token limits..."}]},ensure_ascii=False))
 hint_dialog_sum = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Auto summarizing our dialogs to save tokens…"}]},ensure_ascii=False))
-APICallList = []
+APICallList = {}
 backup_dir = program_dir+"/backup"
-
+def append_API_call(user_id:str,hint):
+    global APICallList
+    if(user_id not in APICallList):
+            APICallList[user_id] = []
+    APICallList[user_id].append(hint)
 class ExChatGPT:
     """
     Official ChatGPT API
@@ -65,12 +70,21 @@ class ExChatGPT:
         self.reply_count = reply_count
         self.decrease_step = 250
         self.conversation = {}
-        self.convo_history = {}
+        self.new_add_conversation = {}
         if self.token_str(self.system_prompt) > self.max_tokens:
             raise Exception("System prompt is too long")
-        self.load_chat_history()
         self.lock = threading.Lock()
-        
+    
+
+
+    def load_recent_history(self, user_id: str, convo_id: str = "default"):
+        conn = create_connection()
+        create_tables(conn)
+        recent_history = get_user_recent_history(conn=conn,user_id=user_id,convo_id=convo_id,limit=100)
+        if conn:
+            conn.close()
+        self.reset(user_id=user_id,convo_id=convo_id)
+        self.conversation[user_id][convo_id] += recent_history[-10:]
     def get_api_key(self):
         with self.lock:
             apiKey = self.api_keys.get()
@@ -85,85 +99,68 @@ class ExChatGPT:
             return self.apiTimeInterval - elapsed_time
         else:
             return 0
-    def backup_chat_history(self):
-        if not os.path.exists(backup_dir):
-            os.mkdir(backup_dir)
-        backup_filename = "chathistory_backup_" + time.strftime("%Y%m%d-%H%M") + ".json"
-        backup_filepath = os.path.join(backup_dir, backup_filename)
-        with open(backup_filepath, "w", encoding="utf-8") as f:
-            json.dump(self.convo_history,f, ensure_ascii=False, indent=4)
-        print("Chat history backup completed:", backup_filename)
-    def load_chat_history(self):
-        if not os.path.exists(backup_dir):
-            os.mkdir(backup_dir)
-        backup_files = sorted(os.listdir(backup_dir), key=lambda x: os.path.getmtime(os.path.join(backup_dir, x)), reverse=True)
-        if(len(backup_files)>self.maxBackup):
-                for outDatedFile in backup_files[self.maxBackup+1:]:
-                    os.remove(os.path.join(backup_dir, outDatedFile))
-        for backup_file in backup_files:
-            latest_backup_file = backup_file
-            backup_filepath = os.path.join(backup_dir, latest_backup_file)
-            if self.load(backup_filepath):
-                break
-            print(f"Chat history: {backup_filepath} can't be loaded, try next one")
-            os.remove(backup_filepath)
-        if self.convo_history == {}:
-            self.reset('default')
-            self.backup_chat_history()
-    def add_to_conversation(self, message: str, role: str, convo_id: str = "default"):
-        if(convo_id not in self.conversation):
-            self.reset(convo_id)
-        self.conversation[convo_id].append({"role": role, "content": message})
-        self.convo_history[convo_id].append({"role": role, "content": message})
-        
-        self.backup_chat_history()
 
-    def __truncate_conversation(self, convo_id: str = "default"):
+    def add_to_conversation(self, user_id: str, message: str, role: str, convo_id: str = "default"):
+        if(user_id not in self.conversation or convo_id not in self.conversation[user_id]):
+            self.reset(user_id=user_id,convo_id=convo_id)
+        self.conversation[user_id][convo_id].append({"role": role, "content": message})
+
+    def add_to_db_temp(self, user_id: str, message: str, role: str, convo_id: str = "default"):
+        if(user_id not in self.new_add_conversation):
+            self.new_add_conversation[user_id] = []
+        created_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.new_add_conversation[user_id].append({"convo_id":convo_id, "role": role,"content": message,"time":created_time})
+        conn = create_connection()
+        insert_user_history(conn,user_id,self.new_add_conversation[user_id])
+        if conn:
+            conn.close()
+        self.new_add_conversation[user_id] = []
+        
+
+    def __truncate_conversation(self,user_id: str, convo_id: str = "default"):
         """
         Truncate the conversation
         """
-        last_dialog = self.conversation[convo_id][-1]
+        last_dialog = self.conversation[user_id][convo_id][-1]
         query = str(last_dialog['content'])
         if(len(ENCODER.encode(str(query)))>self.max_tokens):
             query = query[:int(1.5*self.max_tokens)]
         while(len(ENCODER.encode(str(query)))>self.max_tokens):
             query = query[:self.decrease_step]
-        self.conversation[convo_id] = self.conversation[convo_id][:-1]
-        self.convo_history[convo_id] = self.convo_history[convo_id][:-1]
-        full_conversation = "\n".join([x["content"] for x in self.conversation[convo_id]],)
+        self.conversation[user_id][convo_id] = self.conversation[user_id][convo_id][:-1]
+        full_conversation = "\n".join([x["content"] for x in self.conversation[user_id][convo_id]],)
         if len(ENCODER.encode(full_conversation)) > self.max_tokens:
-            self.conversation_summary(convo_id=convo_id)
+            self.conversation_summary(user_id,convo_id=convo_id)
         last_dialog['content'] = query
-        self.conversation[convo_id].append(last_dialog)
-        self.convo_history[convo_id].append(last_dialog)
+        self.conversation[user_id][convo_id].append(last_dialog)
         while True:
             full_conversation = ""
-            for x in self.conversation[convo_id]:
+            for x in self.conversation[user_id][convo_id]:
                 full_conversation = x["content"] + "\n"
             if (len(ENCODER.encode(full_conversation)) > self.max_tokens):
-                self.conversation[convo_id][-1] = self.conversation[convo_id][-1][:-self.decrease_step]
-                self.convo_history[convo_id][-1] = self.convo_history[convo_id][-1][:-self.decrease_step]
+                self.conversation[user_id][convo_id][-1] = self.conversation[user_id][convo_id][-1][:-self.decrease_step]
             else:
                 break
 
     def ask_stream(
         self,
         prompt: str,
+        user_id: str,
         role: str = "user",
         convo_id: str = "default",
         **kwargs,
     ) -> Generator:
-        if convo_id not in self.conversation:
-            self.reset(convo_id=convo_id)
-        self.add_to_conversation(prompt, "user", convo_id=convo_id)
-        self.__truncate_conversation(convo_id=convo_id)
+        if user_id not in self.conversation or convo_id not in self.conversation[user_id]:
+            self.reset(user_id = user_id, convo_id=convo_id)
+        self.add_to_conversation(user_id, prompt, "user", convo_id=convo_id)
+        self.__truncate_conversation(user_id, convo_id=convo_id)
         apiKey = self.get_api_key()
         response = self.session.post(
             "https://api.openai.com/v1/chat/completions",
             headers={"Authorization": f"Bearer {kwargs.get('api_key', apiKey)}"},
             json={
                 "model": self.engine,
-                "messages": self.conversation[convo_id],
+                "messages": self.conversation[user_id][convo_id],
                 "stream": True,
                 # kwargs
                 "temperature": kwargs.get("temperature", self.temperature),
@@ -194,58 +191,47 @@ class ExChatGPT:
             if "content" in delta:
                 content = delta["content"]
                 yield content
-    def ask(self, prompt: str, role: str = "user", convo_id: str = "default", **kwargs):
+    def ask(self,user_id: str, prompt: str, role: str = "user", convo_id: str = "default", **kwargs):
         """
         Non-streaming ask
         """
         response = self.ask_stream(
+            user_id=user_id,
             prompt=prompt,
             role=role,
             convo_id=convo_id,
             **kwargs,
         )
         full_response: str = "".join(response)
-        self.add_to_conversation(full_response, role, convo_id=convo_id)
+        self.add_to_conversation(user_id, full_response, role, convo_id=convo_id)
         return full_response
 
 
-    def rollback(self, n: int = 1, convo_id: str = "default"):
-        """
-        Rollback the conversation
-        """
-        for _ in range(n):
-            self.conversation[convo_id].pop()
+    # def rollback(self, n: int = 1, convo_id: str = "default"):
+    #     """
+    #     Rollback the conversation
+    #     """
+    #     for _ in range(n):
+    #         self.conversation[user_id][convo_id].pop()
 
 
-    def reset(self, convo_id: str = "default", system_prompt = None):
+    def reset(self,user_id: str, convo_id: str = "default", system_prompt = None):
         """
         Reset the conversation
         """
-        self.conversation[convo_id] = [
+        if user_id not in self.conversation:
+            self.conversation[user_id] = {}
+        self.conversation[user_id][convo_id] = [
             {"role": "system", "content": str(system_prompt or self.system_prompt)},
         ]
-        self.convo_history[convo_id] = [{"role": "system", "content": str(system_prompt or self.system_prompt)}]
 
 
-    def save(self, file: str, *convo_ids: str):
-        try:
-            with open(file, "w", encoding="utf-8") as f:
-                if convo_ids:
-                    json.dump({k: self.convo_history[k] for k in convo_ids}, f, indent=2)
-                else:
-                    json.dump(self.convo_history, f, indent=2,ensure_ascii=False)
-        except (FileNotFoundError, KeyError):
-            return False
-        return True
-        # print(f"Error: {file} could not be created")
- 
 
-    def conversation_summary(self, convo_id: str = "default"):
-        global APICallList
-        APICallList.append(hint_dialog_sum)
+    def conversation_summary(self, user_id: str,  convo_id: str = "default"):
+        append_API_call(user_id, hint_dialog_sum)
         input = ""
         role = ""
-        for conv in self.conversation[convo_id]:
+        for conv in self.conversation[user_id][convo_id]:
             if (conv["role"]=='user'):
                 role = 'User'
             else:
@@ -258,74 +244,31 @@ class ExChatGPT:
         while self.token_str(str(input)+prompt)>self.max_tokens:
             input = input[self.decrease_step:]
         prompt = prompt.replace("{conversation}", input)
-        self.reset(convo_id='conversationSummary')
-        response = self.ask(prompt,convo_id='conversationSummary')
+        self.reset(user_id,convo_id='conversationSummary')
+        response = self.ask(user_id,prompt,convo_id='conversationSummary')
         while self.token_str(str(response))>self.max_tokens:
             response = response[:-self.decrease_step]
-        self.reset(convo_id='conversationSummary',system_prompt='Summariaze our diaglog')
-        self.conversation[convo_id] = [
+        self.reset(user_id,convo_id='conversationSummary',system_prompt='Summariaze our diaglog')
+        self.conversation[user_id][convo_id] = [
             {"role": "system", "content": self.system_prompt},
             {"role": "user", "content": "Summariaze our diaglog"},
             {"role": 'assistant', "content": response},
         ]
-        return self.conversation[convo_id]
+        return self.conversation[user_id][convo_id]
 
 
-    def delete_last2_conversation(self, convo_id: str = "default"):
-        if len(self.conversation[convo_id]) > 0:
-            self.conversation[convo_id].pop()
-        if len(self.conversation[convo_id]) > 0:
-            self.conversation[convo_id].pop()
-        if len(self.convo_history[convo_id]) > 0:
-            self.convo_history[convo_id].pop()
-        if len(self.convo_history[convo_id]) > 0:
-            self.convo_history[convo_id].pop()
-        self.backup_chat_history()
+    def delete_last2_conversation(self, user_id:str, convo_id: str = "default"):
+        if len(self.conversation[user_id][convo_id]) > 0:
+            self.conversation[user_id][convo_id].pop()
+        if len(self.conversation[user_id][convo_id]) > 0:
+            self.conversation[user_id][convo_id].pop()
 
-
-    def summarize_last_message(self, convo_id: str = "default"):
-        last_message = self.conversation[convo_id][-1]["content"]
-
-
-    def token_cost(self,convo_id: str = "default"):
-        return len(ENCODER.encode("\n".join([x["content"] for x in self.conversation[convo_id]])))
+    def token_cost(self,user_id:str,convo_id: str = "default"):
+        return len(ENCODER.encode("\n".join([x["content"] for x in self.conversation[user_id][convo_id]])))
  
 
     def token_str(self,content:str):
         return len(ENCODER.encode(content))
-
-
-    def load(self, file: str, *convo_ids: str):
-        """
-        Load the conversation from a JSON  file
-        """
-        try:
-            with open(file, encoding="utf-8") as f:
-                if convo_ids:
-                    convos = json.load(f)
-                    self.conversation.update({k: convos[k] for k in convo_ids})
-                else:
-                    self.conversation = json.load(f)
-                self.convo_history = copy.deepcopy(self.conversation) 
-        except (FileNotFoundError, KeyError, json.decoder.JSONDecodeError):
-            return False
-        return True
-
-
-    def print_config(self, convo_id: str = "default"):
-        """
-        Prints the current configuration
-        """
-        print(
-            f"""
-ChatGPT Configuration:
-  Messages:         {len(self.conversation[convo_id])} / {self.max_tokens}
-  Engine:           {self.engine}
-  Temperature:      {self.temperature}
-  Top_p:            {self.top_p}
-  Reply count:      {self.reply_count}
-            """,
-        )
 
 
 def main():

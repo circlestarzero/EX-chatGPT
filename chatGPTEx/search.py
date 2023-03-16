@@ -1,5 +1,5 @@
 from api_class import GoogleSearchAPI, WikiSearchAPI, WolframAPI
-from optimizeOpenAI import ExChatGPT,APICallList
+from optimizeOpenAI import ExChatGPT,append_API_call
 import threading 
 import json
 import re
@@ -61,63 +61,72 @@ Wiki = WikiSearchAPI([],proxy=API_PROXY)
 max_token = 1000
 hint_recall_dialog = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Recall our dialogs…"}]},ensure_ascii=False))
 hint_api_finished = json.loads(json.dumps({"calls":[{"API":"System","query":"API calls finished"}]},ensure_ascii=False))
-def load_history(conv_id = 'default'):
-    if(conv_id not in chatbot.convo_history):
-        chatbot.reset(conv_id)
-        chatbot.backup_chat_history()
-    return chatbot.convo_history[conv_id]
-def detail_old(query):
-    call_res0 = search(APIQuery(query))
-    Sum0 = Summary(query, call_res0)
-    call_res1 = search(APIExtraQuery(query,Sum0))
-    Sum1 = Summary(query, call_res1)
+
+
+
+def load_history(user_id: str,conv_id = 'default'):
+    chatbot.load_recent_history(user_id,conv_id)
+    history = []
+    for conv in chatbot.conversation[user_id][conv_id]:
+        if conv['role'] == 'system':
+            continue
+        history.append(conv)
+    return history
+def detail_old(user_id:str,query):
+    call_res0 = search(APIQuery(user_id,query))
+    Sum0 = Summary(user_id,query, call_res0)
+    call_res1 = search(APIExtraQuery(user_id,query,Sum0))
+    Sum1 = Summary(user_id,query, call_res1)
     print('\n\nChatGpt: \n' )
-    result  = SumReply(query, str(Sum0) + str(Sum1))
+    result  = SumReply(user_id,query, str(Sum0) + str(Sum1))
     return result
-def detail(query,conv_id = 'default'):
-    global APICallList
-    call_res0 = search(APIQuery(query),1000)
+def detail(user_id:str,query,conv_id = 'default'):
+    chatbot.add_to_db_temp(user_id, str(query), "user", convo_id=conv_id)
+    append_API_call(user_id,hint_recall_dialog)
+    call_res0 = search(APIQuery(user_id,query),1000)
     print(f'API calls response:\n {call_res0}')
-    call_res1 = search(APIExtraQuery(query,call_res0),1000)
+    call_res1 = search(APIExtraQuery(user_id,query,call_res0),1000)
     print(f'API calls response:\n {call_res1}')
-    result  = SumReply(query, str(call_res0) + str(call_res1),max_token=2000,conv_id=conv_id)
+    result  = SumReply(user_id,query, str(call_res0) + str(call_res1),max_token=2000,conv_id=conv_id)
     for data in result:
         yield data.encode()
-    chatbot.add_to_conversation('', "assistant", convo_id=conv_id)
-    chatbot.delete_last2_conversation(conv_id)
-    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-def web(query,conv_id = 'default'):
-    global APICallList
-    APICallList.append(hint_recall_dialog)
-    resp = directQuery(f'Query: {query}', conv_id=  conv_id)
-    chatbot.delete_last2_conversation(conv_id)
-    apir = APIQuery(query,resp=resp)
+    chatbot.add_to_conversation(user_id,'', "assistant", convo_id=conv_id)
+    chatbot.delete_last2_conversation(user_id,conv_id)
+    chatbot.add_to_conversation(user_id,str(query), "user", convo_id=conv_id)
+    
+def web(user_id:str,query,conv_id = 'default'):
+    chatbot.add_to_db_temp(user_id, str(query), "user", convo_id=conv_id)
+    append_API_call(user_id,hint_recall_dialog)
+    resp = directQuery(user_id,f'Query: {query}', conv_id=  conv_id)
+    chatbot.delete_last2_conversation(user_id,conv_id)
+    apir = APIQuery(user_id,query,resp=resp)
     call_res0 = search(apir,1600)
-    APICallList.append(hint_api_finished)
+    append_API_call(user_id,hint_api_finished)
     print(f'API calls response:\n {call_res0}')
-    result = SumReply(f'Query: {query}' ,str(call_res0),max_token=2000, conv_id=conv_id)
+    result = SumReply(user_id,f'Query: {query}' ,str(call_res0),max_token=2000, conv_id=conv_id)
     for data in result:
         yield data.encode()
-    chatbot.add_to_conversation('', "assistant", convo_id=conv_id)
-    chatbot.delete_last2_conversation(conv_id)
-    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    chatbot.backup_chat_history()
-def webDirect(query,conv_id = 'default'):
-    global APICallList
-    apir = APIQuery(query)
+    chatbot.add_to_conversation(user_id,'', "assistant", convo_id=conv_id)
+    chatbot.delete_last2_conversation(user_id,conv_id)
+    chatbot.add_to_conversation(user_id,str(query), "user", convo_id=conv_id)
+    
+def webDirect(user_id:str,query,conv_id = 'default'):
+    chatbot.add_to_db_temp(user_id, str(query), "user", convo_id=conv_id)
+    apir = APIQuery(user_id,query)
     call_res0 = search(apir,1600)
-    APICallList.append(hint_api_finished)
+    append_API_call(user_id,hint_api_finished)
     print(f'API calls response:\n {call_res0}')
-    result = SumReply(f'{query}', str(call_res0), conv_id=conv_id)
+    result = SumReply(user_id,f'{query}', str(call_res0), conv_id=conv_id)
     for data in result:
         yield data.encode()
-    chatbot.add_to_conversation('', "assistant", convo_id=conv_id)
-    chatbot.delete_last2_conversation(conv_id)
-    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    chatbot.backup_chat_history()
-def WebKeyWord(query,conv_id = 'default'):
-    global APICallList
+    chatbot.add_to_conversation(user_id,'', "assistant", convo_id=conv_id)
+    chatbot.delete_last2_conversation(user_id,conv_id)
+    chatbot.add_to_conversation(user_id,str(query), "user", convo_id=conv_id)
+    
+def WebKeyWord(user_id:str,query,conv_id = 'default'):
+    chatbot.add_to_db_temp(user_id, str(query), "user", convo_id=conv_id)
     q = chatbot.ask(
+                user_id,
                 f'Given a user prompt "{query}", respond with "none" if it is directed at the chatbot or cannot be answered by an internet search. Otherwise, provide a concise search query for a search engine. Avoid adding any additional text to the response to minimize token cost.',
                 convo_id="search",
                 temperature=0.0,
@@ -126,7 +135,7 @@ def WebKeyWord(query,conv_id = 'default'):
     if q == "none":
         search_results = '{"results": "No search results"}'
     else:
-        APICallList.append(json.loads(json.dumps({"calls":[{"API":"ddg-api","query": "Searching for:" + q }]})))
+        append_API_call(user_id,json.loads(json.dumps({"calls":[{"API":"ddg-api","query": "Searching for:" + q }]})))
         search_results = requests.post(
             url="https://ddg-api.herokuapp.com/search",
             json={"query": q, "limit": 4},
@@ -134,78 +143,74 @@ def WebKeyWord(query,conv_id = 'default'):
         ).text
     search_res = json.dumps(json.loads(search_results), indent=4,ensure_ascii=False)
     chatbot.add_to_conversation(
+        user_id,
         "Search results:" + search_res,
         "system",
         convo_id=conv_id,
     )
-    APICallList.append(hint_answer_generating)
-    result = chatbot.ask_stream(query, "user", convo_id=conv_id)
+    append_API_call(user_id,hint_answer_generating)
+    result = chatbot.ask_stream(prompt = query,user_id = user_id,role = "user", convo_id=conv_id)
     for data in result:
         yield data.encode()
-    chatbot.add_to_conversation('', "assistant", convo_id=conv_id)
-    chatbot.delete_last2_conversation(conv_id)
-    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    chatbot.backup_chat_history()
-def directQuery(query,conv_id = 'default',prompt = ''):
-    global APICallList
-    APICallList.append(hint_answer_generating)
-    response = chatbot.ask(prompt+'\n'+query,convo_id=conv_id)
-    chatbot.delete_last2_conversation(conv_id)
-    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
-    chatbot.add_to_conversation(str(response), "assistant", convo_id=conv_id)
+    chatbot.add_to_conversation(user_id,'', "assistant", convo_id=conv_id)
+    chatbot.delete_last2_conversation(user_id,conv_id)
+    chatbot.add_to_conversation(user_id,str(query), "user", convo_id=conv_id)
+def directQuery(user_id:str, query,conv_id = 'default',prompt = ''):
+    append_API_call(user_id,hint_answer_generating)
+    response = chatbot.ask(user_id,prompt+'\n'+query,convo_id=conv_id)
+    chatbot.delete_last2_conversation(user_id,conv_id)
+    chatbot.add_to_conversation(user_id, str(query), "user", convo_id=conv_id)
+    chatbot.add_to_conversation(user_id, str(response), "assistant", convo_id=conv_id)
     print(f'Direct Query: {query}\nChatGpt: {response}')
-    return response+ '\n\n token_cost: '+ str(chatbot.token_cost())
-def directQuery_stream(query,conv_id = 'default',prompt = ''):
-    global APICallList
-    APICallList.append(hint_answer_generating)
+    return response+ '\n\n token_cost: '+ str(chatbot.token_cost(user_id))
+def directQuery_stream(user_id: str, query,conv_id = 'default',prompt = ''):
+    append_API_call(user_id,hint_answer_generating)
+    chatbot.add_to_db_temp(user_id, str(query), "user", convo_id=conv_id)
     if(prompt!=''):
-        chatbot.add_to_conversation(prompt, "system", convo_id=conv_id)
-    response = chatbot.ask_stream(prompt+'\n'+query,convo_id=conv_id)
+        chatbot.add_to_conversation(user_id = user_id ,message = prompt, role="system", convo_id=conv_id)
+    response = chatbot.ask_stream(user_id = user_id ,prompt= prompt+'\n'+query,convo_id=conv_id)
     for data in response:
         yield data.encode()
-    chatbot.add_to_conversation('TEST!', "assistant", convo_id=conv_id)
-    chatbot.delete_last2_conversation(conv_id)
-    chatbot.add_to_conversation(str(query), "user", convo_id=conv_id)
+    chatbot.add_to_conversation(user_id,'TEST!', "assistant", convo_id=conv_id)
+    chatbot.delete_last2_conversation(user_id,conv_id)
+    chatbot.add_to_conversation(user_id,str(query), "user", convo_id=conv_id)
     print(f'Direct Query: {query}\nChatGpt: {response}')
-def APIQuery(query,resp =''):
+def APIQuery(user_id:str,query,resp =''):
     with open(program_dir+"/prompts/APIPrompt.txt", "r", encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{resp}", resp)
     response = ""
-    chatbot.reset(convo_id='api',system_prompt='Your are a API caller for a LLM, you need to call some APIs to get the information you need.')
-    response =  chatbot.ask(prompt,convo_id='api')
+    chatbot.reset(user_id = user_id,convo_id='api',system_prompt='Your are a API caller for a LLM, you need to call some APIs to get the information you need.')
+    response =  chatbot.ask(user_id = user_id,prompt = prompt,convo_id='api')
     pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
     match = re.search(pattern, response)
-    global APICallList
     if match:
         json_data = match.group(1)
         result = json.loads(json_data)
         print(f'API calls: {result}\n')
-        APICallList.append(result)
+        append_API_call(user_id, result)
         return result
     return json.loads("{\"calls\":[]}")
-def APIExtraQuery(query,callResponse):
+def APIExtraQuery(user_id:str , query, callResponse):
     with open(program_dir+"/prompts/APIExtraPrompt.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{callResponse}", str(callResponse))
-    chatbot.reset(convo_id='api',system_prompt='Your are a API caller for a LLM, you need to call some APIs to get the information you need.')
-    response = chatbot.ask(prompt,convo_id='api')
+    chatbot.reset(user_id = user_id, convo_id='api',system_prompt='Your are a API caller for a LLM, you need to call some APIs to get the information you need.')
+    response = chatbot.ask(user_id = user_id, prompt = prompt,convo_id='api')
     pattern = r"(\{[\s\S\n]*\"calls\"[\s\S\n]*\})"
     match = re.search(pattern, response)
-    global APICallList
     if match:
         json_data = match.group(1)
         result = json.loads(json_data)
-        APICallList.append(result)
+        append_API_call(user_id, result)
         print(f'API calls: {result}\n')
         return result
     return json.loads("{\"calls\":[]}")
 hint_answer_generating = json.loads(json.dumps({"calls":[{"API":"ExChatGPT","query":"Generating answers for you…"}]}))
-def SumReply(query, apicalls, max_token=2000, conv_id = 'default'):
-    global APICallList
-    APICallList.append(hint_answer_generating)
+def SumReply(user_id:str,query, apicalls, max_token=2000, conv_id = 'default'):
+    append_API_call(user_id, hint_answer_generating)
     with open(program_dir+"/prompts/ReplySum.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     apicalls = str(apicalls)
@@ -213,17 +218,17 @@ def SumReply(query, apicalls, max_token=2000, conv_id = 'default'):
         apicalls = apicalls[:-100]
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{apicalls}", apicalls)
-    response = chatbot.ask_stream(prompt,convo_id=conv_id)
+    response = chatbot.ask_stream(user_id = user_id, prompt = prompt,convo_id=conv_id)
     for data in response:
         yield data
     print(f'ChatGPT SumReply:\n  {response}\n')
-def Summary(query, callResponse):
+def Summary(user_id:str,query, callResponse):
     with open(program_dir+"/prompts/summary.txt", "r",encoding='utf-8') as f:
         prompt = f.read()
     prompt = prompt.replace("{query}", query)
     prompt = prompt.replace("{callResponse}", callResponse)
-    chatbot.reset(convo_id='sum',system_prompt='Your need to summarize the information you got from the APIs.')
-    response = chatbot.ask_stream(prompt,convo_id='sum')
+    chatbot.reset(user_id,convo_id='sum',system_prompt='Your need to summarize the information you got from the APIs.')
+    response = chatbot.ask_stream(user_id = user_id,prompt = prompt,convo_id='sum')
     print(f'Summary : {response}\n')
     return response
 def search(content,max_token=2000,max_query=5):
