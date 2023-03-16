@@ -155,14 +155,13 @@
         messageHistory.unshift(msgText);
         const uuid = document.querySelector('.sidebar-list').firstElementChild.getAttribute('uuid');
         if (!msgText) return;
-        console.log(msgText)
-        msgText = msgText.replace(/\n/g, "\n</br>")
-        appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText, mode, formatDate(new Date()));
+        msgText = msgText.replace(/\n/g, "\n<br>")
+        appendMessage(PERSON_NAME, PERSON_IMG, "right",msgText , mode, formatDate(new Date()));
         msgerInput.value = "";
         lastRecordmsg = "";
         msgerInput.height = '30px';
         textAreaHeightAdjut();
-        fetchAPIProcessID = setInterval(fetchAPIProcess, 200);
+        fetchAPIProcessID = setInterval(fetchAPIProcess, 500);
         setTimeout(function () {
           clearInterval(fetchAPIProcessID);
         }, 20000);
@@ -171,9 +170,9 @@
           prompt = promptSelect.options[promptSelect.selectedIndex].text;
         }
         console.log(prompt);
+        msgText = msgText.replace(/\n<br>/g, "\n")
         const res = await botResponse(msgText, mode, uuid, prompt, enableRecord);
         clearInterval(fetchAPIProcessID);
-
         markdownMathRender();
       }
       msgerForm.addEventListener("submit", event => {
@@ -243,15 +242,17 @@
           clearInterval(fetchAPIProcessID);
           if (done) {
             if (enableTTS) {
-              TTS(sentences.join(""));
+              TTS(buffer);
             }
             const lastMsgText = document.querySelector("body > div > div.chat-page > section > main > div:last-child > div.msg-bubble").querySelector('.msg-text');
-            lastMsgText.innerHTML = await addChat(uuid, lastMsgText.innerHTML);
+            const lastMsg = lastMsgText.textContent;
+            console.log(lastMsg);
+            lastMsgText.innerHTML = await addChat(uuid, lastMsg);
             break;
           }
           const msg = decoder.decode(value);
           buffer += msg;
-          const sentences = buffer.match(/[^.!?。！？;\uFF0C,\n~]+[.!?。！？;\uFF0C,\n~][\s\u3000]*/g);
+          const sentences = buffer.match(/.*(?<![0-9])[,，。？！～；.]/g);
           if (sentences) {
             console.log(sentences.join(""));
             if (enableTTS) {
@@ -259,14 +260,13 @@
             }
             buffer = buffer.slice(sentences.join("").length); // Remove complete sentences from the buffer
           }
-          const formattedMsg = msg.replace(/\n/g, "\n</br>");
-          lastMsgText.innerHTML += formattedMsg;
+          lastMsgText.textContent += msg;
           textAreaHeightAdjut();
           msger.scrollTop = msger.scrollHeight;
           // lastMsgText.textContent += value;
           console.log(value);
         }
-        return lastMsgText.textContent
+        return lastMsgText.innerHTML;
       }
       // Utils
       function get(selector, root = document) {

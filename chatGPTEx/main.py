@@ -21,6 +21,7 @@ app.static_folder = 'static'
 @app.route("/")
 def home():
     return render_template("index.html")
+
 @app.route("/api/query")
 def get_bot_response():
     mode = str(request.args.get('mode'))

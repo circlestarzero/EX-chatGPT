@@ -20,6 +20,7 @@ This project is divided into `Ex-ChatGPT` and `WebChatGPTEnhance`. The former is
 
 ## Highlights
 
+- **OAuth2.0 Multi User Management** (In webTest branch)
 - **Speech Dialogue Functionality**, utilizing Microsoft Azure API to optimize response time (around 1-2 seconds), featuring both speech recognition and text-to-speech capabilities, supporting multiple languages and voices, and allowing for customized voices.
 - **Docker and Proxy support**
 - **Redundant backup of chat history**

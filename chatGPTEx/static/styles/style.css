@@ -104,6 +104,7 @@ body {
 }
 .msg-text{
   font-size: 1.2em;
+  white-space: pre-wrap;
 }
 .msg-img {
   width: 50px;
