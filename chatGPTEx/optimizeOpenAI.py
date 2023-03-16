@@ -133,18 +133,18 @@ class ExChatGPT:
         full_conversation = "\n".join([x["content"] for x in self.conversation[convo_id]],)
         if len(ENCODER.encode(full_conversation)) > self.max_tokens:
             self.conversation_summary(convo_id=convo_id)
-        last_dialog['content'] = query
-        self.conversation[convo_id].append(last_dialog)
-        self.convo_history[convo_id].append(last_dialog)
+        
         while True:
             full_conversation = ""
             for x in self.conversation[convo_id]:
                 full_conversation = x["content"] + "\n"
-            if (len(ENCODER.encode(full_conversation)) > self.max_tokens):
-                self.conversation[convo_id][-1] = self.conversation[convo_id][-1][:-self.decrease_step]
-                self.convo_history[convo_id][-1] = self.convo_history[convo_id][-1][:-self.decrease_step]
+            if (len(ENCODER.encode(full_conversation+query)) > self.max_tokens):
+                query = query[:-self.decrease_step]
             else:
                 break
+        last_dialog['content'] = query
+        self.conversation[convo_id].append(last_dialog)
+        self.convo_history[convo_id].append(last_dialog)
 
     def ask_stream(
         self,
@@ -311,21 +311,6 @@ class ExChatGPT:
             return False
         return True
 
-
-    def print_config(self, convo_id: str = "default"):
-        """
-        Prints the current configuration
-        """
-        print(
-            f"""
-ChatGPT Configuration:
-  Messages:         {len(self.conversation[convo_id])} / {self.max_tokens}
-  Engine:           {self.engine}
-  Temperature:      {self.temperature}
-  Top_p:            {self.top_p}
-  Reply count:      {self.reply_count}
-            """,
-        )
 
 
 def main():
