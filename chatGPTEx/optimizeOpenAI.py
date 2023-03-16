@@ -131,16 +131,16 @@ class ExChatGPT:
         full_conversation = "\n".join([x["content"] for x in self.conversation[user_id][convo_id]],)
         if len(ENCODER.encode(full_conversation)) > self.max_tokens:
             self.conversation_summary(user_id,convo_id=convo_id)
-        last_dialog['content'] = query
-        self.conversation[user_id][convo_id].append(last_dialog)
+        full_conversation = ""
+        for x in self.conversation[user_id][convo_id]:
+            full_conversation = x["content"] + "\n"
         while True:
-            full_conversation = ""
-            for x in self.conversation[user_id][convo_id]:
-                full_conversation = x["content"] + "\n"
-            if (len(ENCODER.encode(full_conversation)) > self.max_tokens):
-                self.conversation[user_id][convo_id][-1] = self.conversation[user_id][convo_id][-1][:-self.decrease_step]
+            if (len(ENCODER.encode(query+full_conversation)) > self.max_tokens):
+                query = query[:-self.decrease_step]
             else:
                 break
+        last_dialog['content'] = query
+        self.conversation[user_id][convo_id].append(last_dialog)
 
     def ask_stream(
         self,
