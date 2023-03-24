@@ -60,13 +60,23 @@ ChatGPT 是一个强大的工具平台，可以无需任何调整就生成 API �
   -   `wolframAlpha app id key` [申请](https://products.wolframalpha.com/api/)
   -   `openAI api key`( 新功能 ) 或 `chatGPT access_token` ( 旧版本 ) [申请](https://platform.openai.com)
   -   (可选) 在 `apikey.ini` 中填写`Azure API key` 和 `region` [申请](https://learn.microsoft.com/zh-cn/azure/cognitive-services/speech-service)
+-   配置github OAuth
+  -   访问[https://github.com/settings/developers](https://github.com/settings/developers)点击new OAuth APP
+  -   `Application name`随便写
+  -   `Homepage URL`填`http://localhost:1234`
+  -   `Authorization callback URL`填`http://localhost:1234/github-callback`
+  -   `Enable Device Flow`勾选上
+  -   复制`Client ID`
+  -   点击`Generate a new client secret`，复制
+  -   在`main.py`文件的`consumer_key`填前面获取到的`Client ID`、`consumer_secret`填前面获取到的`Generate a new client secret`
+
 -   运行 `main.py` 并打开 `http://127.0.0.1:1234/`
 -   选择模式 ( 可以使用 `Tab` ) ，例如 `chat,detail,web,webDirect,WebKeyWord`
 -   `chat` 模式下 使用 `\{promptname} {query}` 格式来模糊搜索选择 prompt
 -   **快捷键**快速选择模式 `Tab` 和换行 `Shift+Enter`,`Enter` 发送， `up`,`down` 选择历史发送消息，类似终端
 -   **语音对话聊天**(可选功能), 在 `chatGPTEx/static/styles/tts.js` 中选择语言和音色, 在聊天界面中点击麦克风`启动/关闭`对话模式
 
-#### Docker 快速部署
+#### Docker 快速部署（暂不支持webTest）
 
 ##### 方法一 使用构建好的镜像
 
