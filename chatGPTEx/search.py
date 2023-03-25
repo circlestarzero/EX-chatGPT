@@ -271,9 +271,7 @@ def search(content,max_token=2000,max_query=5):
         t.start()
     for t in all_threads:
         t.join()
-    for key,value in call_res.items():
-        if len(str(value)) < 10:
-            del call_res[key]
+    call_res = {key: value for key, value in call_res.items() if len(str(value)) >= 10}
     call_res = json.loads(json.dumps(call_res,ensure_ascii=False))
     res = str(call_res)
     while chatbot.token_str(res) > max_token:
