@@ -95,6 +95,7 @@ class ExChatGPT:
         self.decrease_step = 250
         self.conversation = {}
         self.new_add_conversation = {}
+        self.trash_api_keys = PQ()
         if self.token_str(self.system_prompt) > self.max_tokens:
             raise Exception("System prompt is too long")
         self.lock = threading.Lock()
@@ -113,12 +114,24 @@ class ExChatGPT:
 
     def get_api_key(self):
         with self.lock:
+            while(self.trash_api_keys.qsize() and self.api_keys.qsize()):
+                trash_key = self.trash_api_keys.get()
+                apiKey = self.api_keys.get()
+                if(trash_key[1] == apiKey[1]):
+                    self.api_keys.put((time.time()+24*3600, apiKey[1]))
+                    continue
+                else:
+                    self.trash_api_keys.put(trash_key)
+                    self.api_keys.put(apiKey)
+                    break
             apiKey = self.api_keys.get()
+            if apiKey[0] > time.time():
+                print('API key exhausted')
+                raise Exception('API key Exhausted')
             delay = self._calculate_delay(apiKey)
             time.sleep(delay)
             self.api_keys.put((time.time(), apiKey[1]))
             return apiKey[1]
-
     def _calculate_delay(self, apiKey):
         elapsed_time = time.time() - apiKey[0]
         if elapsed_time < self.apiTimeInterval:
@@ -219,6 +232,8 @@ class ExChatGPT:
             stream=True,
         )
         if response.status_code != 200:
+            if response.status_code == 403:  # API key error
+                self.trash_api_keys.put((time.time(), apiKey))
             raise Exception(
                 f"Error: {response.status_code} {response.reason} {response.text}",
             )
